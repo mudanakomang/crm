@@ -11,7 +11,7 @@
             <div class="panel-heading" role="tab" id="headingOne_11">
                 <h4 class="panel-title">
                     <a role="button" data-toggle="collapse" data-parent="#accordion_11" href="#collapseOne_11" aria-expanded="true" aria-controls="collapseOne_11">
-                        CAMPAIGN DETAIL
+                        <i class="fa fa-chevron-down"></i> CAMPAIGN DETAIL
                     </a>
                 </h4>
             </div>
@@ -21,7 +21,7 @@
                         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
                             {{ Form::label('name','Campaign Name') }}
                         </div>
-                        <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     {{ Form::text('name',$model->name,['class'=>'form-control','required']) }}
@@ -30,6 +30,7 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
 
                         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
@@ -45,7 +46,7 @@
                         </div>
 
                     <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
-                        {{ Form::label('template','Template') }}
+                        {{ Form::label('template','Template',['class'=>'text-right']) }}
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                         <div class="form-group">
@@ -55,7 +56,7 @@
                             <div class="help-info"></div>
                         </div>
                     </div>
-
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,7 +65,7 @@
                 <h4 class="panel-title">
                     <a class="collapsed " role="button" data-toggle="collapse" data-parent="#accordion_11" href="#collapseTwo_11" aria-expanded="false"
                        aria-controls="collapseTwo_11">
-                        SEGMENTS
+                        <i class="fa fa-chevron-down"></i> SEGMENTS
                     </a>
 
                 </h4>
@@ -73,14 +74,13 @@
                 <div class="panel-body">
                     <h5 class="recepient"></h5>
 
-                    <div class="switch">
-                        <label>
-                            New Segment
-                            <input type="checkbox" name="getsegment" id="segment" onchange="selectSegment()">
-                            <span class="lever"></span>
-                            Use Existing Segment
+                    <div class="">
+                        <label>   New Segment
+                            <input type="checkbox" class="js-switch" name="getsegment" id="segment"   onchange="selectSegment()"/>  Use Existing Segment
                         </label>
                     </div>
+
+
                     <div class="selectsegment" >
                         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
                             {{ Form::label('segments','Segment') }}
@@ -197,7 +197,7 @@
                 </div>
                 <div class="panel-body">
                     <h5>Schedule</h5>
-                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                   <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="form-group">
                         <div class="form-line">
                             <input type="text" class="datetimepicker form-control" name="schedule" id="schedule" required placeholder="Set Schedule">
@@ -212,7 +212,7 @@
                 <h4 class="panel-title">
                     <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion_11" href="#collapseThree_11" aria-expanded="false"
                        aria-controls="collapseThree_11">
-                        SUMMARY
+                        <i class="fa fa-chevron-down"></i>  SUMMARY
                     </a>
                 </h4>
             </div>
@@ -260,8 +260,8 @@
 <div class="row clearfix">
     <div class="col-lg-12 ">
         <div class="col-lg-6">
-            <a class="btn bg-teal waves-effect btn-xs" href="{{ url('campaign') }}" title="Back"><i class="material-icons">arrow_back</i> Back</a>
-            <button class="btn bg-teal waves-effect btn-xs" type="submit" id="saveBtn"> <i class="material-icons">save</i> Save</button>
+            <a class="btn btn-success " href="{{ url('campaign') }}" title="Back"><i class="fa fa-arrow-circle-o-left"></i> Back</a>
+            <button class="btn  btn-success " type="submit" id="saveBtn"> <i class="fa fa-save"></i> Save</button>
         </div>
 
     </div>

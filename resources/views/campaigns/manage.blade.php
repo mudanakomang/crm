@@ -1,24 +1,51 @@
-@extends('layouts.app')
-@section('main-content')
-    <section class="content">
-        <div class="row clearfix">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="card">
-                    <div class="header">
-                        <h2>Create Campaign</h2>
-                    </div>
-                    <div class="body">
-
-
-                        @include('campaigns._form')
+@extends('layouts.master')
+@section('content')
+    <div class="right_col" role="main">
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="x_panel tile ">
+                            <div class="x_title">
+                                <h2>Create Campaign</h2>
+                                <ul class="nav navbar-right panel_toolbox">
+                                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                                    </li>
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content" >
+                                @include('campaigns._form')
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
+
 @endsection
 @section('script')
     <script>
+        $(document).ready(function(){
+           $('.selectsegment').hide();
+        });
+    </script>
+    <script>
+        $('#stay_from').datetimepicker({
+            format: 'DD MMMM YYYY',
+            showClear:true,
+        });
+        $('#stay_to').datetimepicker({
+            format: 'DD MMMM YYYY',
+            showClear:true,
+        });
+        $('#schedule').datetimepicker({
+            format: 'DD MMMM YYYY',
+            minDate:new Date(),
+            showClear:true,
+        });
         $(document).ready(function () {
             $('#campaignForm').validate({ignore: []});
             $('#saveBtn').on('click',function (e) {
@@ -132,7 +159,6 @@
     </script>
     <script>
         $(document).ready(function () {
-
             var status= '{{ $model->status }}';
             if (status==='Inactive'){
                 $('#myonoffswitch').prop('checked',false);
@@ -245,7 +271,7 @@
     </script>
     <script>
         function selectSegment(){
-            $('.selectsegment').hide();
+
              var $this=$('#segment');
              if($this.is(':checked')){
                  $('.formsegment').hide();

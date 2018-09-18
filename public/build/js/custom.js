@@ -2552,7 +2552,10 @@ if (typeof NProgress != 'undefined') {
 				  };
 				}();
 
-				$('#datatable').dataTable();
+				$('#datatable').dataTable({
+                    "lengthMenu": [[10, 20,25, 50, -1], [10,20, 25, 50, "All"]],
+                    "pageLength": 25,
+				});
 
 				$('#datatable-keytable').DataTable({
 				  keys: true

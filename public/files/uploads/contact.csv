@@ -1,4 +1,3 @@
-123,456,43313,43327,201,DLSD,2000000,In House
-Guest ID,Resv ID,Checkin Date,Checkout Date,Room,Room Type,Revenue,Status
-23,456,2018-08-01,2018-08-07,201,DLSD,2000000,In House
-23,4535,2018-01-01,2018-01-05,202,DLSD,4000000,In House
+Identity Number e.g passport/id,Company Contact ID add '99',First Name,Last Name,Salutation [Mr/Mrs/Miss],Gender [Male/Female],Email,Birthday [yyyy-mm-dd],[single/married/divorced/widowed],Country Code ISO 2 e.g AU / ID
+idnumber,ccid,fname,lname,salutation,gender,email,birthday,marital_status,country
+45435324,5,Mudana,Komang,Mr,M,mudanakomang@hotmail.com,1988-05-18,single,ID

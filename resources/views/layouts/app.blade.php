@@ -488,7 +488,7 @@
 <script src="{{ asset('plugins/autosize/autosize.js') }}"></script>
 <script src="{{ asset('plugins/momentjs/moment.js')}}"></script>
 <script src="{{ asset('plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js')}}"></script>
-
+<script src="{{ asset('plugins/jquery-validation/jquery.validate.js') }}"></script>
 
 <!-- Select Plugin Js -->
 <script src="{{asset('plugins/bootstrap-select/js/bootstrap-select.js')}}"></script>
@@ -537,7 +537,6 @@
 
 <script src="{{ asset('js/pages/forms/basic-form-elements.js')}}"></script>
 <script src="{{ asset('js/pages/tables/jquery-datatable.js')}}"></script>
-<script src="{{ asset('plugins/jquery-validation/jquery.validate.js') }}"></script>
 <script src="{{ asset('plugins/jquery-steps/jquery.steps.js') }}"></script>
 <script src="{{ asset('plugins/sweetalert/sweetalert.min.js') }}"></script>
 <script src="{{asset('js/pages/index.js')}}"></script>

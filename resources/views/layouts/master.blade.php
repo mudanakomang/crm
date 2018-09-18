@@ -12,13 +12,17 @@
 
     <!-- Bootstrap -->
     <link href="{{ asset('vendors/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('plugins/sweetalert/sweetalert.css') }}" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="{{ asset('vendors/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('plugins/summernote/dist/summernote.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css') }}" rel="stylesheet">
+
     <!-- NProgress -->
     <link href="{{ asset('vendors/nprogress/nprogress.css') }}" rel="stylesheet">
     <!-- iCheck -->
     <link href="{{ asset('vendors/iCheck/skins/flat/green.css') }}" rel="stylesheet">
-
+    <link href="{{ asset('plugins/bootstrap-select/css/bootstrap-select.css') }} " rel="stylesheet" />
     <link href="{{ asset('vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
@@ -30,6 +34,7 @@
     <link href="{{ asset('vendors/jqvmap/dist/jqvmap.min.css') }}" rel="stylesheet"/>
     <!-- bootstrap-daterangepicker -->
     <link href="{{ asset('vendors/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendors/morris/morris.css') }}" rel="stylesheet">
 
     <!-- Custom Theme Style -->
@@ -110,10 +115,19 @@
     <!-- Chart.js -->
     <script src="{{ asset('vendors/Chart.js/dist/Chart.min.js') }}"></script>
     <!-- gauge.js -->
+    <script src="{{asset('plugins/bootstrap-select/js/bootstrap-select.js')}}"></script>
+    <script src="{{ asset('plugins/summernote/dist/summernote.js') }}"></script>
+    <script src="{{ asset('plugins/summernote/dist/plugin/image/summernote-image-attributes.js')}}"></script>
+
 
     <script src="{{ asset('vendors/datatables.net/js/jquery.dataTables.min.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-buttons/js/dataTables.buttons.min.js')}}"></script>
+    <script src="{{ asset('plugins/jquery-validation/jquery.validate.js') }}"></script>
+    <script src="{{ asset('vendors/moment/min/moment.min.js') }}"></script>
+    <script src="{{ asset('vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js') }}"></script>
+
+    <script src="{{ asset('vendors/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
 
 
     <script src="{{ asset('vendors/gauge.js/dist/gauge.min.js') }}"></script>
@@ -140,16 +154,17 @@
     <script src="{{ asset('vendors/jqvmap/dist/maps/jquery.vmap.world.js') }}"></script>
     <script src="{{ asset('vendors/jqvmap/examples/js/jquery.vmap.sampledata.js') }}"></script>
     <!-- bootstrap-daterangepicker -->
-    <script src="{{ asset('vendors/moment/min/moment.min.js') }}"></script>
-    <script src="{{ asset('vendors/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+
     <script src="{{ asset('vendors/raphael/raphael.js') }}"></script>
     <script src="{{ asset('vendors/morris/morris.js') }}"></script>
-
+    <script src="{{ asset('plugins/jquery-validation/jquery.validate.js') }}"></script>
     <script src="{{ asset('vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-keytable/js/dataTables.keyTable.min.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-responsive/js/dataTables.responsive.min.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-scroller/js/dataTables.scroller.min.js')}}"></script>
+    <script src="{{ asset('vendors/switchery/dist/switchery.min.js')}}"></script>
+    <script src="{{ asset('plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 
     <!-- Custom Theme Scripts -->

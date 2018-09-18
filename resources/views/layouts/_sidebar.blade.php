@@ -7,16 +7,17 @@
                 <ul class="nav child_menu">
                     <li><a href="{{ url('contacts/list') }}">View Contacts</a></li>
                     <li><a href="{{ url('contacts/add') }}">New Contact</a></li>
+                    <li><a href="{{ url('contacts/import') }}">Import Guest Profile</a></li>
+                    <li><a href="{{ url('contacts/importstay') }}">Import Guest Stay</a></li>
                 </ul>
             </li>
-            <li><a><i class="fa fa-user"></i> Forms <span class="fa fa-chevron-down"></span></a>
+            <li><a><i class="fa fa-envelope"></i> Email Marketing <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                    <li><a href="form.html">General Form</a></li>
-                    <li><a href="form_advanced.html">Advanced Components</a></li>
-                    <li><a href="form_validation.html">Form Validation</a></li>
-                    <li><a href="form_wizards.html">Form Wizard</a></li>
-                    <li><a href="form_upload.html">Form Upload</a></li>
-                    <li><a href="form_buttons.html">Form Buttons</a></li>
+                        <li><a href="{{ url('campaign') }}">Campaign Management</a></li>
+                        <li><a href="form_validation.html">Form Validation</a></li>
+                        <li><a href="form_wizards.html">Form Wizard</a></li>
+                        <li><a href="form_upload.html">Form Upload</a></li>
+                        <li><a href="form_buttons.html">Form Buttons</a></li>
                 </ul>
             </li>
             <li><a><i class="fa fa-desktop"></i> UI Elements <span class="fa fa-chevron-down"></span></a>

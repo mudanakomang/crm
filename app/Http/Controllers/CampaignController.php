@@ -53,7 +53,6 @@ class CampaignController extends Controller
     {
 
         //
-
         $contacts=Contact::with('transaction')->when($request->country_id !=null,function ($q) use ($request){
             return $q->whereIn('country_id',$request->country_id);
         })->when($request->guest_status !=null,function ($q) use ($request){
@@ -362,7 +361,7 @@ class CampaignController extends Controller
     public function setSheduleFunc($campaign_id,$date){
         $schedule=Schedule::updateOrCreate(
             ['campaign_id'=>$campaign_id],
-            ['schedule'=>Carbon::createFromFormat('l d F Y - H:i',$date)->format('Y-m-d H:i')]
+            ['schedule'=>Carbon::parse($date)->format('Y-m-d H:i')]
         );
         $campaign=Campaign::find($campaign_id);
         $campaign->status='Scheduled';

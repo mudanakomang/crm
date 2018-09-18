@@ -428,7 +428,7 @@ order by hari desc limit 10 '));
                     'gender' => $row[5],
                     'country_id' => $country,
                     'marital_status'=>$row[8],
-                    'source_booking' => $row[10],
+
                 ]);
                 if ($contacts->wasRecentlyCreated) {
                     $created += 1;
@@ -443,7 +443,7 @@ order by hari desc limit 10 '));
                         'gender' => $row[5],
                         'country_id' => $country,
                         'marital_status'=>$row[8],
-                        'source_booking' => $row[10],
+
                     ]);
 
                 } else {
@@ -459,7 +459,7 @@ order by hari desc limit 10 '));
                         'gender' => $row[5],
                         'country_id' => $country,
                         'marital_status'=>$row[8],
-                        'source_booking' => $row[10]
+
                     ]);
                 }
             }
@@ -569,17 +569,20 @@ order by hari desc limit 10 '));
     //}
     public function uploadStay(Request $request){
 
+       // dd($request->all());
         $file=$request->file('file');
         $newName='stay.csv';
-        $path='files/uploads/';
+        $path='files/uploads';
         $file->move($path,$newName);
         $created=0;
         $update=0;
         $created_data=[];
         $updated_data=[];
+
         $reader=Reader::createFromPath($path.'/'.$newName,'r');
         foreach ($reader as $key=>$row){
             if ($key>=2) {
+
                 //dd(Carbon::createFromFormat('Y-m-d',$row[2])->format('Y-m-d'));
 
                 $stays=Transaction::updateOrCreate([
@@ -592,6 +595,7 @@ order by hari desc limit 10 '));
                     'revenue'=>(float)$row[6],
                     'status'=>$row[7]
                 ]);
+
                 if ($stays->wasRecentlyCreated){
                     $stays->contact()->attach($row[0]);
                     $created += 1;
@@ -619,6 +623,7 @@ order by hari desc limit 10 '));
 
             }
         }
+
         return view('contacts.import_stay',['create'=>$created,'update'=>$update,'created_data'=>$created_data,'updated_data'=>$updated_data]);
     }
 }
