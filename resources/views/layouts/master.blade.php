@@ -164,6 +164,7 @@
     <script src="{{ asset('vendors/datatables.net-responsive/js/dataTables.responsive.min.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-scroller/js/dataTables.scroller.min.js')}}"></script>
+    <script src="{{ asset('js/require.js') }}"></script>
     <script src="{{ asset('vendors/switchery/dist/switchery.min.js')}}"></script>
     <script src="{{ asset('plugins/sweetalert/sweetalert.min.js') }}"></script>
 
