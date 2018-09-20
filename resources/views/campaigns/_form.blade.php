@@ -1,7 +1,7 @@
  @if($action=='create')
-       {{ Form::model($model,['route'=>'campaign.store','files'=>'true','id'=>'campaignForm']) }}
+       {{ Form::model($model,['route'=>'campaign.store','files'=>'true','id'=>'campaignForm','class'=>'data-parsley-validate']) }}
   @else
-       {{ Form::model($model,['route'=>['campaign.update',$model->id],'files'=>'true','id'=>'campaignForm']) }}
+       {{ Form::model($model,['route'=>['campaign.update',$model->id],'files'=>'true','id'=>'campaignForm','class'=>'data-parsley-validate']) }}
        {{ method_field('PUT') }}
   @endif
 
@@ -24,7 +24,7 @@
                         <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    {{ Form::text('name',$model->name,['class'=>'form-control','required']) }}
+                                    {{ Form::text('name',$model->name,['class'=>'form-control data-parsley-trigger="change"','required']) }}
                                 </div>
                                 <div class="help-info"></div>
                             </div>
@@ -261,7 +261,7 @@
     <div class="col-lg-12 ">
         <div class="col-lg-6">
             <a class="btn btn-success " href="{{ url('campaign') }}" title="Back"><i class="fa fa-arrow-circle-o-left"></i> Back</a>
-            <button class="btn  btn-success " type="submit" id="saveBtn"> <i class="fa fa-save"></i> Save</button>
+            <button class="btn  btn-success "  id="saveBtn"> <i class="fa fa-save"></i> Save</button>
         </div>
 
     </div>

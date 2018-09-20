@@ -30,6 +30,23 @@
     <script>
         $(document).ready(function(){
            $('.selectsegment').hide();
+           $('#campaignForm').parsley();
+            $("#saveBtn").on('click', function(event) {
+                // validate form with parsley.
+                $('#campaignForm').parsley().validate();
+
+                // if this form is valid
+                if (!$('#campaignForm').parsley().isValid()) {
+                    // show alert message
+                    swal('Error','Some fields contain error','warning');
+                } else {
+                    $('#campaignForm').submit();
+                }
+
+                // prevent default so the form doesn't submit. We can return true and
+                // the form will be submited or proceed with a ajax request.
+                event.preventDefault();
+            });
         });
     </script>
     <script>
@@ -46,18 +63,22 @@
             minDate:new Date(),
             showClear:true,
         });
-        $(document).ready(function () {
-            $('#campaignForm').validate({ignore: []});
-            $('#saveBtn').on('click',function (e) {
-                e.preventDefault();
-                var count = $('#campaignForm').valid();
-                if(count){
-                    $('#campaignForm').submit();
-                }else {
-                    swal("Error", "Some fields contain errors!", "warning")
-                }
-            })
-        })
+//        $(document).ready(function () {
+////            $('#campaignForm').validate({ignore: []});
+//            $('#saveBtn').on('click',function (e) {
+//                e.preventDefault();
+//                var count = $('#campaignForm').valid();
+//                if(count){
+//                    $('#campaignForm').submit();
+//                }else {
+//                    swal("Error", "Some fields contain errors!", "warning")
+//                }
+//            })
+//        })
+
+
+
+
 
     </script>
 

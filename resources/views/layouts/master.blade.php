@@ -106,6 +106,7 @@
 
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendors/parsleyjs/dist/parsley.min.js') }}"></script>
     <!-- Bootstrap -->
     <script src="{{ asset('vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <!-- FastClick -->
@@ -123,7 +124,7 @@
     <script src="{{ asset('vendors/datatables.net/js/jquery.dataTables.min.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-buttons/js/dataTables.buttons.min.js')}}"></script>
-    <script src="{{ asset('plugins/jquery-validation/jquery.validate.js') }}"></script>
+    {{--<script src="{{ asset('plugins/jquery-validation/jquery.validate.js') }}"></script>--}}
     <script src="{{ asset('vendors/moment/min/moment.min.js') }}"></script>
     <script src="{{ asset('vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js') }}"></script>
 
@@ -157,7 +158,7 @@
 
     <script src="{{ asset('vendors/raphael/raphael.js') }}"></script>
     <script src="{{ asset('vendors/morris/morris.js') }}"></script>
-    <script src="{{ asset('plugins/jquery-validation/jquery.validate.js') }}"></script>
+    {{--<script src="{{ asset('plugins/jquery-validation/jquery.validate.js') }}"></script>--}}
     <script src="{{ asset('vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-keytable/js/dataTables.keyTable.min.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-responsive/js/dataTables.responsive.min.js')}}"></script>
