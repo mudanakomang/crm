@@ -1,107 +1,124 @@
-@extends('layouts.app')
-@section('main-content')
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row clearfix">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <div class="card">
-                        <div class="header">
-                            <h2>Birthday Configuration</h2>
-                        </div>
-                        <div class="body">
-                            <div class="form-inline">
-                                {{ Form::model($birthday,['route'=>['birthday.update',$birthday->id],'files'=>'true','id'=>'templateForm']) }}
-                                <div class="form-group">
+@extends('layouts.master')
+@section('content')
+    <div class="right_col" role="main">
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="x_panel title">
+                            <div class="x_title">
+                                <h2>Birthday Configuration</h2>
+                                <ul class="nav navbar-right panel_toolbox">
+                                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                                    </li>
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <div class="form-inline">
+                                    {{ Form::model($birthday,['route'=>['birthday.update',$birthday->id],'files'=>'true','id'=>'templateForm']) }}
+                                    <div class="form-group">
 
-                                    <div class="col-md-12">
-                                        <div class="pull-right">
-                                            <div class="switch">
-                                                <label>
-                                                    Deactivate
-                                                    <input type="checkbox" name="activate" id="myonoffswitch" >
-                                                    <span class="lever"></span>
-                                                    Activate
-                                                </label>
+                                        <div class="col-md-12">
+                                            <div class="pull-right">
+                                                <div class="switch">
+                                                    <label>
+                                                        Deactivate
+                                                        <input type="checkbox" class="js-switch" name="activate" id="myonoffswitch" >
+                                                        <span class="lever"></span>
+                                                        Activate
+                                                    </label>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-4 col-md-4">
-                                            <div class="form-group">
-                                                <label class="control-label">Number of days before birthday that the campaign is sent :</label>
-                                                {{ Form::select('sendafter',[''=>'Day/s before']+range(0,31,1),$birthday->sendafter,['class'=>'form-control ']) }}
+                                            <div class="col-lg-12 col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label">Number of days before birthday that the campaign is sent :</label>
+                                                    {{ Form::select('sendafter',[''=>'Day/s before']+range(0,31,1),$birthday->sendafter,['class'=>'form-control selectpicker']) }}
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6">
+                                                <div id="templateSelection">
+                                                    <label class="control-label">Select Email Template</label>
+                                                    {{ Form::select('template',[''=>'Select Template']+\App\MailEditor::pluck('name','id')->all(),$birthday->template_id,['id'=>'templateChose','class'=>'form-control selectpicker','onchange'=>'selectTemplate(this.value)']) }}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <div class="editorInput col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    {{ Form::textarea('contents',$birthday->template->content,['class'=>'form-control','id'=>'summernote']) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row clearfix">
+                                            <div class="col-lg-12 ">
+                                                <div class="col-lg-6">
+                                                    <a class="btn btn-success btn-sm" href="{{ url('email/template') }}" title="Back"><i class="fa fa-arrow-circle-o-left"></i> Back</a>
+                                                    <button class="btn btn-success btn-sm" type="submit"> <i class="fa fa-save"></i> Save</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{ Form::close() }}
                                 </div>
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="col-lg-4 col-md-4">
-                                        <div id="templateSelection">
-                                            <label class="control-label">Select Email Template</label>
-                                            {{ Form::select('template',[''=>'Select Template']+\App\MailEditor::pluck('name','id')->all(),$birthday->template_id,['id'=>'templateChose','class'=>'form-control','onchange'=>'selectTemplate(this.value)']) }}
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <div class="form-group">
-                                    <div class="editorInput col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="form-group">
-                                                {{ Form::textarea('contents',$birthday->template->content,['class'=>'form-control','id'=>'summernote']) }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row clearfix">
-                                        <div class="col-lg-12 ">
-                                            <div class="col-lg-6">
-                                                <a class="btn bg-teal waves-effect btn-xs" href="{{ url('email/template') }}" title="Back"><i class="material-icons">arrow_back</i> Back</a>
-                                                <button class="btn bg-teal waves-effect btn-xs" type="submit"> <i class="material-icons">save</i> Save</button>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                {{ Form::close() }}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
+
+
 @endsection
 @section('script')
     <script>
-        $(document).ready(function () {
-            var status= '{{ $birthday->active }}';
-            if (status==='n'){
-                $('#myonoffswitch').prop('checked',false);
-            }else {
-                $('#myonoffswitch').prop('checked',true);
+        function setSwitchery(switchElement, checkedBool) {
+            if((checkedBool && !switchElement.isChecked()) || (!checkedBool && switchElement.isChecked())) {
+                switchElement.setPosition(true);
+                switchElement.handleOnchange(true);
             }
-            $('#myonoffswitch').on('change',function () {
-                if ($('#myonoffswitch').is(':checked')){
-                    var state='on';
-                }else {
-                    state='off';
-                }
-                $.ajax({
-                    url:'birthday/activate',
-                    type:'post',
-                    data:{
-                        state:state,
-                        _token:'{{ csrf_token() }}',
-                    },
-                    success:function (data) {
-                        if(data['active']==true){
-                            $('#myonoffswitch').prop('checked',true);
-                        }else {
-                            $('#myonoffswitch').prop('checked',false);
-                        }
-                    }
+        }
+        var mySwitch = new Switchery($('#myonoffswitch')[0], {
+            size:"small",
+            color: '#0D74E9'
+        });
+        //Checks the switch
+        var status='{{ $birthday->active }}';
+        if(status==='y'){
+            setSwitchery(mySwitch, true);
+        } else {
+            setSwitchery(mySwitch, false);
+        }
 
-                })
+        $('#myonoffswitch').on('click',function () {
+            if (mySwitch.isChecked()){
+                var state='on';
+            }else {
+                state='off';
+            }
+            $.ajax({
+                url:'birthday/activate',
+                type:'post',
+                data:{
+                    state:state,
+                    _token:'{{ csrf_token() }}',
+                },
+                success:function (data) {
+                    if(data['active']==true){
+                        setSwitchery(mySwitch, true);
+                    }else {
+                        setSwitchery(mySwitch, false);
+                    }
+                }
+
             })
         })
+        //Unchecks the switch
     </script>
     <script>
         $('#summernote').summernote({

@@ -20,7 +20,7 @@
                                     {{ Form::model($poststay,['route'=>['poststay.update',$poststay->id],'files'=>'true','id'=>'templateForm']) }}
                                     <div class="form-group">
 
-                                        <div class="col-md-12">
+
                                             <div class="pull-right">
 
 
@@ -29,22 +29,21 @@
                                                 </label>
 
                                             </div>
-                                            <div class="col-lg-8 col-md-8">
+                                            <div class="col-lg-12 col-md-12">
                                                 <div class="form-group">
                                                     <label class="control-label">Number of days after check-out that the campaign is sent :</label>
-                                                    {{ Form::select('sendafter',[''=>'Day/s after']+range(1,31,1),$poststay->sendafter-1,['class'=>'form-control selectpicker col-lg-6 col-md-6 col-sm-6 col-xs-6']) }}
+                                                    {{ Form::select('sendafter',[''=>'Day/s after']+range(1,31,1),$poststay->sendafter-1,['class'=>'form-control selectpicker']) }}
                                                 </div>
                                             </div>
-                                        </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div id="templateSelection">
+                                                        <label class="control-label">Select Email Template</label>
+                                                        {{ Form::select('template',[''=>'Select Template']+\App\MailEditor::pluck('name','id')->all(),$poststay->template_id,['id'=>'templateChose','class'=>'selectpicker form-control','onchange'=>'selectTemplate(this.value)']) }}
+                                                    </div>
+                                                </div>
+
                                     </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                        <div class="col-lg-6 col-md-6">
-                                            <div id="templateSelection">
-                                                <label class="control-label">Select Email Template</label>
-                                                {{ Form::select('template',[''=>'Select Template']+\App\MailEditor::pluck('name','id')->all(),$poststay->template_id,['id'=>'templateChose','class'=>'selectpicker form-control','onchange'=>'selectTemplate(this.value)']) }}
-                                            </div>
-                                        </div>
-                                    </div>
+
 
                                    <br>
                                     <div class="form-group">

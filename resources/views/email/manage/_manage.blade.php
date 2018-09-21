@@ -23,7 +23,7 @@
     <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <div class="form-line">
-                {{ Form::select('type',[''=>'Select Type','Poststay'=>'Poststay','Birthday'=>'Birthday','Checkin Reminder'=>'Checkin Reminder','Promo'=>'Promotion','Special Eevent'=>'Special Event'],$template->type,['class'=>'form-control','required']) }}
+                {{ Form::select('type',[''=>'Select Type','Poststay'=>'Poststay','Birthday'=>'Birthday','Checkin Reminder'=>'Checkin Reminder','Promo'=>'Promotion','Special Eevent'=>'Special Event'],$template->type,['class'=>'form-control selectpicker','required']) }}
             </div>
         </div>
     </div>
@@ -72,8 +72,8 @@
 <div class="row clearfix">
     <div class="col-lg-12 ">
         <div class="col-lg-6">
-            <a class="btn bg-teal waves-effect btn-xs" href="{{ url('email/template') }}" title="Back"><i class="material-icons">arrow_back</i> Back</a>
-            <button class="btn bg-teal waves-effect btn-xs" type="submit"> <i class="material-icons">save</i> Save</button>
+            <a class="btn btn-sm btn-success" href="{{ url('email/template') }}" title="Back"><i class="fa fa-arrow-circle-o-left"></i> Back</a>
+            <button class="btn btn-success btn-sm" type="submit"> <i class="fa fa-save"></i> Save </button>
         </div>
 
     </div>

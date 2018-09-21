@@ -1,19 +1,29 @@
-@extends('layouts.app')
-@section('main-content')
+@extends('layouts.master')
+@section('content')
+    <div class="right_col" role="main">
     <section class="content">
-        <div class="row clearfix">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="card">
-                    <div class="header">
-                        <h2>Create Email Template</h2>
-                    </div>
-                    <div class="body">
-                        @include('email.manage._manage')
+        <div class="container-fluid">
+            <div class="row clearfix">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel tile">
+                        <div class="x_title">
+                            <h2>Create Email Template</h2>
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                <li><a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            @include('email.manage._manage')
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+        </section>
+    </div>
 @endsection
 @section('script')
 <script>
