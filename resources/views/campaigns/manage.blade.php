@@ -24,25 +24,21 @@
             </div>
         </section>
     </div>
-    <div  class="modal " id="myModal{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content" >
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">{{ $item->name }}</h4>
-                </div>
-                <div class="modal-body">
-                    {!!  $item->template[0]->content !!}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 @section('script')
+    <script>
+        function setSwitchery(switchElement, checkedBool) {
+            if((checkedBool && !switchElement.isChecked()) || (!checkedBool && switchElement.isChecked())) {
+                switchElement.setPosition(true);
+                switchElement.handleOnchange(true);
+            }
+        }
+        var mySwitch = new Switchery($('#segment')[0], {
+            size:"small",
+            color: '#0D74E9'
+        });
+
+    </script>
     <script>
         $(document).ready(function(){
            $('.selectsegment').hide();
@@ -310,9 +306,11 @@
 
              var $this=$('#segment');
              if($this.is(':checked')){
+                 setSwitchery(mySwitch, true);
                  $('.formsegment').hide();
                  $('.selectsegment').show();
              }else {
+                 setSwitchery(mySwitch, false);
                  $('.formsegment').show();
                  $('.selectsegment').hide();
              }
@@ -321,6 +319,7 @@
            $('.formsegment').show();
 
            var id_=$('#segments option:selected').val();
+
            $.ajax({
               url:'getsegment',
               type:'POST',
@@ -331,29 +330,42 @@
                success:function (data) {
                    var options=data[1];
                    $('.country').selectpicker();
+                   $('.country').selectpicker('val', '');
                    $('.country').selectpicker('val', options);
 
                    var gueststatus=data[2];
                    $('.guest').selectpicker();
+                   $('.guest').selectpicker('val','');
                    $('.guest').selectpicker('val',gueststatus);
 
                    var campaign=data[0];
-                   $('#spending_from').val(campaign['spending_from'])
-                   $('#spending_to').val(campaign['spending_to'])
+                   $('#spending_from').val('');
+                   $('#spending_from').val(campaign['spending_from']);
+                   $('#spending_to').val('');
+                   $('#spending_to').val(campaign['spending_to']);
+                   $('#stay_from').val('');
                    $('#stay_from').val(moment(campaign['stay_from']).format('D MMMM YYYY'));
+                   $('#stay_to').val('');
                    $('#stay_to').val(moment(campaign['stay_to']).format('D MMMM YYYY'));
-                   $('#total_stay_from').val(campaign['total_stay_from'])
-                   $('#total_stay_to').val(campaign['total_stay_to'])
-                   $('#total_night_from').val(campaign['total_night_from'])
-                   $('#total_night_to').val(campaign['total_night_to'])
+                   $('#total_stay_from').val('');
+                   $('#total_stay_from').val(campaign['total_stay_from']);
+                   $('#total_stay_to').val('');
+                   $('#total_stay_to').val(campaign['total_stay_to']);
+                   $('#total_night_from').val('')
+                   $('#total_night_from').val(campaign['total_night_from']);
+                   $('#total_night_to').val('');
+                   $('#total_night_to').val(campaign['total_night_to']);
                    var gender =campaign['gender'];
                    if (gender==='M'){
                         $('#gender').selectpicker();
+                       $('#gender').selectpicker('val','')
                         $('#gender').selectpicker('val','M')
                    } else {
                        $('#gender').selectpicker();
+                       $('#gender').selectpicker('val','')
                         $('#gender').selectpicker('val','F')
                    }
+                   checkRecepient();
                    }
 
 

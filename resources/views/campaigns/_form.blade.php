@@ -39,7 +39,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                             <div class="form-group">
                                 <div class="form-line">
-                                    {{ Form::select('type',[''=>'Select Type','Poststay'=>'Poststay','Birthday'=>'Birthday','Checkin Reminder'=>'Checkin Reminder','Promo'=>'Promo','Special Event'=>'Special Event'],$model->type,['class'=>'form-control','onchange'=>'getType(this.value)', 'data-live-search'=>'true','required','id'=>'type']) }}
+                                    {{ Form::select('type',[''=>'Select Type','Poststay'=>'Poststay','Birthday'=>'Birthday','Checkin Reminder'=>'Checkin Reminder','Promo'=>'Promo','Special Event'=>'Special Event'],$model->type,['class'=>'form-control ','onchange'=>'getType(this.value)', 'data-live-search'=>'true','required','id'=>'type']) }}
                                 </div>
                                 <div class="help-info"></div>
                             </div>
@@ -88,7 +88,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                             <div class="form-group">
                                 <div class="form-line">
-                                    {{ Form::select('segments',[''=>'Select from campaign']+\App\Campaign::pluck('name','id')->all(),null,['class'=>'form-control selectpicker segments','onchange'=>'checkRecepient()']) }}
+                                    {{ Form::select('segments',[''=>'Select from campaign']+\App\Campaign::pluck('name','id')->all(),null,['class'=>'form-control selectpicker segments']) }}
                                 </div>
                             </div>
                         </div>
