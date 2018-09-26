@@ -70,7 +70,12 @@ Route::post('email/config/birthday/activate','Emailtemplate@birthdayActivate');
 Route::get('email/config/poststay','Emailtemplate@postStayConfig');
 Route::post('email/config/poststay/update','Emailtemplate@postStayUpdate')->name('poststay.update');
 Route::post('email/config/template','Emailtemplate@poststayTemplate')->name('email.poststayTemplate');
-Route::post('email/config/poststay/activate','Emailtemplate@poststayActivate');
+Route::post('email/config/poststay/activate','Emailtemplate@poststayActivate')
+;
+Route::get('email/config/confirm','Emailtemplate@confirmConfig');
+Route::post('email/config/confirm/update','Emailtemplate@confirmUpdate')->name('confirm.update');
+Route::post('email/config/confirm','Emailtemplate@confirmTemplate')->name('email.confirmTemplate');
+Route::post('email/config/confirm/activate','Emailtemplate@confirmActivate');
 
 Route::resource('email','Emailtemplate');
 

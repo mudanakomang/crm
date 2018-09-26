@@ -16,6 +16,7 @@
                         <li><a href="{{url('campaign') }}">Campaign Management</a></li>
                         <li><a href="{{url('email/config/poststay')}}">Post-Stay Configuration</a></li>
                         <li><a href="{{url('email/config/birthday')}}">Birthday Configuration</a></li>
+                        <li><a href="{{url('email/config/confirm')}}">Check in Confirmation</a></li>
                         <li><a href="{{url('email/template')}}">Email Template</a></li>
                 </ul>
             </li>

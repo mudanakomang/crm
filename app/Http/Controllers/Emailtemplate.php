@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Birthday;
+use App\ConfirmEmail;
 use App\MailEditor;
 use App\PostStay;
 use Illuminate\Http\Request;
@@ -196,11 +197,36 @@ class Emailtemplate extends Controller
         foreach ($contacts as $contact){
             $this->emailsend($contact,$template,$template->subject.''.$contact->salutation.''.$contact->fname);
         }
-
     }
 
     //POST STAY CONFIGURATION
 
+    public function confirmConfig(){
+        $confirm=ConfirmEmail::find(1);
+
+        return view('email.manage.confirm',['confirm'=>$confirm]);
+    }
+//    public function confirmActivate(Request $request){
+//        $confirm=ConfirmEmail::find(1);
+//        if ($request->state=='on'){
+//            $confirm->update(['active'=>'y']);
+//            return response(['active'=>true],200);
+//        }else{
+//            $confirm->update(['active'=>'n']);
+//            return response(['active'=>false],200);
+//        }
+//    }
+
+    public function confirmActivate(Request $request){
+        $confirm=ConfirmEmail::find(1);
+        if($request->state=='on'){
+            $confirm->update(['active'=>'Y']);
+            return response(['active'=>true],200);
+        }else{
+            $confirm->update(['active'=>'N']);
+            return response(['active'=>false],200);
+        }
+    }
 
     public function postStayConfig(){
         $poststay=PostStay::find(1);
@@ -216,6 +242,14 @@ class Emailtemplate extends Controller
         $poststay->sendafter=$request->sendafter+1;
         $poststay->template_id=$request->template;
         $poststay->save();
+        return redirect()->back();
+    }
+
+    public function confirmUpdate(Request $request){
+        $confirm=ConfirmEmail::find(1);
+        $confirm->sendafter=$request->sendafter;
+        $confirm->template_id=$request->template;
+        $confirm->save();
         return redirect()->back();
     }
     public function poststayActivate(Request $request){

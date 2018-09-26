@@ -78,7 +78,7 @@
                                                     @if($tem->status=='Draft' || $tem->status=='Scheduled')
                                                         <a href="#ScheduleModal{{$tem->id}}" data-toggle="modal" data-target="#ScheduleModal{{$tem->id}}" title="Set Schedule"> <i class="fa fa-calendar-check-o"  style="font-size: 1.5em"> </i></a>
                                                     @endif
-                                                    <a href="#" title="Duplicate Campaign" id="duplicate{{$tem->id}}"><i class="fa  fa-file"  style="font-size: 1.5em"> </i></a>
+
                                                     <a href="#" title="Delete Template" onclick="return swal({title:'Delete Confirmation',text:'This Template will permanently deleted',type:'warning',
                                                             showCancelButton: true,
                                                             confirmButtonColor: '#DD6B55',
@@ -113,6 +113,8 @@
 
 @endsection
 @section('script')
+
+
     <script>
         $('[id^=scheduleSave]').on('click',function () {
             var id_=this.id;
@@ -135,7 +137,6 @@
         $('[id^=scheduleInput]').each(function () {
            $(this).datetimepicker({
                minDate:new Date(),
-
            });
 
         });

@@ -51,7 +51,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                         <div class="form-group">
                             <div class="form-line ">
-                                {{ Form::select('template',[''=>'Select Template'],$model->template,['class'=>'form-control','id'=>'template','onchange=selectTemplate(this.value)', 'data-live-search'=>'true','required']) }}
+                                {{ Form::select('template',[''=>'Select Template'],$model->template,['class'=>'form-control selectpicker','id'=>'template','onchange=selectTemplate(this.value)', 'data-live-search'=>'true','required']) }}
                             </div>
                             <div class="help-info"></div>
                         </div>
