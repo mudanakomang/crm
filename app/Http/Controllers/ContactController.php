@@ -125,6 +125,12 @@ order by hari desc limit 10 '));
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    public function longest($contact){
+        $contact=DB::select(DB::raw('select * from contacts where CONCAT(fname,\' \',lname)=\''.$contact.'\''));
+        return $this->show($contact[0]->contactid);
+    }
+
     public function spending($name)
     {
         $contact=DB::select(DB::raw('select * from contacts where CONCAT(fname,\' \',lname)=\''.$name.'\''));

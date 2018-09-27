@@ -45,6 +45,7 @@ Route::post('campaign/activate','CampaignController@activateCampaign')->name('ca
 Route::get('contacts/f/country/{country}','ContactController@country');
 Route::get('contacts/f/created/{dateadded}','ContactController@dateadded');
 Route::get('contacts/f/status/{status}','ContactController@dstatus');
+Route::get('contacts/f/longest/{contact}','ContactController@longest');
 Route::get('contacts/f/spending/{spending}','ContactController@spending');
 Route::get('contacts/f/roomtype/{type}','ContactController@type');
 Route::get('/','ContactController@dashboard');

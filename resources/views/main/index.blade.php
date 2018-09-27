@@ -296,7 +296,7 @@
                 return 'rgb('+red+',0,0)';
             }
         }).on('click',function(i,row){
-            window.location.href='contacts/f/created/'+row.x;
+            window.location.href='contacts/f/longest/'+row.x;
         });
         var troom='{!! $troom !!}';
         Morris.Donut({
