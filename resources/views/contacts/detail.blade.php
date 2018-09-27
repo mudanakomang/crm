@@ -366,8 +366,30 @@
                                                             <div role="tabpanel" class="tab-pane fade" id="settings_with_icon_title">
                                                                 <b>Settings Content</b>
                                                                 <p>
-                                                                    Kosong
-                                                                </p>
+                                                                 <table class="table table-bordered table-striped table-hover dataTable js-basic-example">
+                                                                    <thead>
+                                                                      <tr class="bg-teal">
+                                                                          <th>#</th>
+                                                                          <th>Name</th>
+                                                                          <th>Status</th>
+                                                                          <th>Schedule</th>
+                                                                      </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    @foreach($data->campaign as $key=>$campaign)
+                                                                        <tr align="center">
+                                                                            <td>{{ $key+1 }}</td>
+                                                                            <td>{{ $campaign->name }}</td>
+                                                                            <td>{{ $campaign->status }}</td>
+                                                                            <td>{{ \Carbon\Carbon::parse($campaign->schedule->schedule)->format('d F Y H:i') }}</td>
+                                                                        </tr>
+
+                                                                    @endforeach
+
+                                                                    </tbody>
+                                                                </table>
+
+
                                                             </div>
                                                         </div>
                                                     </div>

@@ -66,5 +66,8 @@ class Contact extends Model
     public function attribute(){
         return $this->belongsToMany('\App\Attribute');
     }
+    public function campaign(){
+        return $this->belongsToMany('\App\Campaign','campaign_contact','contact_id')->withPivot('status');
+    }
 
 }
