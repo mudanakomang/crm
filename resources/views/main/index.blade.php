@@ -21,32 +21,32 @@
                         <div class="row tile_count">
                             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                 <span class="count_top"><i class="fa fa-user"></i> Total Contacts</span>
-                                <div class="count green"> {{ \App\Contact::all()->count()  }} </div>
+                                <div class="count green"> <a href="{{ url('contacts/list') }}" class="green" >{{ \App\Contact::all()->count()  }}</a> </div>
 
                             </div>
 
                             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                 <span class="count_top"><i class="fa fa-user"></i> Total Males</span>
-                                <div class="count blue">{{ \App\Contact::where('gender','M')->count() }}</div>
+                                <div class="count blue"><a href="{{ url('contacts/f/male') }}" class="green" >{{ \App\Contact::where('gender','M')->count() }}</a></div>
 
                             </div>
                             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                 <span class="count_top"><i class="fa fa-user"></i> Total Females</span>
-                                <div class="count orange">{{ \App\Contact::where('gender','F')->count() }}</div>
+                                <div class="count orange"><a href="{{ url('contacts/f/female') }}" class="green" >{{ \App\Contact::where('gender','F')->count() }}</a></div>
 
                             </div>
                             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                 <span class="count_top"><i class="fa fa-user"></i> Inhouse </span>
-                                <div class="count green"> {{ \App\Contact::whereHas('transaction',function ($q){
-                                    return $q->where('status','=','I');
-                                    })->count()  }} </div>
+                                <div class="count green"> <a href="{{ url('contacts/f/status/Inhouse') }}" class="green" >{{ \App\Contact::whereHas('transaction',function ($q){
+                                    return $q->where('status','=','I')->whereRaw('date_format(now(),\'%Y-%m-%d\') between checkin and checkout');
+                                    })->count()  }}</a> </div>
 
                             </div>
                             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                 <span class="count_top"><i class="fa fa-user"></i> Confirm </span>
-                                <div class="count red"> {{ \App\Contact::whereHas('transaction',function ($q){
-                                    return $q->where('status','=','C');
-                                    })->count()  }} </div>
+                                <div class="count red"> <a href="{{ url('contacts/f/status/Confirm') }}" class="green" > {{ \App\Contact::whereHas('transaction',function ($q){
+                                    return $q->where('status','=','C')->whereRaw('checkin > date_format(now(),\'%y-%m-%d\')');
+                                    })->count()  }} </a></div>
 
                             </div>
 
@@ -275,7 +275,7 @@
             ykeys:['y'],
             labels:['Contact Added'],
             barColors:function (row, series, type) {
-                var red = Math.ceil((255 * row.y / this.ymax)+255/5 );
+                var red = Math.ceil((255 * row.y / this.ymax)+255/6);
                 return 'rgb('+red+',0,0)';
             }
         }).on('click',function(i,row){

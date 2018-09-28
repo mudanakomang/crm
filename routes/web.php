@@ -42,6 +42,9 @@ Route::get('home',function (){
 });
 Route::post('campaign/getsegment','CampaignController@getSegment');
 Route::post('campaign/activate','CampaignController@activateCampaign')->name('campaign.activate');
+Route::get('contacts/f/male','ContactController@male');
+Route::get('contacts/f/female','ContactController@female');
+Route::get('contacts/f/inhouse','ContactController@inhouse');
 Route::get('contacts/f/country/{country}','ContactController@country');
 Route::get('contacts/f/created/{dateadded}','ContactController@dateadded');
 Route::get('contacts/f/status/{status}','ContactController@dstatus');

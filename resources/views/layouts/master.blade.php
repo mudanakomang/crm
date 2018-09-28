@@ -39,6 +39,7 @@
 
     <!-- Custom Theme Style -->
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('flags/flags.css') }}" rel="stylesheet">
 
 
   </head>

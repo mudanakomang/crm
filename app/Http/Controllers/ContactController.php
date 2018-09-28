@@ -535,27 +535,40 @@ order by hari desc limit 10 '));
             default:
                 $status = 'X';
         }
+
+
         setlocale(LC_MONETARY, "id_ID");
-        $b = [];
-        $a = [];
-        $c = [];
+//        $b = [];
+//        $a = [];
+//        $c = [];
+        if($status=='I') {
+            $contacts = Contact::whereHas('transaction', function ($q) use ($status) {
+                return $q->where('status', '=', $status)->whereRaw('date_format(now(),\'%Y-%m-%d\') between checkin and checkout');
+            })->get();
+        }
+        elseif ($status=='C'){
+            $contacts = Contact::whereHas('transaction', function ($q) use ($status) {
+                return $q->where('status', '=', $status)->whereRaw('date_format(now(),\'%Y-%m-%d\') < checkin ');
+            })->get();
+        }
 
-        $contacts=Contact::all();
+//
+//            foreach ($contacts as $contact) {
+//
+//                    array_push($b, $contact);
+//                    foreach ($contact->transaction as $trx) {
+//
+//                            array_push($c, $trx);
+//
+//
+//                    }
+//
+//                    array_merge($b, $a);
+//                    array_merge($b, $c);
+//
+//            }
 
-            foreach ($contacts as $contact) {
-
-                    array_push($b, $contact);
-                    foreach ($contact->transaction as $trx) {
-                        if ($trx->where('status',$status)) {
-                            array_push($c, $trx);
-                        }
-
-                    }
-                    array_merge($b, $a);
-                    array_merge($b, $c);
-
-            }
-            return view('contacts.list', ['data' => $b]);
+            return view('contacts.list', ['data' => $contacts]);
         }
 
 
@@ -574,6 +587,50 @@ order by hari desc limit 10 '));
         //}
       //  return view('contacts.list',['data'=>$b]);
     //}
+    public function male(){
+
+        setlocale(LC_MONETARY, "id_ID");
+        $b = [];
+        $a = [];
+        $c = [];
+
+        $contacts=Contact::where('gender','=','M')->get();
+
+        foreach ($contacts as $contact) {
+
+            array_push($b, $contact);
+            foreach ($contact->transaction as $trx) {
+                array_push($c,$trx);
+
+            }
+            array_merge($b, $a);
+            array_merge($b, $c);
+
+        }
+        return view('contacts.list', ['data' => $b]);
+    }
+    public function female(){
+
+        setlocale(LC_MONETARY, "id_ID");
+        $b = [];
+        $a = [];
+        $c = [];
+
+        $contacts=Contact::where('gender','=','F')->get();
+
+        foreach ($contacts as $contact) {
+
+            array_push($b, $contact);
+            foreach ($contact->transaction as $trx) {
+                array_push($c,$trx);
+
+            }
+            array_merge($b, $a);
+            array_merge($b, $c);
+
+        }
+        return view('contacts.list', ['data' => $b]);
+    }
     public function uploadStay(Request $request){
 
        // dd($request->all());

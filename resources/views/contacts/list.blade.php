@@ -29,6 +29,7 @@
 										<th class="align-center">Birthday</th>
 										<th class="align-center">Country</th>
 										<th class="align-center">Status</th>
+										<th class="align-center">Campaign</th>
 										<th class="align-center">Total Stays</th>
 										<th class="align-center">Last Stay</th>
 										<th class="align-center">Total Spending (Rp.)</th>
@@ -37,7 +38,6 @@
 									</thead>
 									<tbody>
 									@foreach($data as $key=>$contact)
-
 										<tr class="align-center">
 											<td>{{ $key+1 }}</td>
 											<td>
@@ -52,7 +52,10 @@
 
 											</td>
 											<td>{{ $contact->birthday=='' ? "": \Carbon\Carbon::parse($contact->birthday)->format('d M Y') }}</td>
-											<td>{{ \App\Country::where('iso3',$contact->country_id)->first()['country'] }}</td>
+											<td>{{ \App\Country::where('iso3',$contact->country_id)->first()['country'] }}
+												<img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($contact->country['iso2'])}} pull-right" alt="{{$contact->country['country']}}" />
+											</td>
+
 
 
 											@if(DB::table('profilesfolio')->where('profileid','=',$contact->contactid)->value('foliostatus')=='X' )
@@ -64,7 +67,11 @@
 											@else
 												<td> Checked Out </td>
 											@endif
-
+											<td> @if(count($contact->campaign) <> 0)
+													 	<i class="fa fa-envelope success"></i>
+														{{ $contact->campaign->where('status','=','Sent')->count()}} Campaign
+												@endif
+											</td>
 
 											<td>
 
