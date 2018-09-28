@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Attribute;
 use App\Contact;
 use App\Country;
+use App\ProfileFolio;
 use App\RoomType;
 use App\Transaction;
 use Carbon\Carbon;
@@ -601,6 +602,14 @@ order by hari desc limit 10 '));
                     'revenue'=>(float)$row[6],
                     'status'=>$row[7]
                 ]);
+                $profiles=ProfileFolio::updateOrCreate([
+                    'profileid'=>$row[0]
+                ],[
+                   'folio_master'=>$row[1],
+                    'folio'=>$row[1],
+                    'foliostatus'=>$row[7],
+
+                ]);
 
                 if ($stays->wasRecentlyCreated){
                     $stays->contact()->attach($row[0]);
@@ -615,6 +624,7 @@ order by hari desc limit 10 '));
                         'status'=>$row[7]
                     ]);
                 } else{
+                    $stays->contact()->sync($row[0]);
                     $update+=1;
                     array_push($updated_data,[
                         'resv_id'=>$row[1],
