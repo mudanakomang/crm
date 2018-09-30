@@ -99,9 +99,10 @@ order by hari desc limit 10 '));
             array_push($data_room_type,$tmp);
             $troom+=$item->value;
         }
-
         $data_room_type=json_encode($data_room_type);
-        return view('main.index',['data'=>$contact,'country'=>$country,'total'=>$total,'monthcount'=>$data,'countstatus'=>$datastatus,'spending'=>$dataspending,'longstay'=>$datatrx,'data_age'=>$data_age,'tages'=>$tages,'room_type'=>$data_room_type,'troom'=>$troom]);
+        $reviews=json_decode(file_get_contents('tripadvisor.json'));
+
+        return view('main.index',['data'=>$contact,'country'=>$country,'total'=>$total,'monthcount'=>$data,'countstatus'=>$datastatus,'spending'=>$dataspending,'longstay'=>$datatrx,'data_age'=>$data_age,'tages'=>$tages,'room_type'=>$data_room_type,'troom'=>$troom,'reviews'=>$reviews]);
     }
     /**
      * Show the form for creating a new resource.

@@ -58,6 +58,111 @@
         <!-- top tiles -->
         <!-- /top tiles -->
         <div class="row">
+
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="x_panel tile " style="height: 420px">
+                        <div class="x_title">
+                            <h2>Tripadvisor Rating </h2>
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                <li><a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content" >
+                            <div class="dashboard-widget-content">
+                                <div class="star" style="color:#1ABB9C;padding: 20px">
+                                    <h4>Rating  {{$reviews->aggregateRating->ratingValue}} of {{$reviews->aggregateRating->reviewCount}} Travelers</h4>
+                                    @for($i=0;$i<5;$i++ )
+                                            @if($i<$reviews->aggregateRating->ratingValue)
+                                                <span><i class="fa fa-star fa-2x"></i> </span>
+                                                @else
+                                            <span><i class="fa fa-star-o fa-2x"></i> </span>
+                                            @endif
+
+                                    @endfor
+                                </div>
+                                @foreach($reviews->rating as $rating)
+                                <div class="widget_summary">
+                                    <div class="w_left w_25">
+                                        <span>{{ $rating->label }}</span>
+                                    </div>
+                                    <div class="w_center w_55">
+                                        <div class="progress">
+                                            <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $rating->value }}" aria-valuemax=" {{ $reviews->aggregateRating->reviewCount  }}" aria-valuemin="0" style="width: {{$rating->value/$reviews->aggregateRating->reviewCount*100 }}%" >
+                                                <span class="sr-only">{{ $rating->value }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w_right w_25">
+                                        <span>{{ $rating->value }}</span>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-12">
+                    <div class="x_panel tile " style="height: 420px">
+                        <div class="x_title">
+                            <h2>Tripadvisor Review</h2>
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                <li><a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content"  style="overflow-y:auto; overflow-x:hidden; height:350px;">
+                            <div class="dashboard-widget-content">
+
+                                  <ul  class="list-unstyled ">
+                                  @foreach($reviews->reviews as $review)
+                                        <li >
+                                         <div class="block" style="border-bottom: 1px solid">
+                                             <a class="pull-left border-green profile_thumb">
+                                                 <img src="{{ url($review->avatar) }} "  width="75px" alt="" style="padding-top: 20px" >
+                                             </a>
+                                             <div class="media" style="padding: 10px">
+                                             <h4 class="title">
+                                                 <a href="{{ url($review->link) }}">{{ $review->quotes }}</a>
+                                             </h4>
+                                             <div class="byline">{{ $review->member }}
+                                                 <div class="star" style="color:#1ABB9C">
+                                                 @for($i=0;$i<5;$i++ )
+                                                     @if($i<$review->rate/10)
+                                                         <span><i class="fa fa-star "></i> </span>
+                                                     @else
+                                                         <span><i class="fa fa-star-o"></i> </span>
+                                                     @endif
+
+                                                 @endfor
+                                                 </div>
+                                             </div>
+                                             <p class="excerpt">
+                                                 {{ $review->review }}
+                                             </p>
+
+                                             </div>
+
+                                         </div>
+                                        </li>
+
+
+
+                                  @endforeach
+                                  </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-4 col-sm-4 col-xs-12">
                 <div class="x_panel tile " style="height: 420px">
                     <div class="x_title">
