@@ -139,21 +139,16 @@
                                                      @else
                                                          <span><i class="fa fa-star-o"></i> </span>
                                                      @endif
-
                                                  @endfor
                                                  </div>
+                                                <span> <small>{{ $review->reviewdate }}</small></span>
                                              </div>
                                              <p class="excerpt">
                                                  {{ $review->review }}
                                              </p>
-
                                              </div>
-
                                          </div>
                                         </li>
-
-
-
                                   @endforeach
                                   </ul>
                             </div>
