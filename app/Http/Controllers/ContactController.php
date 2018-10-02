@@ -101,8 +101,11 @@ order by hari desc limit 10 '));
         }
         $data_room_type=json_encode($data_room_type);
         $reviews=json_decode(file_get_contents('tripadvisor.json'));
+        $filebooking=file_get_contents('booking.json');
+        $databooking=json_decode($filebooking,true);
+        //dd($databooking["reviews"]["total"]);
 
-        return view('main.index',['data'=>$contact,'country'=>$country,'total'=>$total,'monthcount'=>$data,'countstatus'=>$datastatus,'spending'=>$dataspending,'longstay'=>$datatrx,'data_age'=>$data_age,'tages'=>$tages,'room_type'=>$data_room_type,'troom'=>$troom,'reviews'=>$reviews]);
+        return view('main.index',['data'=>$contact,'country'=>$country,'total'=>$total,'monthcount'=>$data,'countstatus'=>$datastatus,'spending'=>$dataspending,'longstay'=>$datatrx,'data_age'=>$data_age,'tages'=>$tages,'room_type'=>$data_room_type,'troom'=>$troom,'reviews'=>$reviews,'booking_com'=>$databooking]);
     }
     /**
      * Show the form for creating a new resource.
@@ -116,10 +119,6 @@ order by hari desc limit 10 '));
         $act='add';
         return view('contacts.detail',['data'=>$contact,'action'=>$act]);
     }
-
-
-
-
 
     /**
      * Store a newly created resource in storage.
