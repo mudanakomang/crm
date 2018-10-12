@@ -6,7 +6,12 @@
                 <div class="row clearfix">
                     <div class="x_panel tile " >
                         <div class="panel-heading ">
-                            <h2> {{ $data->fname.' '.$data->lname }}   </h2> <img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($data->country->iso2)}}" alt="{{$data->country->country}}" />
+
+                            <h2> {{ $data->fname.' '.$data->lname }}   </h2>
+                            @if(!empty($data->country->country))
+                            <img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($data->country->iso2)}}" alt="{{$data->country->country}}" />
+                                @endif
+
                         </div>
                         <div class="x_content" style="height:120px;">
                             <div class="row tile_count">
@@ -310,12 +315,7 @@
                                                                 <div class="row clearfix">
                                                                     <div class="x_content">
                                                                     <div class="col-lg-12">
-                                                                        <div class="col-lg-6 col-md-6  ">
-                                                                            <a href="{{ url('contacts/stay/add/').'/'.$data->id }}" class="btn btn-sm btn-primary waves-effect">
-                                                                                <i class="fa fa-plus"></i>
-                                                                                <span>Add Stay</span>
-                                                                            </a>
-                                                                        </div>
+
                                                                     </div>
                                                                     </div>
                                                                 </div>
@@ -327,11 +327,12 @@
                                                                         <th class="align-center">Check in</th>
                                                                         <th class="align-center">Check Out</th>
                                                                         <th class="align-center">No. Of Night</th>
+                                                                        <th class="align-center">Booking Source</th>
                                                                         <th class="align-center">Room Number</th>
                                                                         <th class="align-center">Room Type</th>
                                                                         <th class="align-center">Total Revenue (Rp)</th>
                                                                         <th class="align-center">Status</th>
-                                                                        <th class="align-center">Action</th>
+                                                                        {{--<th class="align-center">Action</th>--}}
                                                                     </tr>
                                                                     </thead>
 
@@ -343,6 +344,7 @@
                                                                                 <td>{{\Carbon\Carbon::parse($trx->checkin)->format('d M Y')}}</td>
                                                                                 <td>{{\Carbon\Carbon::parse($trx->checkout)->format('d M Y')}}</td>
                                                                                 <td>{{\Carbon\Carbon::parse($trx->checkin)->diffInDays(\Carbon\Carbon::parse($trx->checkout))}}</td>
+                                                                                <td>{{ \App\ProfileFolio::where('folio','=',$trx->resv_id)->value('source') }}</td>
                                                                                 <td>{{$trx->room}}</td>
                                                                                 <td>{{$trx->roomType->room_name}}</td>
                                                                                 <td>{{number_format($trx->revenue,0,',','.')}}</td>
@@ -357,9 +359,9 @@
                                                                                         Confirm
                                                                                     @endif
                                                                                 </td>
-                                                                                <td>
-                                                                                    <a href="{{ url('contacts/stay/edit').'/'.$trx->id }}" title="Edit Stay"> <i class="fa fa-edit"></i></a>
-                                                                                </td>
+                                                                                {{--<td>--}}
+                                                                                    {{--<a href="{{ url('contacts/stay/edit').'/'.$trx->id }}" title="Edit Stay"> <i class="fa fa-edit"></i></a>--}}
+                                                                                {{--</td>--}}
                                                                             </tr>
                                                                         @endif
                                                                     @endforeach

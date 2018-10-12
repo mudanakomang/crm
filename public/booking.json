@@ -1,6 +1,6 @@
 {
     "reviews": {
-        "total": "720",
+        "total": "700",
         "score": "8.2",
         "rating": "Very Good",
         "breakdown": [
@@ -30,7 +30,7 @@
             },
             {
                 "name": "Free WiFi",
-                "value": "8.2"
+                "value": "8"
             }
         ],
         "reviewlist": [

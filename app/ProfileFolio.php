@@ -8,5 +8,5 @@ class ProfileFolio extends Model
 {
     //
     protected $table='profilesfolio';
-    protected $fillable=['profileid','folio_master','folio','foliostatus'];
+    protected $fillable=['profileid','folio_master','folio','source','foliostatus'];
 }

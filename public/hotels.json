@@ -1,0 +1,529 @@
+{
+    "rating": "8.0",
+    "predicate": "Very Good",
+    "total": "317",
+    "breakdown": [
+        {
+            "score": "10",
+            "count": "99"
+        },
+        {
+            "score": "8-9",
+            "count": "146"
+        },
+        {
+            "score": "6-7",
+            "count": "50"
+        },
+        {
+            "score": "4-5",
+            "count": "16"
+        },
+        {
+            "score": "1-3",
+            "count": "6"
+        }
+    ],
+    "reviews": [
+        {
+            "member": "Elaine",
+            "nationality": "gb",
+            "date": "Aug 24, 2018",
+            "score": "4.0",
+            "predicate": "Fair",
+            "summary": "Noisy Hotel",
+            "content": "There was building work being carried out when we were there and not advised of.\r\nOne swimming pool was closed. The main reception lift didn't work and the telephones were down so we couldn't make room to room calls.\r\nThis hotel is not a resort it is a hotel on a very busy and noisy main road.The photos of the complex are not upto date.",
+            "reply": "Dear Elaine, Thank you for choosing Ramayana Resort & Spa, our hotel will be completely renovated the end of December 2018 and I hope this is not your last experience in our hotel, we hope you can come when our hotel is completed. Thank you"
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "gb",
+            "date": "Mar 25, 2018",
+            "score": "4.0",
+            "predicate": "Fair",
+            "summary": "Not as I remembered or expected.",
+            "content": "The hotel is undergoing renovations which was not notified or advertised at time of booking and which for me really ruined the experience and enjoyment. Have stayed here before and the standards have slipped as well as the service and attentiveness of staff . Range offered for breakfast remains wide but quality appears to have been reduced as well. Sports bar attached to hotel can get busy and noise carries but not really late into night. The air conditioning was noisy and rooms are now looking bit tired and dull but still clean. So called garden view at rear end of hotel is non existent but hopefully will improve with renovations Location is excellent only a short walk from beach and plenty of bars, shops and restaurants. Overall quite disappointed this time round. ",
+            "reply": "Thank you for choosing Ramayana Resort & Spa, we apologize for any inconvenience you get, we hope you can come back when our new room is ready."
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "gb",
+            "date": "Mar 21, 2018",
+            "score": "6.0",
+            "predicate": "Good",
+            "summary": "Good but not great ",
+            "content": "Firstly i will start with the positives its location is perfect and the food is excellent.\r\nNow for the not so good the renovations make it noisy and the main pool is no longer there only one pool which is right near the restaurant and it doesnt give you any privacy..also the price for what you get with all this is expensive it should be cheaper when only half the resort is operational...the air con is too small for the rooms...the pillows are hard and give you a sore neck and the staff at reception are not loyal to their loyal costomers its all about the money money money.",
+            "reply": ""
+        },
+        {
+            "member": "Glenn",
+            "nationality": "gb",
+            "date": "Jan 31, 2018",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "Best staff ever ",
+            "content": "Starff are amazing, our 4yr old doughter had to go to hospital, the manager and another member of staff can and visited the hospital with a present, help with transfers and picking up the medication, extended our stay at the same rate with an upgrade. Can\u2019t thank them enough for smoothing a horrible situation so lovingly. Can\u2019t recommend enough and can\u2019t wait to come back next year \ud83d\ude4f\ud83d\ude18\ud83c\udf05",
+            "reply": "Thank you very much for your visit, we look forward to your next trip."
+        },
+        {
+            "member": "Lisa",
+            "nationality": "gb",
+            "date": "Nov 10, 2017",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "great location just noisy from pubs",
+            "content": "The hotel was great, the rooms were spacious and clean. The staff were so friendly and helpful with a welcome drink on arrival. Our room, 908 which was spacious. The only downside was the noise coming from a live band in a pub down the street until midnight which unfortunately the hotel can do absolutely nothing about.",
+            "reply": ""
+        },
+        {
+            "member": "Tyron",
+            "nationality": "gb",
+            "date": "Apr 13, 2017",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "Excellent holiday",
+            "content": "Spa is really good. Spare ribs are a must. \r\nService is good and staff very friendly and try help as much as possible. \r\nKuta beach sunset is a must and nusa duo for water sports is a little expensive for the time allowed. But excellent. \r\nWaterbom the water park 5min walk from hotel.",
+            "reply": ""
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "gb",
+            "date": "Mar 10, 2017",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Nice Hotel close to beach and buzzing areas",
+            "content": "Perfect value for money with very central location, very close to beach as well as nice dining and shopping places , yet very quiet inside. Small pool and excellent restaurants within. Staff are very helpful and courteous. Loved the location and the hotel.",
+            "reply": ""
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "gb",
+            "date": "Jan 26, 2017",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Very good location",
+            "content": "It was a wonderful stay at Ramayana. Hotel even upgraded our room on the first day. Can increase options in breakfast for vegetarian Indians. Only one option was available and that too with poor taste.",
+            "reply": ""
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "gb",
+            "date": "Jan 17, 2017",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Nice centrally located hotel.. Many restaurants ",
+            "content": "Wonderful experience.. Courteous staff, we'll maintained. Good spread of breakfast. ",
+            "reply": ""
+        },
+        {
+            "member": "d",
+            "nationality": "gb",
+            "date": "Oct 25, 2016",
+            "score": "6.0",
+            "predicate": "Good",
+            "summary": "Central place in kuta",
+            "content": "",
+            "reply": ""
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "gb",
+            "date": "Oct 2, 2016",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "",
+            "content": "The stay in the hotel was very pleasant",
+            "reply": ""
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "gb",
+            "date": "Sep 15, 2016",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "Book the Club room!",
+            "content": "The only disappointment I had was that I had only booked 4 days here. I its a great hotel with 2 pools great retaurants and bars.. service is 2nd to non. I can only comment on the club room, which were top end rooms but at \u00a380 per night for this luxury I will definitely stay again. Very near all shops restaurants and the wonderful Kuta beach.",
+            "reply": ""
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "gb",
+            "date": "Jun 26, 2016",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "nil",
+            "content": "nil",
+            "reply": ""
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "gb",
+            "date": "Jul 17, 2016",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Friendly staff",
+            "content": "Staff sorted problems that we had very quickly and always had a smile , hotel very clean , poolside staff very attentive , hotel restaurant evening food was of very high standard and very well priced .\r\nHotel was ideally placed for restaurants in the quieter part of Kuta, but a short walk would soon have you in the clubland.\r\nThe sunsets are fantastic at Kuta , but can be very crowded \r\nSports bar and Italian restaurant attached to hotel were over priced compared to the rest of the restaurants in the area",
+            "reply": ""
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "gb",
+            "date": "Jul 14, 2016",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Good value nice property close to airport /beach",
+            "content": "We stayed on a one day layover and made sure to book it for return 3 day stay. \r\n",
+            "reply": ""
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "gb",
+            "date": "Jul 11, 2016",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Nice hotel, lovely pool, good location ",
+            "content": "We had a pool side view room with a balcony, which felt like a private haven. The pools are amazing! ",
+            "reply": ""
+        },
+        {
+            "member": "Christopher",
+            "nationality": "gb",
+            "date": "Jun 15, 2016",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "great hotel in central kuta",
+            "content": "The Ramyana is a great hotel in a central location in Kuta. It is decorated in traditional Balinese style and has lovely tropical gardens around the pool. Room was spacious and the huge bed was so comfy. Breakfast was great and no queues for the buffet. The sports bar attached is always lively and there is a fantastic Italian restaurant attached too. Only complaint was booking a superior room and not getting a balcony which I would have expected in a resort type hotel. Had my hair done at the spa for a wedding and loved it, great value.",
+            "reply": ""
+        },
+        {
+            "member": "Maryse",
+            "nationality": "nz",
+            "date": "Sep 10, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "! week stay September 2018",
+            "content": "My stay was  pleasant because the staff were nice, the food at night was very good and tasty, the best Lava cake ive ever tasted so yummy, The breakfast very average but did improve on a Friday, Coffee aweful unless you bought one off them, The room was comfy but very dark and if you dont like noise then dont stay here, big rock bands across the road, we loved it, very central and to be fair the Resort is being fixed up so when its finished i think it will be great, A few bad points i think the rooms could be a bit cleaner, in saying that i feel the staff do try and keep them nice, Need more coffee and sugar in rooms, WiFi not to bad but have had better, Rooms also need airing or an oil Burner put in them before guests arrive as our room was rather musty when we arrived, we sorted it with an oil burner and a bit of fresh air, The bar down stairs is great and has sport going and music. Thank you to the staff despite a few small things we enjoyed our stay.x",
+            "reply": "Dear Marsey, Thank you for choosing Ramayana Resort & Spa, I hope this is not your last experience in our hotel, we are waiting your next trip at our hotel"
+        },
+        {
+            "member": "KERRY",
+            "nationality": "au",
+            "date": "Aug 7, 2018",
+            "score": "6.0",
+            "predicate": "Good",
+            "summary": "Great if you don\u2019t sleep before midnight ",
+            "content": "Nice hotel , but band playing across road from rooms on main road side is so loud in room you cannot even contemplate sleep until after midnight. ",
+            "reply": "Dear Kerry, Thank you for choosing Ramayana Resort & Spa, I hope this is not your last experience in our hotel, we are waiting your next trip at our hotel."
+        },
+        {
+            "member": "Sue",
+            "nationality": "au",
+            "date": "Jul 14, 2018",
+            "score": "4.0",
+            "predicate": "Fair",
+            "summary": "Renovations on going.",
+            "content": "Awful.. Main pool closed. Other pool next to restaurant, in view of all eating and passing by, (no privacy anywhere in resort).I wasn't notified of this or I would of not booked ( of course they know that).  Staff very friendly although Friday and Saturday at breakfast no service, I didn't return for my last 4 breakfast, was given room service voucher, however when I handed it to reception on paying, the said I couldn't use it? Not the relaxing holiday I paid for, and really needed.. Big disappointment. I only ate at the restaurants in the complex but I suffered from an allergic reaction, heaps itchy blisters. I thought bites though my doctor said food probably. Real shame. This was my 3rd stay in 3 years. Won't be back, mostly due to not being informed of the condition of the so called 'Resort'...",
+            "reply": "Dear Sue, Thank you for choosing Ramayana Resort & Spa, our hotel will be completely renovated in April 2019 and I hope this is not your last experience in our hotel, we hope you can come when our hotel is completed. Thank you"
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "au",
+            "date": "Jul 13, 2018",
+            "score": "6.0",
+            "predicate": "Good",
+            "summary": "",
+            "content": "Excellent location and staff were lovely. The noise was a problem. Our room was facing the street and the noise coming from the bars  went on until 5am. Impossible to sleep and lucky I was only there for 2 nights. Also there was renovations at the hotel which wasn\u2019t too bad but I could here the constant digging when I was trying to relax by the pool.  The highlight was definitely the staff and location. ",
+            "reply": "Dear Guest, Thank you for choosing Ramayana Resort & Spa, I hope this is not your last experience in our hotel, we are waiting your next trip at our hotel."
+        },
+        {
+            "member": "anna",
+            "nationality": "my",
+            "date": "Jun 20, 2018",
+            "score": "6.0",
+            "predicate": "Good",
+            "summary": "Good location, close to beach, shopping hub",
+            "content": "The locality of the hotel is good but the hotel is a bit run down, breakfast provided is monotonous (every day the same food provided).",
+            "reply": "Dear Stefan, Thank you for choosing Ramayana Resort & Spa, I hope this is not your last experience in our hotel, we are waiting your next trip at our hotel."
+        },
+        {
+            "member": "Stefan van",
+            "nationality": "as",
+            "date": "May 30, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Excellent location",
+            "content": "It's a good hotel for the price we paid, the breakfast is just above average although there are many choices but  almost vegetable. Dinner is very cosy with candle light and price is right. ",
+            "reply": "Dear Stefan, Thank you for choosing Ramayana Resort & Spa, we are waiting for your next trip at our Hotel."
+        },
+        {
+            "member": "tanya",
+            "nationality": "au",
+            "date": "Jun 7, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "",
+            "content": "Delicious food\r\nFriendly staff \r\nGreat drivers\r\nExcellent service ",
+            "reply": "Dear Tanya, Thank you for choosing Ramayana Resort & Spa, we are waiting for your next trip to our hotel."
+        },
+        {
+            "member": "Jasmin",
+            "nationality": "au",
+            "date": "Jun 3, 2018",
+            "score": "4.0",
+            "predicate": "Fair",
+            "summary": "",
+            "content": "Huge renovations taking place so the main pool is closed. Most of the rooms are facing Kuta Beach, so on Friday and Saturday you can hear extremely loyd band playing over the road, at the Hibachi Bar. They played until midnight. The food, as always was beautiful, especially the new menu at Al Dentes. Staff were great and the spa treatments were worth it. If you are after a peaceful holiday then don't stay here.",
+            "reply": "Dear Jasmin, Thank you for choosing Ramayana Resort & Spa, our hotel will be completely renovated in October 2018 and I hope this is not your last experience in our hotel, we hope you can come when our hotel is completed. Thank you"
+        },
+        {
+            "member": "Stefan van",
+            "nationality": "us",
+            "date": "May 29, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "three and half star hotel",
+            "content": "hotei is old room  is not clean .washroom is small. breakfast is very simple. just a few choices",
+            "reply": "Dear Stefan, Thank you for choosing Ramayana Resort & Spa,  I hope this is not your last experience in our hotel, we are waiting your next trip at our hotel."
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "au",
+            "date": "May 29, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Nice Hotel with walking distance to beach",
+            "content": "Nice hotel with friendly staff, however due to renovation most of the areas are closed at the moment. Specially the Big Pool.\r\n\r\n ",
+            "reply": "Dear Value Guest, Thank you for choosing Ramayana Resort & Spa, our hotel will be completely renovated in October 2018 and I hope this is not your last experience in our hotel, we hope you can come when our hotel is completed. Thank you"
+        },
+        {
+            "member": "Wayne",
+            "nationality": "au",
+            "date": "May 16, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Recommended",
+            "content": "Really nice hotel with great breakfast. Currently under renovation which made it hard to sleep in once the workers started. But once that\u2019s finished it would be 5/5",
+            "reply": "Thank you for choosing Ramayana Resort & Spa, we are waiting for your next trip and some information for our Renovation will complete October 2018."
+        },
+        {
+            "member": "Victor",
+            "nationality": "au",
+            "date": "May 20, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "",
+            "content": "Location was perfect. Only fault was they carried out renovations to the room next to us throughout our stay there.Bit noisy.Beautiful breakfast everyday.Staff were wonderful.",
+            "reply": "Thank you for choosing Ramayana Resort & Spa, we are waiting for your next trip."
+        },
+        {
+            "member": "Wendy",
+            "nationality": "as",
+            "date": "May 2, 2018",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "Lovely Bali feel hotel",
+            "content": "We always staying here. At the moment there are renovations going on so that does have a sloght impact. My biggest issue is having the pool right near the restaurant so you cant have even semi private swim.",
+            "reply": "Thank you for choosing Ramayana Resort & Spa, we are waiting for your next trip. We are still under construction until October 2018 to make service more better then before"
+        },
+        {
+            "member": "Robert",
+            "nationality": "th",
+            "date": "Apr 27, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Kuta",
+            "content": "Enjoyable",
+            "reply": "Thank you for choosing Ramayana Resort & Spa, we are waiting for your next trip. We are still under construction until October 2018 to make service more better then before"
+        },
+        {
+            "member": "Dee",
+            "nationality": "au",
+            "date": "May 4, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Still under renovation ",
+            "content": "This hotel would look amazing once the Reno is done, unfortunately I booked on the wrong time. If only I knew about the reno, I wouldn\u2019t book the room! There\u2019s no swimming pool, no view, half resort were closed! Have to in and out trough their restaurant. Apart from that the staffs are very polite and nice, walking distance to market, beach, and all.\r\nMaybe ask them first if the renovation is done before you book the hotel.\r\nIn the end we only stayed for 2 nights and moved to other hotel.",
+            "reply": "Thank you for choosing Ramayana resort & Spa for your holiday, we waiting for your next trip."
+        },
+        {
+            "member": "Nurul",
+            "nationality": "sg",
+            "date": "Apr 25, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Anniversary stay",
+            "content": "Arrived late at night and greeted by two warm and welcoming gentleman upon c/i. Just said my name & they congratulated us for our anniversary! Thank you for upgrading us to the executive deluxe room. Its so pretty and the bed is huge and fluffy. I had a good sleep every night and woke up late every morning!  Received a yummy chocolate cake in room after c/i and we enjoyed every single bite. At bkf, the hostess congratulated us again when we said our room number. They made us feel at home with their smile. Our flight was at 6pm and we asked for late c/o at 2pm upon c/i and they said ok. But on last day after breakfast i reconfirm the timing with the lady but she rejected me. So upset as we check in late on the first day and we wanted to do some last minute shopping and pack our bags. She keep on declining. After much negotiation, she only gave 1pm and wanted to charge us about $20 to c/o at 2pm. I was shocked as i have never encountered a hotel that will charge us to c/o at 2pm. I know that late c/o depends on the availability (i am a hotelier too) but i was granted upon c/i but upon reconfirming again, she said no. I told her to give us a little bit of time to pack our bags but she keep on repeating to quickly c/o. It was annoying as we have to pack our bags but she keep on calling you non stop. This wont happen if im given 2pm, as committed upon c/i. Ended the trip with disappointment. ",
+            "reply": "Thank you for choosing Ramayana Resort & Spa, we are waiting for your next trip. We are still under construction until October 2018 to make service more better then before"
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "au",
+            "date": "Apr 18, 2018",
+            "score": "6.0",
+            "predicate": "Good",
+            "summary": "",
+            "content": "Hotel was under renovations the main pool was closed while this is happening , all other functions of the hotel were in operation , great place to stay central to most things",
+            "reply": "Thank you for choosing Ramayana resort & Spa for your holiday, we waiting for your next trip and hopefully our new room will finish on the end of October 2018"
+        },
+        {
+            "member": "Ranjeet",
+            "nationality": "us",
+            "date": "Apr 13, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Good enjoyable trip",
+            "content": "",
+            "reply": "Thank you for choosing Ramayana Resort and Spa for your holiday, we waiting for your next trip"
+        },
+        {
+            "member": "Steven",
+            "nationality": "au",
+            "date": "Apr 1, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "",
+            "content": "Comfortable accommodation with excellent service. Facility is currently undergoing renovations but this didn't detract from our stay",
+            "reply": "Thank you for choosing Ramayana Resort & Spa for your holiday, hopefully our new room will finish on October 2018."
+        },
+        {
+            "member": "A Traveller",
+            "nationality": "au",
+            "date": "Mar 4, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Good ambience ",
+            "content": "We had a good stay at Ramayana . Good breakfast . ",
+            "reply": ""
+        },
+        {
+            "member": "Gazi",
+            "nationality": "au",
+            "date": "Mar 3, 2018",
+            "score": "6.0",
+            "predicate": "Good",
+            "summary": "Loud Music Till Midnight Everyday",
+            "content": "Ramayana Resort and spa\r\nThe check in was smooth, friendly receptionists. Room was dated but clean. The music from nearby bars made it a little hard to relax at night but it stopped around midnight. You want quiet this place is not for you. Every staff acknowledges you so it\u2019s a very friendly Resort. It was my first trip to Bali and I shall remember this Resort with great memories.",
+            "reply": ""
+        },
+        {
+            "member": "Stacey ",
+            "nationality": "au",
+            "date": "Feb 25, 2018",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "Great location within the hustle of Kuta",
+            "content": "The venue is right in the heart of Kuta with easy access to the beach, markets, Mata Hari and many other great shopping adventures. Or you can simply relax within the resort enjoying their wonderful spa treatments, relax by the pool or eat st one of their many restaurants. ",
+            "reply": "Thank you for visiting, we look forward to your next trip."
+        },
+        {
+            "member": "virk",
+            "nationality": "sg",
+            "date": "Feb 6, 2018",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Nice hotel in a expensive area",
+            "content": "There was some reno going on near our rooms and when we called reception,we were upgraded immediately.Rooms were beautiful and spacious.Location around hotel was good but restaurants nearby were slightly pricey Beach is nearby",
+            "reply": "Thank you very much for your visit, we look forward to your next trip."
+        },
+        {
+            "member": "Jockey",
+            "nationality": "au",
+            "date": "Jan 24, 2018",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "hotel close to many restaurants and shop",
+            "content": "Greeted with a warm smile and welcome drink , fast check in and helpful staff , breakfast , lunch and dinners were all good quality food catering for all people .\r\nPool was clean and area around pool i.e. gardens were in great condition .",
+            "reply": "Thank you very much for your visit, we look forward to your next trip."
+        },
+        {
+            "member": "huiz",
+            "nationality": "my",
+            "date": "Dec 4, 2017",
+            "score": "6.0",
+            "predicate": "Good",
+            "summary": "Hotel is near the beach but bit old ",
+            "content": "Hotel is near the beach but the condition of hotel is a bit old to me. The toilet cover is old but after request to change a new one, they got change it immediately. My brother\u2019s room aircond also not working in last day of stay. ",
+            "reply": "Sorry for the inconvenience, we will always upgrade our facilities, i hope you can come for next trip and holiday. :)"
+        },
+        {
+            "member": "Leanne",
+            "nationality": "au",
+            "date": "Nov 13, 2017",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "Beautiful hotel in the heart of KUTA",
+            "content": "Absolutely loved our stay!\r\nGreat location, Room was lovely.\r\nStaff always smiling and friendly and helpful.\r\nWould totally recommend to friends to stay! :-)",
+            "reply": ""
+        },
+        {
+            "member": "Rahul",
+            "nationality": "in",
+            "date": "Nov 7, 2017",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "Great place to stay on a short trip",
+            "content": "Lovely hotel, in central location, near from airport and beach. Spacious clean rooms. Good breakfast layout. A bit old but well maintained. Nice helpful staff",
+            "reply": ""
+        },
+        {
+            "member": "rose",
+            "nationality": "au",
+            "date": "Nov 1, 2017",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "Perfect position ",
+            "content": "I have stayed here twice before \r\nThis time I took my partner and 2 children whom have never been to Bali \r\nThey loved it was in a great position to b able to access everything easily and the staff are fantastic I will stay here again ",
+            "reply": ""
+        },
+        {
+            "member": "pat",
+            "nationality": "au",
+            "date": "Oct 17, 2017",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "the hotel is the best the staff are marvellous and",
+            "content": "the hotel is the best for what we want central to everything ",
+            "reply": ""
+        },
+        {
+            "member": "Jenny",
+            "nationality": "au",
+            "date": "Oct 7, 2017",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Central location and friendly staff",
+            "content": "The hotel is centrally located in Kuta and walking distance to the beach as well as Waterbom park. It has great entertainment in the evening and the spa on site was is first class",
+            "reply": ""
+        },
+        {
+            "member": "Jay",
+            "nationality": "au",
+            "date": "Oct 7, 2017",
+            "score": "10.0",
+            "predicate": "Exceptional",
+            "summary": "Happy with hotel",
+            "content": "Enjoyed my stay at this hotel. Friendly hotel staff & felt very relaxed here. The all you can eat breakfast was great in the morning & the food overall was very nice. Would definitely recommend : )",
+            "reply": ""
+        },
+        {
+            "member": "Jenny",
+            "nationality": "au",
+            "date": "Sep 25, 2017",
+            "score": "4.0",
+            "predicate": "Fair",
+            "summary": "Noisy",
+            "content": "Staff were friendly and it was a good location but it was noisy around the pool due to building next door. The room was OK but the air conditioner was very noisy and if you turned it off you could hear the street noise. ",
+            "reply": ""
+        },
+        {
+            "member": "Michael",
+            "nationality": "au",
+            "date": "Sep 24, 2017",
+            "score": "8.0",
+            "predicate": "Very Good",
+            "summary": "Like to stay here",
+            "content": "Have stayed here 3 times and would come back. Like the staff and location, rooms are clean and spacious. Definitely recommend.",
+            "reply": ""
+        }
+    ]
+}

@@ -7,8 +7,9 @@
                 <ul class="nav child_menu">
                     <li><a href="{{ url('contacts/list') }}">View Contacts</a></li>
                     <li><a href="{{ url('contacts/add') }}">New Contact</a></li>
-                    <li><a href="{{ url('contacts/import') }}">Import Guest Profile</a></li>
-                    <li><a href="{{ url('contacts/importstay') }}">Import Guest Stay</a></li>
+                    <li><a href="{{ url('contacts/filter') }}">Filter Contact</a></li>
+                    {{--<li><a href="{{ url('contacts/import') }}">Import Guest Profile</a></li>--}}
+                    {{--<li><a href="{{ url('contacts/importstay') }}">Import Guest Stay</a></li>--}}
                 </ul>
             </li>
             <li><a><i class="fa fa-envelope"></i> Email Marketing <span class="fa fa-chevron-down"></span></a>
@@ -20,7 +21,10 @@
                         <li><a href="{{url('email/template')}}">Email Template</a></li>
                 </ul>
             </li>
+            <li><a href="{{ url('reviews') }}"><i class="fa fa-comments-o"></i>Reviews</a>
+            </li>
         </ul>
+
     </div>
 
 

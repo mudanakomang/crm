@@ -1,5 +1,6 @@
-@extends('layouts.app')
-@section('main-content')
+@extends('layouts.master')
+@section('content')
+<div class="right_col" role="main">
 <section class="content">
     <div class="container-fluid">
         <div class="row clearfix">
@@ -42,7 +43,7 @@
                                     <th>Total Stays</th>
                                     <th>Last Stay</th>
                                     <th>Total Spending (Rp.)</th>
-                                    <th>Action</th>
+
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -55,9 +56,8 @@
                                                 <a href="{{ url('contacts/detail/').'/'.$contact->id }}" >{{ $contact->fname }}</a>
                                             @endif
                                             @if(\Carbon\Carbon::parse($contact->birthday)->format('m-d')==\Carbon\Carbon::now()->format('m-d'))
-                                                <i class="material-icons " style="color: #009688" >cake</i>
+                                                 <i class="fa fa-birthday-cake " style="color: #009688" > </i>
                                             @endif
-
                                         </td>
                                         <td>{{ \Carbon\Carbon::parse($contact->birthday)->format('d M Y') }}</td>
                                         <td>{{ $contact->country->country }}</td>
@@ -70,7 +70,6 @@
                                         <td>
                                             {{ number_format($contact->transaction->sum('revenue'),0,'.',',')}}
                                         </td>
-                                        <td> <a href="{{url('contacts/stay/add/').'/'.$contact->id}}"  title="Add Stay"> <i class="material-icons">local_hotel</i></a>  </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -82,4 +81,5 @@
         </div>
     </div>
 </section>
+</div>
     @endsection

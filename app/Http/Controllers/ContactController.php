@@ -15,6 +15,7 @@ use DB;
 use League\Csv\Reader;
 use PHPUnit\Framework\Constraint\Count;
 use function Sodium\add;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ContactController extends Controller
 {
@@ -26,6 +27,43 @@ class ContactController extends Controller
     public function index()
     {
         //
+    }
+
+    public function ages($type){
+
+        $tr=Contact::with('transaction')->when($type=='low',function ($q){
+            return $q->whereRaw('DATEDIFF(DATE_FORMAT(now(),\'%y-%m-%d\'),birthday) /365 < 30 ');
+        })->when($type=='mid',function ($q){
+            return $q->whereRaw('DATEDIFF(DATE_FORMAT(now(),\'%y-%m-%d\'),birthday) /365 between 30 and 60 ');
+        })->when($type=='high',function ($q){
+            return $q->whereRaw('DATEDIFF(DATE_FORMAT(now(),\'%y-%m-%d\'),birthday) /365 > 60 ');
+        })->get();
+        return view('contacts.list',['data'=>$tr]);
+
+    }
+    public function reviews(){
+        $ta=json_decode(file_get_contents('tripadvisor.json'));
+        $ta_reviews=collect($ta->reviews);
+        $currentPageTa = LengthAwarePaginator::resolveCurrentPage('ta');
+        $currentPageB=LengthAwarePaginator::resolveCurrentPage('bo');
+        $currentPageH=LengthAwarePaginator::resolveCurrentPage('ht');
+        $perPage = 15;
+        $currentResultsTa = $ta_reviews->slice(($currentPageTa - 1) * $perPage, $perPage)->take(10);
+
+        $filebooking=file_get_contents('booking.json');
+        $databooking=json_decode($filebooking,true);
+        $booking_review=collect($databooking["reviews"]["reviewlist"]);
+
+        $resultsta = new LengthAwarePaginator($currentResultsTa, $ta_reviews->count(), $perPage);
+        $currentResultsB = $booking_review->slice(($currentPageB - 1) * $perPage, $perPage)->take(10);
+        $resultsbooking=new LengthAwarePaginator($currentResultsB,$booking_review->count(),$perPage);
+
+        $ht=json_decode(file_get_contents('hotels.json'));
+        $ht_reviews=collect($ht->reviews);
+        $currentResultsH=$ht_reviews->slice(($currentPageH-1)* $perPage,$perPage)->take(10);
+        $resutlsHotel=new LengthAwarePaginator($currentResultsH,$ht_reviews->count(),$perPage);
+
+        return view('review.index',['tripadvisor'=>$ta,'ta_reviews'=>$resultsta,'booking'=>$databooking,'booking_reviews'=>$resultsbooking,'hotels'=>$ht,'hotelreview'=>$resutlsHotel]);
     }
     public function dashboard(){
         $total=0;
@@ -85,9 +123,9 @@ order by hari desc limit 10 '));
 
         $contacts_age=DB::select(DB::raw('select  sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) <30,1,0)) as low, sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) >=30  and floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365)<=60,1,0)) as mid,sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) >=60,1,0)) as high from contacts'));
         $data_age=[];
-        array_push($data_age,['label'=>'Under 30','value'=>$contacts_age[0]->low]);
-        array_push($data_age,['label'=>'Between 30 and 60','value'=>$contacts_age[0]->mid]);
-        array_push($data_age,['label'=>'Higher than 60','value'=>$contacts_age[0]->high]);
+        array_push($data_age,['label'=>'Under 30','value'=>$contacts_age[0]->low,'type'=>'low']);
+        array_push($data_age,['label'=>'Between 30 and 60','value'=>$contacts_age[0]->mid,'type'=>'mid']);
+        array_push($data_age,['label'=>'Higher than 60','value'=>$contacts_age[0]->high,'type'=>'high']);
         $data_age=json_encode($data_age);
         $tages=$contacts_age[0]->low+$contacts_age[0]->mid+$contacts_age[0]->high;
 
@@ -698,5 +736,94 @@ order by hari desc limit 10 '));
         }
 
         return view('contacts.import_stay',['create'=>$created,'update'=>$update,'created_data'=>$created_data,'updated_data'=>$updated_data]);
+    }
+    public function filter(Request $request){
+        $retval=Contact::with('transaction')->get();
+        return view('contacts.filter',['data'=>$retval]);
+    }
+
+    public function filterPost(Request $request){
+//        $tr=Transaction::whereIn('status',$request->status)->get();
+//
+//        $contacts=Contact::with('transaction')->when($request->country_id !=null,function ($q) use ($request) {
+//            return $q->whereIn('country_id', $request->country_id);
+//        })->when($request->gender!=null,function($q) use ($request){
+//            $q->whereIn('status',$request->gender);
+//        })->get();
+////        })->when($request->name !=null,function ($q) use ($request){
+////            return $q->whereRaw('CONCAT(fname,lname) like \'%'.$request->name.'%\'');
+////        })->when($request->status !=null,function ($q) use ($request){
+////            $q->whereHas('transaction',function ($q) use ($request){
+////                $q->whereIn('status',$request->status);
+////            });
+////        })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
+////                return $q->whereHas('transaction',function ($q) use ($request){
+////                    return $q->whereBetween('revenue',[0,$request->spending_to]);
+////                });
+////        })->when($request->spending_from !=null and $request->spending_to ==null,function ($q) use ($request) {
+////            return $q->whereHas('transaction', function ($q) use ($request) {
+////                return $q->where('revenue', '>=', $request->spending_from);
+////            });
+////        })->when($request->spending_from !=null and $request->spending_to !=null,function ($q) use ($request) {
+////            return $q->whereHas('transaction', function ($q) use ($request) {
+////                return $q->whereBetween('revenue', [$request->spending_from, $request->spending_to]);
+////            });
+//        //}) ->get();
+        $contacts=Contact::with('transaction')->when($request->country_id !=null,function ($q) use ($request){
+            return $q->whereIn('country_id',$request->country_id);
+        })->when($request->guest_status !=null,function ($q) use ($request){
+            return $q->whereHas('transaction',function ($q) use ($request){
+                return $q->whereIn('status',$request->guest_status);
+            });
+        })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
+            return $q->whereHas('transaction',function ($q) use ($request){
+                return $q->whereBetween('revenue',[0,$request->spending_to]);
+            });
+        })->when($request->spending_from !=null and $request->spending_to ==null,function ($q) use ($request){
+            return $q->whereHas('transaction',function ($q) use ($request){
+                return $q->where('revenue','>=',$request->spending_from);
+            });
+        })->when($request->spending_from !=null and $request->spending_to !=null,function ($q) use ($request){
+            return $q->whereHas('transaction',function ($q) use ($request){
+                return $q->whereBetween('revenue',[$request->spending_from,$request->spending_to]);
+            });
+        })->when($request->gender !=null,function ($q) use ($request) {
+            return $q->whereIn('gender', $request->gender);
+        })->when($request->stay_from == null and $request->stay_to != null,function ($q) use ($request) {
+            return $q->whereHas('transaction', function ($q) use ($request) {
+                return $q->where('checkout', '<=', Carbon::parse($request->stay_to)->format('Y-m-d'));
+            });
+        })->when($request->stay_from !=null and $request->stay_to ==null ,function ($q) use ($request){
+            return $q->whereHas('transaction',function ($q) use ($request){
+                return $q->where('checkin','>=',Carbon::parse($request->stay_from)->format('Y-m-d'));
+            });
+        })->when($request->stay_from !=null and $request->stay_to !=null,function ($q) use ($request) {
+            return $q->whereHas('transaction', function ($q) use ($request) {
+                return $q->where('checkin', '>=', Carbon::parse($request->stay_from)->format('Y-m-d'))
+                    ->where('checkout', '<=', Carbon::parse($request->stay_to)->format('Y-m-d'));
+            });
+        })->when($request->total_night_from !=null and $request->total_night_to==null, function ($q) use ($request) {
+            return $q->whereHas('transaction', function ($q) use ($request) {
+                return $q->whereRaw('DATEDIFF(checkout,checkin) >= ' . $request->total_night_from);
+            });
+        })->when($request->total_night_from == null and $request->total_night_to !=null ,function ($q) use ($request){
+            return $q->whereHas('transaction',function ($q) use ($request){
+                return $q->whereRaw('DATEDIFF(checkout,checkin) <='.$request->total_night_to);
+            });
+        })->when($request->total_night_from !=null and $request->total_night_to !=null, function ($q) use ($request) {
+            return  $q->whereHas('transaction', function ($q) use ($request) {
+                return    $q->whereRaw('DATEDIFF(checkout,checkin) between ' . $request->total_night_from . ' and ' . $request->total_night_to . '');
+            });
+        })->when($request->total_stay_from !=null and $request->total_stay_to ==null ,function ($q) use ($request){
+            return $q->has('transaction','>=',$request->total_stay_from);
+        })->when($request->total_stay_from == null and $request->total_stay_to !=null ,function ($q) use ($request){
+            return $q->has('transaction','<=',$request->total_stay_to);
+        })->when($request->total_stay_from !=null and $request->total_stay_to !=null, function ($q) use ($request){
+            return $q->has('transaction','>=',$request->total_stay_from)->has('transaction','<=',$request->total_stay_to);
+        })->when($request->name !=null,function ($q) use ($request){
+            return $q->whereRaw('CONCAT(fname,lname) like \'%'.$request->name.'%\'');
+        })->get();
+
+        return response($contacts,200);
     }
 }

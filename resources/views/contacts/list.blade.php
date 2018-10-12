@@ -33,7 +33,7 @@
 										<th class="align-center">Total Stays</th>
 										<th class="align-center">Last Stay</th>
 										<th class="align-center">Total Spending (Rp.)</th>
-										<th class="align-center">Action</th>
+										{{--<th class="align-center">Action</th>--}}
 									</tr>
 									</thead>
 									<tbody>
@@ -47,7 +47,7 @@
 													<a href="{{ url('contacts/detail/').'/'.$contact->contactid }}" >{{ $contact->fname }}</a>
 												@endif
 												@if( $contact->birthday=='' ? '': \Carbon\Carbon::parse($contact->birthday)->format('m-d')==\Carbon\Carbon::now()->format('m-d'))
-													<i class="material-icons " style="color: #009688" >cake</i>
+													<i class="fa fa-birthday-cake " style="color: #009688" ></i>
 												@endif
 
 											</td>
@@ -83,9 +83,9 @@
 											<td>
 												{{ number_format($contact->transaction->sum('revenue'),0,'.',',')}}
 											</td>
-											<td>
-												<a href="{{url('contacts/stay/add/').'/'.$contact->contactid}}" title="Add Stay"><i class="fa fa-hotel fa-2x "></i></a>
-											</td>
+											{{--<td>--}}
+												{{--<a href="{{url('contacts/stay/add/').'/'.$contact->contactid}}" title="Add Stay"><i class="fa fa-hotel fa-2x "></i></a>--}}
+											{{--</td>--}}
 										</tr>
 									@endforeach
 									</tbody>

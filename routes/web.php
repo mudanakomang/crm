@@ -40,6 +40,7 @@ setlocale(LC_MONETARY,"id_ID");
 Route::get('home',function (){
    return redirect('/');
 });
+Route::get('reviews','ContactController@reviews');
 Route::post('campaign/getsegment','CampaignController@getSegment');
 Route::post('campaign/activate','CampaignController@activateCampaign')->name('campaign.activate');
 Route::get('contacts/f/male','ContactController@male');
@@ -51,10 +52,13 @@ Route::get('contacts/f/status/{status}','ContactController@dstatus');
 Route::get('contacts/f/longest/{contact}','ContactController@longest');
 Route::get('contacts/f/spending/{spending}','ContactController@spending');
 Route::get('contacts/f/roomtype/{type}','ContactController@type');
+Route::get('contacts/f/ages/{type}','ContactController@ages');
 Route::get('/','ContactController@dashboard');
 Route::get('contacts/birthday',function (){
    return view('contacts.birthday');
 });
+Route::get('contacts/filter','ContactController@filter');
+Route::post('contacts/filter','ContactController@filterPost');
 Route::post('contacts/birthday/search','ContactController@search');
 Route::get('contacts/detail/{id}','ContactController@show');
 Route::post('contacts/update','ContactController@update')->name('contacts.update');

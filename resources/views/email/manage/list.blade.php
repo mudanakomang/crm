@@ -65,7 +65,7 @@
                                                         } else {
                                                         swal('Cancelled', 'Delete Template Cancelled','error');
                                                         }
-                                                        });"><i class="fa fa-trash"></i> </a> | <a href="{{ url('email/'.$tem->id.'/edit') }}" title="Edit"><i class="fa fa-edit"></i> </a> | <a href="#myModal{{$tem->id}}" data-toggle="modal" data-target="#myModal{{$tem->id}}"><i class="fa fa-eye"></i> </a>
+                                                        });"><i class="fa fa-2x fa-trash"></i> </a> | <a href="{{ url('email/'.$tem->id.'/edit') }}" title="Edit"><i class="fa fa-2x fa-edit"></i> </a> | <a href="#myModal{{$tem->id}}" data-toggle="modal" data-target="#myModal{{$tem->id}}"><i class="fa fa-2x fa-eye"></i> </a>
 
                                             </td>
                                         </tr>
