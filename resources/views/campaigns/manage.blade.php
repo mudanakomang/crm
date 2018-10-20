@@ -120,6 +120,10 @@
                 $('.guest').children('option:selected').each(function () {
                     guest.push($(this).val())
                 })
+                var booking=[]
+                $('#booking_source').children('option:selected').each(function () {
+                    booking.push($(this).val())
+                })
                 var gen=[]
                 $('#gender').children('option:selected').each(function () {
                     gen.push($(this).val())
@@ -148,6 +152,10 @@
                         total_night_from:$('#total_night_from').val(),
                         total_night_to:$('#total_night_to').val(),
                         gender:gen,
+                        age_from:$('#age_from').val(),
+                        age_to:$('#age_to').val(),
+                        booking_source:booking,
+
                     },
                     type:'POST',
                     success:function (data) {
@@ -337,7 +345,17 @@
                    $('.guest').selectpicker();
                    $('.guest').selectpicker('val','');
                    $('.guest').selectpicker('val',gueststatus);
+                   var gender=data[3]
+                   if(gender!=null){
+                       $('#gender').selectpicker();
+                       $('#gender').selectpicker('val','');
+                       $('#gender').selectpicker('val',gender);
+                   }else
+                   {
+                       $('#gender').selectpicker();
+                       $('#gender').selectpicker('val','');
 
+                   }
                    var campaign=data[0];
                    $('#spending_from').val('');
                    $('#spending_from').val(campaign['spending_from']);
@@ -355,16 +373,8 @@
                    $('#total_night_from').val(campaign['total_night_from']);
                    $('#total_night_to').val('');
                    $('#total_night_to').val(campaign['total_night_to']);
-                   var gender =campaign['gender'];
-                   if (gender==='M'){
-                        $('#gender').selectpicker();
-                       $('#gender').selectpicker('val','')
-                        $('#gender').selectpicker('val','M')
-                   } else {
-                       $('#gender').selectpicker();
-                       $('#gender').selectpicker('val','')
-                        $('#gender').selectpicker('val','F')
-                   }
+
+
                    checkRecepient();
                    }
 

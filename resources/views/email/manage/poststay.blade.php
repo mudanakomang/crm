@@ -31,8 +31,8 @@
                                             </div>
                                             <div class="col-lg-12 col-md-12">
                                                 <div class="form-group">
-                                                    <label class="control-label">Number of days after check-out that the campaign is sent :</label>
-                                                    {{ Form::select('sendafter',[''=>'Day/s after']+range(1,31,1),$poststay->sendafter-1,['class'=>'form-control selectpicker']) }}
+                                                    <label class="control-label">Send after checkout (days):</label>
+                                                    {{ Form::select('sendafter',[''=>'Day/s after']+range(1,7,1),$poststay->sendafter-1,['class'=>'form-control selectpicker']) }}
                                                 </div>
                                             </div>
                                                 <div class="col-lg-6 col-md-6">

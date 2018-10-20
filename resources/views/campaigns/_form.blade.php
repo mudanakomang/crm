@@ -21,7 +21,7 @@
                         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
                             {{ Form::label('name','Campaign Name') }}
                         </div>
-                        <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     {{ Form::text('name',$model->name,['class'=>'form-control data-parsley-trigger="change"','required']) }}
@@ -33,17 +33,7 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
 
-                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
-                            {{ Form::label('type','Template Type') }}
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
-                            <div class="form-group">
-                                <div class="form-line">
-                                    {{ Form::select('type',[''=>'Select Type','Poststay'=>'Poststay','Birthday'=>'Birthday','Checkin Reminder'=>'Checkin Reminder','Promo'=>'Promo','Special Event'=>'Special Event'],$model->type,['class'=>'form-control ','onchange'=>'getType(this.value)', 'data-live-search'=>'true','required','id'=>'type']) }}
-                                </div>
-                                <div class="help-info"></div>
-                            </div>
-                        </div>
+
 
                     <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
                         {{ Form::label('template','Template',['class'=>'text-right']) }}
@@ -51,7 +41,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                         <div class="form-group">
                             <div class="form-line ">
-                                {{ Form::select('template',[''=>'Select Template'],$model->template,['class'=>'form-control selectpicker','id'=>'template','onchange=selectTemplate(this.value)', 'data-live-search'=>'true','required']) }}
+                                {{ Form::select('template',[''=>'Select Template']+\App\MailEditor::where('type','=','Promo')->pluck('name','id')->all(),$model->template,['class'=>'form-control selectpicker','id'=>'template','onchange=selectTemplate(this.value)', 'data-live-search'=>'true','required']) }}
                             </div>
                             <div class="help-info"></div>
                         </div>
@@ -189,10 +179,37 @@
                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                         <div class="form-group">
                             <div class="form-line">
-                                {{ Form::select('gender[]',['M'=>'Male','F'=>'Female'],$model->gender,['class'=>'form-control selectpicker','id'=>'gender','multiple','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','actionsBox'=>'true','data-live-search'=>'true']) }}
+                                {{ Form::select('gender[]',['M'=>'Male','F'=>'Female'],null,['class'=>'form-control selectpicker','id'=>'gender','multiple','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','actionsBox'=>'true','data-live-search'=>'true']) }}
                             </div>
                         </div>
                     </div>
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                            {{ Form::label('','Age') }}
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ Form::text('age_from',null,['class'=>'form-control','id'=>'age_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ Form::text('age_to',null,['class'=>'form-control', 'id'=>'age_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                            {{ Form::label('','Booking Source') }}
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ Form::select('booking_source[]',\App\ProfileFolio::groupBy('source')->pluck('source','source')->all(),null,['class'=>'form-control selectpicker','id'=>'booking_source','multiple','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'actionsBox'=>'true','data-live-search'=>'true']) }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-body">

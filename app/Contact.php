@@ -61,13 +61,16 @@ class Contact extends Model
         return $this->belongsToMany('\App\Transaction','contact_transaction','contact_id','transaction_id','contactid','id');
     }
     public function country(){
-        return $this->belongsTo('\App\Country','country_id','iso3');
+        return $this->belongsTo('\App\Country','country_id','iso2');
     }
     public function attribute(){
         return $this->belongsToMany('\App\Attribute');
     }
     public function campaign(){
         return $this->belongsToMany('\App\Campaign','campaign_contact','contact_id')->withPivot('status');
+    }
+    public function profilesfolio(){
+        return $this->hasMany('\App\ProfileFolio','profileid','contactid');
     }
 
 }

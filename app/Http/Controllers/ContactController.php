@@ -70,7 +70,7 @@ class ContactController extends Controller
         $contact=Contact::whereRaw('DATE_FORMAT(birthday,"%m-%d") >= ?',[\Carbon\Carbon::now()->format('m-d')])
             ->whereRaw('DATE_FORMAT(birthday,"%m-%d") <= ?',[\Carbon\Carbon::now()->addDays(7)->format('m-d')])
             ->orderBy(DB::raw('ABS( DATEDIFF( birthday, NOW() ) )'),'asc')->limit(10)->get();
-        $contacts=DB::select(DB::raw('select country as label, count(*) as value from contacts left join countries on contacts.country_id=countries.iso3 group by label '));
+        $contacts=DB::select(DB::raw('select country as label, count(*) as value from contacts left join countries on contacts.country_id=countries.iso2   group by label order by value asc'));
         $country=json_encode($contacts);
         foreach ($contacts as $value){
             $total=$total+$value->value;
@@ -101,7 +101,10 @@ class ContactController extends Controller
         }
         $datastatus=json_encode($datastatus);
        // $spending=Transaction::orderBy('revenue','desc')->take(10)->get();
-        $spending=DB::select(DB::raw('select fname,lname,revenue from transactions a left join contact_transaction b on b.transaction_id=a.id left join contacts c on b.contact_id=c.contactid where contact_id is not NULL order by revenue desc limit 10'));
+        $date=\Carbon\Carbon::now();
+        $first=$date->firstOfQuarter()->format('Y-m-d');
+        $last=$date->lastOfQuarter()->format('Y-m-d');
+        $spending=DB::select(DB::raw('select fname,lname,revenue from transactions a left join contact_transaction b on b.transaction_id=a.id left join contacts c on b.contact_id=c.contactid where contact_id is not NULL and a.checkout BETWEEN \''.$first.'\' and \''.$last.'\' order by revenue desc limit 10'));
         $dataspending=[];
       foreach ($spending as $sp){
           $temspend=['x'=>$sp->fname.' '.$sp->lname,'y'=>$sp->revenue];
@@ -109,11 +112,10 @@ class ContactController extends Controller
        }
        $dataspending=json_encode($dataspending);
         $datatrx=[];
-        $trx=DB::select(DB::raw('select fname,lname,datediff(checkout,checkin) as hari from transactions a 
-left join contact_transaction b on b.transaction_id=a.id
-left join contacts c on c.contactid=b.contact_id
-where contact_id is not null
-order by hari desc limit 10 '));
+        $date=\Carbon\Carbon::now();
+        $first=$date->firstOfQuarter()->format('Y-m-d');
+        $last=$date->lastOfQuarter()->format('Y-m-d');
+        $trx=DB::select(DB::raw('select fname,lname,datediff(checkout,checkin) as hari from transactions a left join contact_transaction b on b.transaction_id=a.id left join contacts c on c.contactid=b.contact_id where contact_id is not null and a.checkout BETWEEN \''.$first.'\' and \''.$last.'\' order by hari desc limit 10 '));
 
         foreach ($trx as $tr){
             $tmp=['x'=>$tr->fname .' '.$tr->lname,'y'=>$tr->hari ];
@@ -769,12 +771,13 @@ order by hari desc limit 10 '));
 ////                return $q->whereBetween('revenue', [$request->spending_from, $request->spending_to]);
 ////            });
 //        //}) ->get();
-        $contacts=Contact::with('transaction')->when($request->country_id !=null,function ($q) use ($request){
+        //dd($request->all());
+        $contacts=Contact::with('transaction','profilesfolio')->when($request->country_id !=null,function ($q) use ($request){
             return $q->whereIn('country_id',$request->country_id);
         })->when($request->guest_status !=null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
                 return $q->whereIn('status',$request->guest_status);
-            });
+            })->orderBy('created_at','desc');
         })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
                 return $q->whereBetween('revenue',[0,$request->spending_to]);
@@ -822,7 +825,18 @@ order by hari desc limit 10 '));
             return $q->has('transaction','>=',$request->total_stay_from)->has('transaction','<=',$request->total_stay_to);
         })->when($request->name !=null,function ($q) use ($request){
             return $q->whereRaw('CONCAT(fname,lname) like \'%'.$request->name.'%\'');
-        })->get();
+        })->when($request->age_from!=null and $request->age_to!=null ,function ($q) use ($request){
+            return $q->whereRaw('birthday <= date_sub(now(), INTERVAL \''.$request->age_from.'\' YEAR) and birthday >= date_sub(now(),interval \''.$request->age_to.'\' year)');
+        })->when($request->age_from!=null ,function($q) use ($request){
+            return $q->whereRaw('birthday <= date_sub(now(),INTERVAL \''.$request->age_from.'\' YEAR)');
+        })->when($request->age_to!=null,function ($q) use ($request){
+            return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$request->age_to.'\' YEAR)');
+        })->when($request->booking_source!=null,function ($q) use ($request){
+            $q->whereHas('profilesfolio',function ($q) use ($request){
+                $q->whereIn('source',$request->booking_source);
+            });
+        })
+            ->get();
 
         return response($contacts,200);
     }

@@ -11,12 +11,12 @@
 							</div>
 							<div class="row clearfix">
 								<div class="col-lg-12">
-									<div class="col-lg-6 col-md-6  ">
-										<a href="{{ url('contacts/add') }}" class="btn btn-sm btn-primary waves-effect">
-											<i class="fa fa-plus"></i>
-											<span>Add Contact</span>
-										</a>
-									</div>
+									{{--<div class="col-lg-6 col-md-6  ">--}}
+										{{--<a href="{{ url('contacts/add') }}" class="btn btn-sm btn-primary waves-effect">--}}
+											{{--<i class="fa fa-plus"></i>--}}
+											{{--<span>Add Contact</span>--}}
+										{{--</a>--}}
+									{{--</div>--}}
 								</div>
 							</div>
 
@@ -51,8 +51,8 @@
 												@endif
 
 											</td>
-											<td>{{ $contact->birthday=='' ? "": \Carbon\Carbon::parse($contact->birthday)->format('d M Y') }}</td>
-											<td>{{ \App\Country::where('iso3',$contact->country_id)->first()['country'] }}
+											<td>{{ $contact->birthday=='' ? "": \Carbon\Carbon::parse($contact->birthday)->format('M d') }}</td>
+											<td>{{ \App\Country::where('iso2',$contact->country_id)->first()['country'] }}
 												<img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($contact->country['iso2'])}} pull-right" alt="{{$contact->country['country']}}" />
 											</td>
 

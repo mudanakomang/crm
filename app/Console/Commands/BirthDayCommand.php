@@ -46,7 +46,7 @@ class BirthDayCommand extends Command
         $email=new EmailTemplateController();
         if ($birthday->active=='y'){
             $template=MailEditor::find($birthday->template_id);
-            $contacts=Contact::whereRaw('DATE_FORMAT(birthday,\'%m-%d\')=DATE_FORMAT(DATE_SUB(now(),INTERVAL -\''.$birthday->sendafter.'\' day),\'%m-%d\') ')->get();
+            $contacts=Contact::whereRaw('DATE_FORMAT(birthday,\'%m-%d\')=DATE_FORMAT(DATE_ADD(now(),INTERVAL \''.$birthday->sendafter.'\' day),\'%m-%d\') ')->get();
             foreach ($contacts as $contact){
                 $email->emailsend($contact,$template,$contact->gender=='M' ? $template->subject.' Mr.'.$contact->fname.' '.$contact->lname:$template->subject.' Ms./Mrs.'.$contact->fname.' '.$contact->lname);
             }

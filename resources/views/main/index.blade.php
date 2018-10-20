@@ -37,9 +37,9 @@
                             </div>
                             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                 <span class="count_top"><i class="fa fa-user"></i> Inhouse </span>
-                                <div class="count green"> <a href="{{ url('contacts/f/status/Inhouse') }}" class="green" >{{ \App\Contact::whereHas('transaction',function ($q){
-                                    return $q->where('status','=','I')->whereRaw('date_format(now(),\'%Y-%m-%d\') between checkin and checkout');
-                                    })->count()  }}</a> </div>
+                                <div class="count green"> <a href="{{ url('contacts/f/status/Inhouse') }}" class="green" >{{ \App\Contact::whereHas('profilesfolio',function($q){
+                                    return $q->where('foliostatus','=','I');
+                                })->count() }} </a> </div>
 
                             </div>
                             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
@@ -109,7 +109,7 @@
             <div class="col-md-4 col-sm-4 col-xs-12">
                 <div class="x_panel tile " style="height: 420px">
                     <div class="x_title">
-                        <h2>Top 10 Spending</h2>
+                        <h2>Top 10 Spending Q<sub>{{ \Carbon\Carbon::now()->quarter }}</sub></h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -173,7 +173,7 @@
             <div class="col-md-4 col-sm-4 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h2>Longest Stay</h2>
+                        <h2>Longest Stay Q<sub>{{ \Carbon\Carbon::now()->quarter }}</sub></h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -258,7 +258,11 @@
             data:{!! $spending !!},
             xkey: 'x',
             ykeys: ['y'],
-            labels: ['Spending Rp'],
+            labels: [''],
+            axes:'x',
+            hoverCallback:function (index, options, content, row) {
+                return row.x ;
+            },
             barColors: function (row, series, type) {
                 var blue = Math.ceil((255 * row.y / this.ymax)+255/10 );
                 return 'rgb(0,100,'+blue+')';
@@ -276,7 +280,7 @@
             labels:['Contact Added'],
             barColors:function (row, series, type) {
                 var red = Math.ceil((255 * row.y / this.ymax)+255/6);
-                return 'rgb('+red+',0,0)';
+                return 'rgb(180,20,0)';
             }
         }).on('click',function(i,row){
             window.location.href='contacts/f/created/'+row.x;

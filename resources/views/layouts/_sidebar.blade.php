@@ -6,7 +6,7 @@
             <li><a><i class="fa fa-user"></i> Contact Management <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
                     <li><a href="{{ url('contacts/list') }}">View Contacts</a></li>
-                    <li><a href="{{ url('contacts/add') }}">New Contact</a></li>
+                    {{--<li><a href="{{ url('contacts/add') }}">New Contact</a></li>--}}
                     <li><a href="{{ url('contacts/filter') }}">Filter Contact</a></li>
                     {{--<li><a href="{{ url('contacts/import') }}">Import Guest Profile</a></li>--}}
                     {{--<li><a href="{{ url('contacts/importstay') }}">Import Guest Stay</a></li>--}}
@@ -18,6 +18,7 @@
                         <li><a href="{{url('email/config/poststay')}}">Post-Stay Configuration</a></li>
                         <li><a href="{{url('email/config/birthday')}}">Birthday Configuration</a></li>
                         <li><a href="{{url('email/config/confirm')}}">Check in Confirmation</a></li>
+                        <li><a href="{{url('email/config/miss')}}">We Miss You Letter</a></li>
                         <li><a href="{{url('email/template')}}">Email Template</a></li>
                 </ul>
             </li>

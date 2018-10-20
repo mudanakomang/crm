@@ -84,6 +84,11 @@ Route::get('email/config/confirm','Emailtemplate@confirmConfig');
 Route::post('email/config/confirm/update','Emailtemplate@confirmUpdate')->name('confirm.update');
 Route::post('email/config/confirm','Emailtemplate@confirmTemplate')->name('email.confirmTemplate');
 Route::post('email/config/confirm/activate','Emailtemplate@confirmActivate');
+//We Miss You Letter
+Route::get('email/config/miss','Emailtemplate@missConfig');
+Route::post('email/config/miss/update','Emailtemplate@missUpdate')->name('miss.update');
+Route::post('email/config/miss','Emailtemplate@missTemplate')->name('email.missTemplate');
+Route::post('email/config/miss/activate','Emailtemplate@missActivate');
 
 Route::resource('email','Emailtemplate');
 
@@ -123,13 +128,15 @@ Route::post('contacts/stay/update','TransactionController@update')->name('stay.u
 Route::get('contacts/stay/delete/{id}','TransactionController@delete')->name('stay.delete');
 
 Route::post('setschedule','CampaignController@setSchedule');
-
+Route::post('contacts/newcampaign','CampaignController@newCampaign');
 
 //segmen
 Route::get('segment','SegmentController@index')->name('segment');
 Route::get('tt',function (){
-$campaign=\App\Campaign::first();
-dd(unserialize($campaign->country_id)[0]);
+    $contacts=\App\Contact::whereRaw('floor(datediff (now(), birthday)/365)  <=25')->get();
+    foreach ($contacts as $contact){
+       dd( $contact->profilesfolio[0]->source);
+    }
 });
 
 

@@ -33,8 +33,9 @@
                                             </div>
                                             <div class="col-lg-12 col-md-12">
                                                 <div class="form-group">
-                                                    <label class="control-label">Number of days before birthday that the campaign is sent :</label>
-                                                    {{ Form::select('sendafter',[''=>'Day/s before']+range(0,31,1),$birthday->sendafter,['class'=>'form-control selectpicker']) }}
+                                                    <label class="control-label">
+                                                       Send before / after birthday</label>
+                                                    {{ Form::select('sendafter',[''=>'Day/s before']+range(-2,2,1),$birthday->sendafter,['class'=>'form-control selectpicker']) }}
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6">

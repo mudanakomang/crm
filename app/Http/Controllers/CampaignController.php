@@ -53,7 +53,7 @@ class CampaignController extends Controller
     {
 
         //
-        $contacts=Contact::with('transaction')->when($request->country_id !=null,function ($q) use ($request){
+        $contacts=Contact::with('transaction','profilesfolio')->when($request->country_id !=null,function ($q) use ($request){
             return $q->whereIn('country_id',$request->country_id);
         })->when($request->guest_status !=null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
@@ -105,6 +105,16 @@ class CampaignController extends Controller
         })->when($request->total_stay_from !=null and $request->total_stay_to !=null, function ($q) use ($request){
             return $q->has('transaction','>=',$request->total_stay_from)->has('transaction','<=',$request->total_stay_to);
 
+        })->when($request->age_from!=null and $request->age_to!=null ,function ($q) use ($request){
+            return $q->whereRaw('birthday <= date_sub(now(), INTERVAL \''.$request->age_from.'\' YEAR) and birthday >= date_sub(now(),interval \''.$request->age_to.'\' year)');
+        })->when($request->age_from!=null ,function($q) use ($request){
+            return $q->whereRaw('birthday <= date_sub(now(),INTERVAL \''.$request->age_from.'\' YEAR)');
+        })->when($request->age_to!=null,function ($q) use ($request){
+            return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$request->age_to.'\' YEAR)');
+        })->when($request->booking_source!=null,function ($q) use ($request){
+            $q->whereHas('profilesfolio',function ($q) use ($request){
+                $q->whereIn('source',$request->booking_source);
+            });
         })->get();
 
 
@@ -129,8 +139,11 @@ class CampaignController extends Controller
         $campaign->total_stay_to=$request->total_stay_to;
         $campaign->total_night_from=$request->total_night_from;
         $campaign->total_night_to=$request->total_night_to;
-        $campaign->gender=$request->gender[0];
+        $campaign->gender=serialize($request->gender);
         $campaign->template_id=$request->template;
+        $campaign->age_from=$request->age_from;
+        $campaign->age_to=$request->age_to;
+        $campaign->booking_source=serialize($request->booking_source);
         $campaign->save();
 
         foreach ($contacts as $contact) {
@@ -183,7 +196,7 @@ class CampaignController extends Controller
         //
 
 
-        $contacts=Contact::with('transaction')->when($request->country_id !=null,function ($q) use ($request){
+        $contacts=Contact::with('transaction','profilesfolio')->when($request->country_id !=null,function ($q) use ($request){
             return $q->whereIn('country_id',$request->country_id);
         })->when($request->guest_status !=null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
@@ -235,7 +248,18 @@ class CampaignController extends Controller
         })->when($request->total_stay_from !=null and $request->total_stay_to !=null, function ($q) use ($request){
             return $q->has('transaction','>=',$request->total_stay_from)->has('transaction','<=',$request->total_stay_to);
 
-        })->get();
+        })->when($request->age_from!=null and $request->age_to!=null ,function ($q) use ($request){
+            return $q->whereRaw('birthday <= date_sub(now(), INTERVAL \''.$request->age_from.'\' YEAR) and birthday >= date_sub(now(),interval \''.$request->age_to.'\' year)');
+        })->when($request->age_from!=null ,function($q) use ($request){
+            return $q->whereRaw('birthday <= date_sub(now(),INTERVAL \''.$request->age_from.'\' YEAR)');
+        })->when($request->age_to!=null,function ($q) use ($request){
+            return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$request->age_to.'\' YEAR)');
+        })->when($request->booking_source!=null,function ($q) use ($request){
+            $q->whereHas('profilesfolio',function ($q) use ($request){
+                $q->whereIn('source',$request->booking_source);
+            });
+        })
+            ->get();
      // dd($request->all());
         $campaign=Campaign::find($id);
         $campaign->name=$request->name;
@@ -250,7 +274,10 @@ class CampaignController extends Controller
         $campaign->total_stay_to=$request->total_stay_to;
         $campaign->total_night_from=$request->total_night_from;
         $campaign->total_night_to=$request->total_night_to;
-        $campaign->gender=$request->gender;
+        $campaign->gender=serialize($request->gender);
+        $campaign->age_from=$request->age_from;
+        $campaign->age_to=$request->age_to;
+        $campaign->booking_source=serialize($request->booking);
         if ($request->template<>'') {
             $campaign->template_id = $request->template;
         }
@@ -372,10 +399,43 @@ class CampaignController extends Controller
         $this->setSheduleFunc($request->id,$request->value);
     }
     public function getSegment(Request $request){
+
         $campaign=Campaign::find($request->id);
         $country=unserialize($campaign->country_id);
         $guestsatus=unserialize($campaign->guest_status);
+       $gender = unserialize($campaign->gender);
+        $booking=unserialize($campaign->booking_source);
+        return response([$campaign,$country,$guestsatus,$gender,$booking],200);
+    }
+    public function newCampaign(Request $request){
+       $campaign=new Campaign();
+        $campaign->name=$request->cname;
+        $campaign->status='Draft';
+        $campaign->type='Promo';
+        $campaign->country_id=serialize($request->country_id);
+        $campaign->guest_status=serialize($request->guest_status);
+        $campaign->spending_from=$request->spending_from;
+        $campaign->spending_to=$request->spending_to;
+        $campaign->stay_from=Carbon::parse($request->stay_from)->format('Y-m-d');
+        $campaign->stay_to=Carbon::parse($request->stay_to)->format('Y-m-d');
+        $campaign->total_stay_from=$request->total_stay_from;
+        $campaign->total_stay_to=$request->total_stay_to;
+        $campaign->total_night_from=$request->total_night_from;
+        $campaign->total_night_to=$request->total_night_to;
+        $campaign->gender=serialize($request->gender);
+        $campaign->age_from=$request->age_from;
+        $campaign->age_to=$request->age_to;
+        $campaign->booking_source=serialize($request->booking);
+        $campaign->template_id=$request->template;
+        $campaign->save();
 
-        return response([$campaign,$country,$guestsatus],200);
+        foreach ($request->contact as $cid){
+           $contact=Contact::find($cid['value']);
+           $campaign->contact()->attach($contact);
+           $campaign->contact()->updateExistingPivot($contact,['status'=>'queue']);
+        }
+        $campaign->template()->attach($request->template);
+        $this->setSheduleFunc($campaign->id,$request->schedule);
+       return response('success',200);
     }
 }

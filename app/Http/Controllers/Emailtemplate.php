@@ -294,4 +294,6 @@ class Emailtemplate extends Controller
 
     }
 
+
+
 }

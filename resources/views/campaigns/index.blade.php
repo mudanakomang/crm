@@ -11,7 +11,7 @@
                         <h4 class="modal-title" id="myModalLabel">{{ $item->name }}</h4>
                     </div>
                     <div class="modal-body">
-                        {!!  $item->template[0]->content !!}
+                        {!!   $item->template[0]->content !!}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -46,7 +46,7 @@
             <div class="container-fluid">
                 <div class="row clearfix">
                     <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                        <div class="x_panel tile " style="height: 420px">
+                        <div class="x_panel tile ">
                             <div class="x_title">
                                 <h2>Campaign Management</h2>
                                 <ul class="nav navbar-right panel_toolbox">
@@ -140,5 +140,6 @@
            });
 
         });
+        $('.dataTable').dataTable();
     </script>
 @endsection
