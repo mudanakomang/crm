@@ -15,6 +15,7 @@
             <li><a><i class="fa fa-envelope"></i> Email Marketing <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
                         <li><a href="{{url('campaign') }}">Campaign Management</a></li>
+                        <li><a href="{{url('segments') }}">Segment Management</a></li>
                         <li><a href="{{url('email/config/poststay')}}">Post-Stay Configuration</a></li>
                         <li><a href="{{url('email/config/birthday')}}">Birthday Configuration</a></li>
                         <li><a href="{{url('email/config/confirm')}}">Check in Confirmation</a></li>

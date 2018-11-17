@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+    Contact Details | {{ config('app.name') }}
+@endsection
 @section('content')
     <div class="right_col" role="main">
         <section class="content">
@@ -7,9 +10,9 @@
                     <div class="x_panel tile " >
                         <div class="panel-heading ">
 
-                            <h2> {{ $data->fname.' '.$data->lname }}   </h2>
-                            @if(!empty($data->country->country))
-                            <img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($data->country->iso2)}}" alt="{{$data->country->country}}" />
+                            <h2> {{ $data[0]->fname.' '.$data[0]->lname }}   </h2>
+                            @if(!empty($data[0]->country->country))
+                            <img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($data[0]->country->iso2)}}" alt="{{$data[0]->country->country}}" />
                                 @endif
 
                         </div>
@@ -19,15 +22,15 @@
                                 <div class="col-lg-3 col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                     <span class="count_top"><i class="fa fa-user"></i>  STAYS/NIGHTS </span>
                                     <div class="count green">
-                                        @if(empty($data->transaction) )
+                                        @if(empty($data[0]->transaction) )
                                             0
                                         @else
-                                            {{ count($data->transaction) }} /
-                                            @if(!$data->transaction->isEmpty())
+                                            {{ count($data[0]->transaction) }} /
+                                            @if(!$data[0]->transaction->isEmpty())
 
                                                 @php
                                                     $sum=0;
-                                                    foreach($data->transaction as $night){
+                                                    foreach($data[0]->transaction as $night){
                                                     $total= \Carbon\Carbon::parse($night->checkout)->diffInDays(\Carbon\Carbon::parse($night->checkin));
                                                     $sum+=$total;
                                                     }
@@ -44,10 +47,10 @@
                                 <div class="col-lg-3 col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                     <span class="count_top"><i class="fa fa-money"></i> TOTAL SPENDING</span>
                                     <div class="count blue">
-                                        @if(!$data->transaction->isEmpty())
+                                        @if(!$data[0]->transaction->isEmpty())
                                             @php
                                                 $sum=0;
-                                                foreach($data->transaction as $spending){
+                                                foreach($data[0]->transaction as $spending){
                                                     $total=$spending->revenue;
                                                     $sum+=$total;
                                                 }
@@ -61,15 +64,15 @@
                                 <div class="col-lg-3 col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                     <span class="count_top"><i class="fa fa-percent"></i> AVG SPENT / STAY</span>
                                     <div class="count blue">
-                                        @if(!$data->transaction->isEmpty())
+                                        @if(!$data[0]->transaction->isEmpty())
                                             @php
                                                 $sum=0;
-                                                    foreach($data->transaction as $spending){
+                                                    foreach($data[0]->transaction as $spending){
                                                         $total=$spending->revenue;
                                                         $sum+=$total;
                                                     }
                                             @endphp
-                                            {{"Rp " . number_format($sum/count($data->transaction),0,',','.') }}
+                                            {{"Rp " . number_format($sum/count($data[0]->transaction),0,',','.') }}
                                         @else
                                            Rp. 0
                                         @endif
@@ -77,8 +80,8 @@
                                 </div>
                                 <div class="col-lg-3 col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                     <span class="count_top"><i class="fa fa-calendar"></i>
-                                        @if(!$data->birthday==NULL)
-                                            BIRTHDAY  {{ \Carbon\Carbon::parse($data->birthday)->format('d M') }}
+                                        @if(!$data[0]->birthday==NULL)
+                                            BIRTHDAY  {{ \Carbon\Carbon::parse($data[0]->birthday)->format('d M') }}
                                         @else
                                             BIRTHDAY
                                         @endif
@@ -86,9 +89,9 @@
                                     <div class="count blue">
                                        <h4>@php
                                             $datenow=\Carbon\Carbon::now('Asia/Makassar')->day;
-                                            $datebday=\Carbon\Carbon::parse($data->birthday)->day;
+                                            $datebday=\Carbon\Carbon::parse($data[0]->birthday)->day;
                                              $monthnow=\Carbon\Carbon::now('Asia/Makassar')->month;
-                                              $monthbday=\Carbon\Carbon::parse($data->birthday)->month;
+                                              $monthbday=\Carbon\Carbon::parse($data[0]->birthday)->month;
                                            $bday=\Carbon\Carbon::create(\Carbon\Carbon::now()->year,$monthbday,$datebday);
                                            $now=\Carbon\Carbon::create(\Carbon\Carbon::now()->year,$monthnow,$datenow);
 
@@ -102,7 +105,7 @@
                                             $next=\Carbon\Carbon::create($y,$monthbday,$datebday);
                                             $day=$next->diffInDays(\Carbon\Carbon::now('Asia/Makassar'));
                                               echo 'Birthday in '. $day .' day/s';
-                                        } elseif($data->birthday==NULL){
+                                        } elseif($data[0]->birthday==NULL){
                                             echo '';
                                         } else{
                                             echo 'Today';
@@ -159,20 +162,20 @@
                                                                         <div class="card">
                                                                             <div class="x_content">
                                                                                 @if(!empty($action))
-                                                                                    {{ Form::model($data,['route'=>['contacts.store'],'class'=>'form-horizontal','id'=>'contactForm1']) }}
+                                                                                    {{ Form::model($data[0],['route'=>['contacts.store'],'class'=>'form-horizontal','id'=>'contactForm1']) }}
                                                                                 @else
-                                                                                    {{ Form::model($data,['route'=>['contacts.update','id'=>$data->contactid],'class'=>'form-horizontal','id'=>'contactForm1']) }}
+                                                                                    {{ Form::model($data[0],['route'=>['contacts.update','id'=>$data[0]->contactid],'class'=>'form-horizontal','id'=>'contactForm1']) }}
 
                                                                                 @endif
-                                                                                {{ Form::hidden('company_name',$data->companyname->isEmpty() ? NULL: $data->companyname[0]->pivot->value) }}
-                                                                                {{ Form::hidden('company_address',$data->companyaddress->isEmpty() ? NULL :$data->companyaddress[0]->pivot->value) }}
-                                                                                {{ Form::hidden('company_phone',$data->companyphone->isEmpty() ? NULL : $data->companyphone[0]->pivot->value )}}
-                                                                                {{ Form::hidden('company_email',$data->companyemail->isEmpty() ? NULL:$data->companyemail[0]->pivot->value) }}
-                                                                                {{ Form::hidden('company_status',$data->companystatus->isEmpty() ? NULL : $data->companystatus[0]->pivot->value) }}
-                                                                                {{ Form::hidden('company_type',$data->companytype->isEmpty() ? NULL :$data->companytype[0]->pivot->value) }}
-                                                                                {{ Form::hidden('company_area',$data->companyarea->isEmpty() ? NULL:$data->companyarea[0]->pivot->value) }}
-                                                                                {{ Form::hidden('company_nationality',$data->companynationality->isEmpty() ? NULL : $data->companynationality[0]->pivot->value) }}
-                                                                                {{ Form::hidden('company_fax',$data->companyfax->isEmpty() ? NULL : $data->companyfax[0]->pivot->value) }}
+                                                                                {{ Form::hidden('company_name',$data[0]->companyname->isEmpty() ? NULL: $data[0]->companyname[0]->pivot->value) }}
+                                                                                {{ Form::hidden('company_address',$data[0]->companyaddress->isEmpty() ? NULL :$data[0]->companyaddress[0]->pivot->value) }}
+                                                                                {{ Form::hidden('company_phone',$data[0]->companyphone->isEmpty() ? NULL : $data[0]->companyphone[0]->pivot->value )}}
+                                                                                {{ Form::hidden('company_email',$data[0]->companyemail->isEmpty() ? NULL:$data[0]->companyemail[0]->pivot->value) }}
+                                                                                {{ Form::hidden('company_status',$data[0]->companystatus->isEmpty() ? NULL : $data[0]->companystatus[0]->pivot->value) }}
+                                                                                {{ Form::hidden('company_type',$data[0]->companytype->isEmpty() ? NULL :$data[0]->companytype[0]->pivot->value) }}
+                                                                                {{ Form::hidden('company_area',$data[0]->companyarea->isEmpty() ? NULL:$data[0]->companyarea[0]->pivot->value) }}
+                                                                                {{ Form::hidden('company_nationality',$data[0]->companynationality->isEmpty() ? NULL : $data[0]->companynationality[0]->pivot->value) }}
+                                                                                {{ Form::hidden('company_fax',$data[0]->companyfax->isEmpty() ? NULL : $data[0]->companyfax[0]->pivot->value) }}
 
 
 
@@ -183,7 +186,7 @@
                                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
-                                                                                                {{ Form::text('fname',$data->fname,['class'=>'form-control','required']) }}
+                                                                                                {{ Form::text('fname',$data[0]->fname,['class'=>'form-control','required']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -193,7 +196,7 @@
                                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
-                                                                                                {{ Form::text('lname',$data->lname=='' ? '':$data->lname,['class'=>'form-control']) }}
+                                                                                                {{ Form::text('lname',$data[0]->lname=='' ? '':$data[0]->lname,['class'=>'form-control']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -203,7 +206,7 @@
                                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
-                                                                                                {{ Form::select('salutation',[''=>'Select Salutation','Mr'=>'Mr','Mrs'=>'Mrs','Miss'=>'Miss'],$data->salutation,['class'=>'form-control selectpicker','required']) }}
+                                                                                                {{ Form::select('salutation',[''=>'Select Salutation','Mr'=>'Mr','Mrs'=>'Mrs','Miss'=>'Miss'],$data[0]->salutation,['class'=>'form-control selectpicker','required']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -214,7 +217,7 @@
                                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
-                                                                                                {{ Form::select('marital_status',[''=>'Select Marital Status','Divorced'=>'Divorced','Married'=>'Married','Single'=>'Single','Widowed'=>'Widowed'],$data->marital_status,['class'=>'form-control selectpicker']) }}
+                                                                                                {{ Form::select('marital_status',[''=>'Select Marital Status','Divorced'=>'Divorced','Married'=>'Married','Single'=>'Single','Widowed'=>'Widowed'],$data[0]->marital_status,['class'=>'form-control selectpicker']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -224,7 +227,7 @@
                                                                                     <div class="col-lg-4  col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
-                                                                                                {{ Form::select('gender',[''=>'Select Gender','Male'=>'Male','Female'=>'Female'],$data->gender,['class'=>'form-control selectpicker','required']) }}
+                                                                                                {{ Form::select('gender',[''=>'Select Gender','Male'=>'Male','Female'=>'Female'],$data[0]->gender,['class'=>'form-control selectpicker','required']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -234,7 +237,7 @@
                                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
-                                                                                                {{ Form::text('birthday',$data->birthday==NULL ? '': \Carbon\Carbon::parse($data->birthday)->format('d M Y'),['class'=>'datepicker form-control','required']) }}
+                                                                                                {{ Form::text('birthday',$data[0]->birthday==NULL ? '': \Carbon\Carbon::parse($data[0]->birthday)->format('d M Y'),['class'=>'datepicker form-control','required']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -244,7 +247,7 @@
                                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
-                                                                                                {{ Form::text('address1',$data->address1->isEmpty() ? '': $data->address1[0]->pivot->value,['class'=>'form-control']) }}
+                                                                                                {{ Form::text('address1',$data[0]->address1->isEmpty() ? '': $data[0]->address1[0]->pivot->value,['class'=>'form-control']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -254,7 +257,7 @@
                                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
-                                                                                                {{ Form::text('address2',$data->address2->isEmpty() ? '': $data->address2[0]->pivot->value,['class'=>'form-control']) }}
+                                                                                                {{ Form::text('address2',$data[0]->address2->isEmpty() ? '': $data[0]->address2[0]->pivot->value,['class'=>'form-control']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -266,7 +269,7 @@
                                                                                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                     <div class="form-group">
                                                                                         <div class="form-line">
-                                                                                            {{ Form::select('country_id',[''=>'Select Nationality']+\App\Country::pluck('country','id')->all(),$data->country==NULL ? '' : $data->country->id,['class'=>'form-control selectpicker', 'data-live-search'=>'true','required']) }}
+                                                                                            {{ Form::select('country_id',[''=>'Select Nationality']+\App\Country::pluck('country','id')->all(),$data[0]->country==NULL ? '' : $data[0]->country->id,['class'=>'form-control selectpicker', 'data-live-search'=>'true','required']) }}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -276,7 +279,7 @@
                                                                                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                     <div class="form-group">
                                                                                         <div class="form-line">
-                                                                                            {{ Form::email('email',$data->email,['class'=>'form-control','required']) }}
+                                                                                            {{ Form::email('email',$data[0]->email,['class'=>'form-control','required']) }}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -286,7 +289,7 @@
                                                                                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                     <div class="form-group">
                                                                                         <div class="form-line">
-                                                                                            {{ Form::text('mobile',$data->mobile->isEmpty() ? '': $data->mobile[0]->pivot->value,['class'=>'form-control','number=number','minlength=6','maxlength=15']) }}
+                                                                                            {{ Form::text('mobile',$data[0]->mobile->isEmpty() ? '': $data[0]->mobile[0]->pivot->value,['class'=>'form-control','number=number','minlength=6','maxlength=15']) }}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -296,7 +299,7 @@
                                                                                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                     <div class="form-group">
                                                                                         <div class="form-line">
-                                                                                            {{ Form::text('idnumber',$data->idnumber=='' ? '': $data->idnumber,['class'=>'form-control']) }}
+                                                                                            {{ Form::text('idnumber',$data[0]->idnumber=='' ? '': $data[0]->idnumber,['class'=>'form-control']) }}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -337,8 +340,8 @@
                                                                     </thead>
 
                                                                     <tbody>
-                                                                    @foreach($data->transaction as $trx)
-                                                                        @if($trx->status != 'C')
+                                                                    @foreach($data[0]->transaction as $trx)
+
                                                                             <tr class="align-center">
                                                                                 <td>{{$trx->resv_id}}</td>
                                                                                 <td>{{\Carbon\Carbon::parse($trx->checkin)->format('d M Y')}}</td>
@@ -363,7 +366,7 @@
                                                                                     {{--<a href="{{ url('contacts/stay/edit').'/'.$trx->id }}" title="Edit Stay"> <i class="fa fa-edit"></i></a>--}}
                                                                                 {{--</td>--}}
                                                                             </tr>
-                                                                        @endif
+
                                                                     @endforeach
 
                                                                     </tbody>
@@ -382,7 +385,7 @@
                                                                       </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                    @foreach($data->campaign as $key=>$campaign)
+                                                                    @foreach($data[0]->campaign as $key=>$campaign)
                                                                         <tr align="center">
                                                                             <td>{{ $key+1 }}</td>
                                                                             <td>{{ $campaign->name }}</td>
@@ -416,21 +419,21 @@
                                                             <div class="card">
                                                                 <div class="body">
                                                                     @if(!empty($action))
-                                                                        {{ Form::model($data,['route'=>['contacts.store'],'class'=>'form-horizontal','id'=>'contactForm2']) }}
+                                                                        {{ Form::model($data[0],['route'=>['contacts.store'],'class'=>'form-horizontal','id'=>'contactForm2']) }}
                                                                     @else
-                                                                        {{ Form::model($data,['route'=>['contacts.update','id'=>$data->contactid],'class'=>'form-horizontal','id'=>'contactForm2']) }}
+                                                                        {{ Form::model($data[0],['route'=>['contacts.update','id'=>$data[0]->contactid],'class'=>'form-horizontal','id'=>'contactForm2']) }}
                                                                     @endif
 
-                                                                    {{ Form::hidden('fname',$data->fname )}}
-                                                                    {{ Form::hidden('lname',$data->lname )}}
-                                                                    {{ Form::hidden('email',$data->email )}}
-                                                                    {{ Form::hidden('salutation',$data->salutation )}}
-                                                                    {{ Form::hidden('salutation',$data->salutation )}}
-                                                                    {{ Form::hidden('gender',$data->gender )}}
-                                                                    {{ Form::hidden('birthday',$data->birthday )}}
-                                                                    {{ Form::hidden('country_id',$data->country==null ? '':$data->country->id )}}
-                                                                    {{ Form::hidden('address1',$data->address1->isEmpty() ? '' :$data->address1[0]->pivot->value) }}
-                                                                    {{ Form::hidden('address2',$data->address2->isEmpty() ? '' :$data->address2[0]->pivot->value) }}
+                                                                    {{ Form::hidden('fname',$data[0]->fname )}}
+                                                                    {{ Form::hidden('lname',$data[0]->lname )}}
+                                                                    {{ Form::hidden('email',$data[0]->email )}}
+                                                                    {{ Form::hidden('salutation',$data[0]->salutation )}}
+                                                                    {{ Form::hidden('salutation',$data[0]->salutation )}}
+                                                                    {{ Form::hidden('gender',$data[0]->gender )}}
+                                                                    {{ Form::hidden('birthday',$data[0]->birthday )}}
+                                                                    {{ Form::hidden('country_id',$data[0]->country==null ? '':$data[0]->country->id )}}
+                                                                    {{ Form::hidden('address1',$data[0]->address1->isEmpty() ? '' :$data[0]->address1[0]->pivot->value) }}
+                                                                    {{ Form::hidden('address2',$data[0]->address2->isEmpty() ? '' :$data[0]->address2[0]->pivot->value) }}
 
                                                                     <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
                                                                         {{ Form::label('company_name','Name') }}
@@ -438,7 +441,7 @@
                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                         <div class="form-group">
                                                                             <div class="form-line">
-                                                                                {{ Form::text('company_name',$data->companyname->isEmpty() ? '': $data->companyname[0]->pivot->value,['class'=>'form-control', 'data-live-search'=>'true']) }}
+                                                                                {{ Form::text('company_name',$data[0]->companyname->isEmpty() ? '': $data[0]->companyname[0]->pivot->value,['class'=>'form-control', 'data-live-search'=>'true']) }}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -448,7 +451,7 @@
                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                         <div class="form-group">
                                                                             <div class="form-line">
-                                                                                {{ Form::text('company_address',$data->companyaddress->isEmpty() ? '':$data->companyaddress[0]->pivot->value,['class'=>'form-control']) }}
+                                                                                {{ Form::text('company_address',$data[0]->companyaddress->isEmpty() ? '':$data[0]->companyaddress[0]->pivot->value,['class'=>'form-control']) }}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -459,7 +462,7 @@
                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                         <div class="form-group">
                                                                             <div class="form-line">
-                                                                                {{ Form::text('company_phone',$data->companyphone->isEmpty() ? '': $data->companyphone[0]->pivot->value,['class'=>'form-control','number=number','minlength=6','maxlength=15']) }}
+                                                                                {{ Form::text('company_phone',$data[0]->companyphone->isEmpty() ? '': $data[0]->companyphone[0]->pivot->value,['class'=>'form-control','number=number','minlength=6','maxlength=15']) }}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -469,7 +472,7 @@
                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                         <div class="form-group">
                                                                             <div class="form-line">
-                                                                                {{ Form::text('company_fax',$data->companyfax->isEmpty() ? '': $data->companyfax[0]->pivot->value,['class'=>'form-control','number=number','minlength=6','maxlength=15']) }}
+                                                                                {{ Form::text('company_fax',$data[0]->companyfax->isEmpty() ? '': $data[0]->companyfax[0]->pivot->value,['class'=>'form-control','number=number','minlength=6','maxlength=15']) }}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -479,7 +482,7 @@
                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                         <div class="form-group">
                                                                             <div class="form-line">
-                                                                                {{ Form::email('company_email',$data->companyemail->isEmpty()  ? '': $data->companyemail[0]->pivot->value,['class'=>'form-control']) }}
+                                                                                {{ Form::email('company_email',$data[0]->companyemail->isEmpty()  ? '': $data[0]->companyemail[0]->pivot->value,['class'=>'form-control']) }}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -489,7 +492,7 @@
                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                         <div class="form-group">
                                                                             <div class="form-line">
-                                                                                {{ Form::select('company_type',[''=>'Select Type','Compliment'=>'Compliment','Corporate'=>'Corporate','Direct'=>'Direct','Goverment'=>'Goverment','Group'=>'Group','OTA'=>'OTA','Timeshare'=>'Timeshare', 'Travel Agent'=>'Travel Agent','Whosaler'=>'Wholesaler'],$data->companytype->isEmpty() ? '' : $data->companytype[0]->pivot->value,['class'=>'form-control selectpicker']) }}
+                                                                                {{ Form::select('company_type',[''=>'Select Type','Compliment'=>'Compliment','Corporate'=>'Corporate','Direct'=>'Direct','Goverment'=>'Goverment','Group'=>'Group','OTA'=>'OTA','Timeshare'=>'Timeshare', 'Travel Agent'=>'Travel Agent','Whosaler'=>'Wholesaler'],$data[0]->companytype->isEmpty() ? '' : $data[0]->companytype[0]->pivot->value,['class'=>'form-control selectpicker']) }}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -499,7 +502,7 @@
                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                         <div class="form-group">
                                                                             <div class="form-line">
-                                                                                {{ Form::text('company_area',$data->companyarea->isEmpty() ? '': $data->companyarea[0]->pivot->value,['class'=>'form-control']) }}
+                                                                                {{ Form::text('company_area',$data[0]->companyarea->isEmpty() ? '': $data[0]->companyarea[0]->pivot->value,['class'=>'form-control']) }}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -509,7 +512,7 @@
                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                         <div class="form-group">
                                                                             <div class="form-line">
-                                                                                {{ Form::select('company_nationality',[''=>'Select Nationality']+\App\Country::pluck('country','id')->all(),$data->companynationality->isEmpty() ? '' : $data->companynationality[0]->pivot->value,['class'=>'form-control', 'data-live-search'=>'true']) }}
+                                                                                {{ Form::select('company_nationality',[''=>'Select Nationality']+\App\Country::pluck('country','id')->all(),$data[0]->companynationality->isEmpty() ? '' : $data[0]->companynationality[0]->pivot->value,['class'=>'form-control', 'data-live-search'=>'true']) }}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -520,7 +523,7 @@
                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                         <div class="form-group">
                                                                             <div class="form-line">
-                                                                                {{ Form::select('company_status',[''=>'Select Status','Prospect'=>'Prospect','Active'=>'Active','In Active'=>'In Active'],$data->companystatus->isEmpty() ? '' : $data->companystatus[0]->pivot->value,['class'=>'form-control selectpicker']) }}
+                                                                                {{ Form::select('company_status',[''=>'Select Status','Prospect'=>'Prospect','Active'=>'Active','In Active'=>'In Active'],$data[0]->companystatus->isEmpty() ? '' : $data[0]->companystatus[0]->pivot->value,['class'=>'form-control selectpicker']) }}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -552,6 +555,7 @@
         if (window.location.pathname=='/contacts/add'){
             $('#updateContact2').attr('disabled','disabled');
         }
+        $('.dataTable').dataTable()
     </script>
     <script>
        $('#contactForm1').validate();

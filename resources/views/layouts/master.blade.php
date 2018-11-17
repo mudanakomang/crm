@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" href="images/favicon.ico" type="image/ico" />
 
-    <title>CRM RCO Demo | </title>
+    <title>@yield('title')</title>
 
     <!-- Bootstrap -->
     <link href="{{ asset('vendors/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -36,7 +36,6 @@
     <link href="{{ asset('vendors/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet">
     <link href="{{ asset('vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendors/morris/morris.css') }}" rel="stylesheet">
-
     <!-- Custom Theme Style -->
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
     <link href="{{ asset('flags/flags.css') }}" rel="stylesheet">
@@ -56,10 +55,10 @@
             <!-- menu profile quick info -->
             <div class="profile clearfix">
               <div class="profile_pic">
-                <img src="" alt="..." class="img-circle profile_img">
+
               </div>
               <div class="profile_info">
-                <span>Welcome,</span>
+
                 <h2></h2>
               </div>
             </div>
@@ -166,14 +165,16 @@
     <script src="{{ asset('vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js')}}"></script>
     <script src="{{ asset('vendors/datatables.net-scroller/js/dataTables.scroller.min.js')}}"></script>
     <script src="{{ asset('js/require.js') }}"></script>
+    <script src="{{ asset('js/jquery.maskMoney.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.blockUI.js') }}"></script>
     <script src="{{ asset('vendors/switchery/dist/switchery.min.js')}}"></script>
+    <script src="{{ asset('vendors/iCheck/icheck.min.js')}}"></script>
     <script src="{{ asset('plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 
     <!-- Custom Theme Scripts -->
     <script src="{{ asset('build/js/custom.js') }}"></script>
 
-
-	@yield('script')
+    @yield('script')
   </body>
 </html>

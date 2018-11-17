@@ -23,7 +23,7 @@
     <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <div class="form-line">
-                {{ Form::select('type',[''=>'Select Type','Poststay'=>'Poststay','Birthday'=>'Birthday','Checkin Reminder'=>'Checkin Reminder','Promo'=>'Promotion','Special Eevent'=>'Special Event'],$template->type,['class'=>'form-control selectpicker','required']) }}
+                {{ Form::select('type',[''=>'Select Type','Poststay'=>'Poststay','Birthday'=>'Birthday','Checkin Reminder'=>'Checkin Reminder','Promo'=>'Promotion','Special Eevent'=>'Special Event','Miss You'=>'Miss You'],$template->type,['class'=>'form-control selectpicker','required']) }}
             </div>
         </div>
     </div>

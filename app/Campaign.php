@@ -16,4 +16,10 @@ class Campaign extends Model
     public function schedule(){
         return $this->hasOne('\App\Schedule');
     }
+    public function segment(){
+        return $this->belongsTo('\App\Segment');
+    }
+    public  function emailresponse(){
+        return $this->hasMany('\App\EmailResponse');
+    }
 }

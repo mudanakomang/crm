@@ -20,6 +20,49 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="modal fade" id="cloneTemplate{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="cloneTemplateLable" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="cloneTemplateLable{{ $item->id }}">Clone Template</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="templateClone{{ $item->id }}" >
+                                    <div class="col-lg-3 col-md-3 col-sm-8 col-xs-8 form-control-label">
+                                        {{ Form::label('tname','New Template Name') }}
+                                    </div>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                {{ Form::text('tname',null,['class'=>'form-control','id'=>'tname','data-live-search'=>'true','required','placeholder'=>'New Template Name']) }}
+                                            </div>
+                                            <span class="text-danger">
+                                            <strong id="tname-error">
+                                            </strong>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="template_id" id="template_id{{$item->id}}" value="{{$item->id}}">
+                                    <div class="col-lg-3 col-md-3 col-sm-8 col-xs-8 form-control-label">
+                                        {{ Form::label('','Preview:') }}
+                                    </div>
+                                    {!! $item->content !!}
+                                    <div class="previewtemplate">
+
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                                <a href="#" id="{{ $item->id }}" class="btn btn-sm btn-success" onclick="return submitClone(this.id)">Save</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             @endforeach
             <div class="container-fluid">
                 <div class="row clearfix">
@@ -65,7 +108,8 @@
                                                         } else {
                                                         swal('Cancelled', 'Delete Template Cancelled','error');
                                                         }
-                                                        });"><i class="fa fa-2x fa-trash"></i> </a> | <a href="{{ url('email/'.$tem->id.'/edit') }}" title="Edit"><i class="fa fa-2x fa-edit"></i> </a> | <a href="#myModal{{$tem->id}}" data-toggle="modal" data-target="#myModal{{$tem->id}}"><i class="fa fa-2x fa-eye"></i> </a>
+                                                        });"><i class="fa  fa-trash" style="font-size: 1.5em"></i> </a> <a href="{{ url('email/'.$tem->id.'/edit') }}" title="Edit"><i class="fa  fa-edit" style="font-size: 1.5em"></i> </a>  <a href="#myModal{{$tem->id}}" data-toggle="modal" data-target="#myModal{{$tem->id}}"><i class="fa  fa-eye" style="font-size: 1.5em"></i> </a>
+                                                         <a href="#cloneTemplate{{$tem->id}}" data-toggle="modal" data-target="#cloneTemplate{{$tem->id}}" id="copyTempalte" title="Copy Template" ><i class="fa fa-copy" style="font-size: 1.5em"></i> </a>
 
                                             </td>
                                         </tr>
@@ -81,3 +125,36 @@
     </div>
 
 @endsection
+@section('script')
+    <script>
+        function submitClone(id) {
+
+            var form=$('#templateClone'+id)
+            var name=form.find('#tname');
+            $.ajax({
+                url:'saveclone',
+                type:'post',
+                data:{
+                    tid:id,
+                    name:name.val(),
+                    _token:'{{ csrf_token() }}'
+                },success:function (data) {
+                    if(data==='success'){
+                        swal({
+                            title: "Sucess",
+                            text: "Template Cloned",
+                            type: "success",
+                        },function() {
+                            window.location.reload();
+                        });
+                    }else {
+                        if(data.errors.name){
+                            swal('', data.errors.name[0], 'warning')
+                        }
+                    }
+                }
+            })
+        }
+        $('.dataTable').dataTable();
+    </script>
+    @endsection

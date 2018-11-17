@@ -41,6 +41,12 @@ class ContactController extends Controller
         return view('contacts.list',['data'=>$tr]);
 
     }
+    public function source($type){
+        $contacts=Contact::whereHas('profilesfolio',function ($q) use ($type){
+            return $q->where('source','=',$type);
+        })->get();
+        return view('contacts.list',['data'=>$contacts]);
+    }
     public function reviews(){
         $ta=json_decode(file_get_contents('tripadvisor.json'));
         $ta_reviews=collect($ta->reviews);
@@ -70,12 +76,12 @@ class ContactController extends Controller
         $contact=Contact::whereRaw('DATE_FORMAT(birthday,"%m-%d") >= ?',[\Carbon\Carbon::now()->format('m-d')])
             ->whereRaw('DATE_FORMAT(birthday,"%m-%d") <= ?',[\Carbon\Carbon::now()->addDays(7)->format('m-d')])
             ->orderBy(DB::raw('ABS( DATEDIFF( birthday, NOW() ) )'),'asc')->limit(10)->get();
-        $contacts=DB::select(DB::raw('select country as label, count(*) as value from contacts left join countries on contacts.country_id=countries.iso2   group by label order by value asc'));
+        $contacts=DB::select(DB::raw('select country as label, count(*) as value from contacts left join countries on contacts.country_id=countries.iso2 left join contact_transaction on contact_transaction.contact_id=contacts.contactid left join transactions on transactions.id=contact_transaction.transaction_id where transactions.checkin between DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\')  group by label order by value asc'));
         $country=json_encode($contacts);
         foreach ($contacts as $value){
             $total=$total+$value->value;
         }
-        $added=DB::select(DB::raw('select DATE_FORMAT(created_at,\'%Y %M\') as created,count(*) as count from contacts group by created order by created_at asc'));
+        $added=DB::select(DB::raw('select DATE_FORMAT(created_at,\'%Y %M\') as created,count(*) as count from contacts where created_at between DATE_SUB(now(),INTERVAL 90 day) and now() group by created order by created desc'));
         $data=[];
         foreach ($added as $item) {
             $tmp=['x'=>$item->created,'y'=>$item->count];
@@ -101,21 +107,26 @@ class ContactController extends Controller
         }
         $datastatus=json_encode($datastatus);
        // $spending=Transaction::orderBy('revenue','desc')->take(10)->get();
-        $date=\Carbon\Carbon::now();
-        $first=$date->firstOfQuarter()->format('Y-m-d');
-        $last=$date->lastOfQuarter()->format('Y-m-d');
-        $spending=DB::select(DB::raw('select fname,lname,revenue from transactions a left join contact_transaction b on b.transaction_id=a.id left join contacts c on b.contact_id=c.contactid where contact_id is not NULL and a.checkout BETWEEN \''.$first.'\' and \''.$last.'\' order by revenue desc limit 10'));
+        $spending=DB::select(DB::raw('select fname,lname,revenue from transactions a left join contact_transaction b on b.transaction_id=a.id left join contacts c on b.contact_id=c.contactid where contact_id is not NULL and a.checkin BETWEEN  DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') order by revenue desc limit 10'));
         $dataspending=[];
       foreach ($spending as $sp){
           $temspend=['x'=>$sp->fname.' '.$sp->lname,'y'=>$sp->revenue];
           array_push($dataspending,$temspend);
        }
        $dataspending=json_encode($dataspending);
+
+        $stays=DB::select(DB::raw('select contacts.contactid as ids,fname, lname,sum(c.revenue) as rev ,count(b.contact_id) as stays from contacts left join contact_transaction b on b.contact_id=contacts.contactid left join transactions c on c.id=contacts.contactid where contact_id is not NULL and c.checkin BETWEEN  DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') group by ids,c.revenue order by stays desc,rev desc limit 10'));
+        $datastays=[];
+        foreach ($stays as $stay){
+            $tempstay=['x'=>$stay->fname.' '.$stay->lname,'y'=>$stay->stays];
+            array_push($datastays,$tempstay);
+        }
+
         $datatrx=[];
         $date=\Carbon\Carbon::now();
         $first=$date->firstOfQuarter()->format('Y-m-d');
         $last=$date->lastOfQuarter()->format('Y-m-d');
-        $trx=DB::select(DB::raw('select fname,lname,datediff(checkout,checkin) as hari from transactions a left join contact_transaction b on b.transaction_id=a.id left join contacts c on c.contactid=b.contact_id where contact_id is not null and a.checkout BETWEEN \''.$first.'\' and \''.$last.'\' order by hari desc limit 10 '));
+        $trx=DB::select(DB::raw('select fname,lname,datediff(checkout,checkin) as hari ,sum(revenue) as rev from transactions a left join contact_transaction b on b.transaction_id=a.id left join contacts c on c.contactid=b.contact_id where contact_id is not null and a.checkin BETWEEN DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') group by fname order by hari desc, rev desc limit 10 '));
 
         foreach ($trx as $tr){
             $tmp=['x'=>$tr->fname .' '.$tr->lname,'y'=>$tr->hari ];
@@ -123,7 +134,9 @@ class ContactController extends Controller
         }
         $datatrx=json_encode($datatrx);
 
-        $contacts_age=DB::select(DB::raw('select  sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) <30,1,0)) as low, sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) >=30  and floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365)<=60,1,0)) as mid,sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) >=60,1,0)) as high from contacts'));
+
+
+        $contacts_age=DB::select(DB::raw('select  sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) <30,1,0)) as low, sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) >=30  and floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365)<=60,1,0)) as mid,sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) >=60,1,0)) as high from contacts where created_at BETWEEN DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\')'));
         $data_age=[];
         array_push($data_age,['label'=>'Under 30','value'=>$contacts_age[0]->low,'type'=>'low']);
         array_push($data_age,['label'=>'Between 30 and 60','value'=>$contacts_age[0]->mid,'type'=>'mid']);
@@ -131,7 +144,7 @@ class ContactController extends Controller
         $data_age=json_encode($data_age);
         $tages=$contacts_age[0]->low+$contacts_age[0]->mid+$contacts_age[0]->high;
 
-        $room_type=DB::select(DB::raw('select room_name as label, count(*)  as value from transactions,room_type where room_type is not null and room_type.room_code=transactions.room_type group by room_type'));
+        $room_type=DB::select(DB::raw('select room_name as label, count(*)  as value from transactions,room_type where room_type is not null and room_type.room_code=transactions.room_type and checkin between DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') group by room_type'));
         $data_room_type=[];
         $troom=0;
         foreach ($room_type as $item) {
@@ -144,8 +157,15 @@ class ContactController extends Controller
         $filebooking=file_get_contents('booking.json');
         $databooking=json_decode($filebooking,true);
         //dd($databooking["reviews"]["total"]);
-
-        return view('main.index',['data'=>$contact,'country'=>$country,'total'=>$total,'monthcount'=>$data,'countstatus'=>$datastatus,'spending'=>$dataspending,'longstay'=>$datatrx,'data_age'=>$data_age,'tages'=>$tages,'room_type'=>$data_room_type,'troom'=>$troom,'reviews'=>$reviews,'booking_com'=>$databooking]);
+        $bookingsource=[];
+        $booking=DB::select(DB::raw('select count(*) as count ,source from contacts left join contact_transaction on contact_transaction.contact_id=contacts.contactid LEFT JOIN transactions on contact_transaction.transaction_id=transactions.id LEFT JOIN profilesfolio on contactid=profileid  where contacts.created_at between DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') group by source order by count ASC'));
+        foreach ($booking as $b){
+            array_push($bookingsource,['label'=>$b->source,'value'=>$b->count]);
+        }
+        $datastays=json_encode($datastays);
+        $databookingsource=json_encode($bookingsource);
+        $tbookingsource=Contact::with('profilesfolio')->count();
+        return view('main.index',['data'=>$contact,'datastay'=>$datastays,'country'=>$country,'total'=>$total,'monthcount'=>$data,'countstatus'=>$datastatus,'spending'=>$dataspending,'longstay'=>$datatrx,'data_age'=>$data_age,'tages'=>$tages,'room_type'=>$data_room_type,'troom'=>$troom,'reviews'=>$reviews,'booking_com'=>$databooking,'databookingsource'=>$databookingsource,'tbookingsource'=>$tbookingsource]);
     }
     /**
      * Show the form for creating a new resource.
@@ -235,9 +255,19 @@ class ContactController extends Controller
         //
 
     $contacts=\App\Contact::where('contactid','=',$id)->first();
-	$foliostatus=DB::table('profilesfolio')->where('profileid','=',$contacts->contactid)->first()->foliostatus;
+//    $contacts=\App\Contact::with(['transaction'=>function($q){
+//        return $q->orderBy('checkin','asc');
+//    }])->where('contactid','=',$id)->first();
+//    $contacts=\App\Contact::where('contactid','=',$id)->with(['transaction'=>function($q){
+//        return $q->orderBy('created_at','desc');
+//    }])->get();
+   $contacts=Contact::where('contactid','=',$id)->with(['transaction'=>function($q){
+       $q->orderBy('created_at','desc');
+   }])->get();
+  // dd($contacts);
+	//$foliostatus=DB::table('profilesfolio')->where('profileid','=',$contacts->contactid)->first()->foliostatus;
 	//dd($contacts->transaction);
-	return view('contacts.detail',['data'=>$contacts,'foliostatus'=>$foliostatus]);
+	return view('contacts.detail',['data'=>$contacts]);
     }
 
     /**
@@ -515,7 +545,7 @@ class ContactController extends Controller
         return view('contacts.import',['create'=>$created,'update'=>$update,'created_data'=>$created_data,'updated_data'=>$updated_data]);
     }
     public function country($c){
-        $cid=Country::where('country','=',$c)->value('iso3');
+        $cid=Country::where('country','=',$c)->value('iso2');
         setlocale(LC_MONETARY,"id_ID");
         $b=[];
         $a=[];
@@ -566,9 +596,6 @@ class ContactController extends Controller
             case "Inhouse":
                 $status = 'I';
                 break;
-            case "Checked Out":
-                $status = 'O';
-                break;
             case "Confirm":
                 $status = 'C';
                 break;
@@ -577,56 +604,22 @@ class ContactController extends Controller
         }
 
 
+
         setlocale(LC_MONETARY, "id_ID");
-//        $b = [];
-//        $a = [];
-//        $c = [];
         if($status=='I') {
             $contacts = Contact::whereHas('transaction', function ($q) use ($status) {
-                return $q->where('status', '=', $status)->whereRaw('date_format(now(),\'%Y-%m-%d\') between checkin and checkout');
+                return $q->where('status', '=', $status);
             })->get();
         }
         elseif ($status=='C'){
             $contacts = Contact::whereHas('transaction', function ($q) use ($status) {
-                return $q->where('status', '=', $status)->whereRaw('date_format(now(),\'%Y-%m-%d\') < checkin ');
+                return $q->where('status', '=', $status)->whereRaw('date_format(now(),\'%Y-%m-%d\') < checkin')->groupBy('folio')->orderBy('checkin','desc');
             })->get();
         }
-
-//
-//            foreach ($contacts as $contact) {
-//
-//                    array_push($b, $contact);
-//                    foreach ($contact->transaction as $trx) {
-//
-//                            array_push($c, $trx);
-//
-//
-//                    }
-//
-//                    array_merge($b, $a);
-//                    array_merge($b, $c);
-//
-//            }
-
+        //dd($contacts);
             return view('contacts.list', ['data' => $contacts]);
         }
 
-
-
-      //  foreach ($contacts as $contact){
-        //    if(!empty($contact)) {
-          //      array_push($b, $contact);
-            //    foreach ($contact->transaction as $trx) {
-
-                  //  array_push($c, $trx);
-
-                //}
-              //  array_merge($b, $a);
-            //    array_merge($b, $c);
-          //  }
-        //}
-      //  return view('contacts.list',['data'=>$b]);
-    //}
     public function male(){
 
         setlocale(LC_MONETARY, "id_ID");
@@ -745,33 +738,7 @@ class ContactController extends Controller
     }
 
     public function filterPost(Request $request){
-//        $tr=Transaction::whereIn('status',$request->status)->get();
-//
-//        $contacts=Contact::with('transaction')->when($request->country_id !=null,function ($q) use ($request) {
-//            return $q->whereIn('country_id', $request->country_id);
-//        })->when($request->gender!=null,function($q) use ($request){
-//            $q->whereIn('status',$request->gender);
-//        })->get();
-////        })->when($request->name !=null,function ($q) use ($request){
-////            return $q->whereRaw('CONCAT(fname,lname) like \'%'.$request->name.'%\'');
-////        })->when($request->status !=null,function ($q) use ($request){
-////            $q->whereHas('transaction',function ($q) use ($request){
-////                $q->whereIn('status',$request->status);
-////            });
-////        })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
-////                return $q->whereHas('transaction',function ($q) use ($request){
-////                    return $q->whereBetween('revenue',[0,$request->spending_to]);
-////                });
-////        })->when($request->spending_from !=null and $request->spending_to ==null,function ($q) use ($request) {
-////            return $q->whereHas('transaction', function ($q) use ($request) {
-////                return $q->where('revenue', '>=', $request->spending_from);
-////            });
-////        })->when($request->spending_from !=null and $request->spending_to !=null,function ($q) use ($request) {
-////            return $q->whereHas('transaction', function ($q) use ($request) {
-////                return $q->whereBetween('revenue', [$request->spending_from, $request->spending_to]);
-////            });
-//        //}) ->get();
-        //dd($request->all());
+
         $contacts=Contact::with('transaction','profilesfolio')->when($request->country_id !=null,function ($q) use ($request){
             return $q->whereIn('country_id',$request->country_id);
         })->when($request->guest_status !=null,function ($q) use ($request){
@@ -780,15 +747,15 @@ class ContactController extends Controller
             })->orderBy('created_at','desc');
         })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[0,$request->spending_to]);
+                return $q->whereBetween('revenue',[0,str_replace('.','',$request->spending_to)]);
             });
         })->when($request->spending_from !=null and $request->spending_to ==null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->where('revenue','>=',$request->spending_from);
+                return $q->where('revenue','>=',str_replace('.','',$request->spending_from));
             });
         })->when($request->spending_from !=null and $request->spending_to !=null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[$request->spending_from,$request->spending_to]);
+                return $q->whereBetween('revenue',[str_replace('.','',$request->spending_from),str_replace('.','',$request->spending_to)]);
             });
         })->when($request->gender !=null,function ($q) use ($request) {
             return $q->whereIn('gender', $request->gender);
@@ -837,6 +804,7 @@ class ContactController extends Controller
             });
         })
             ->get();
+       // dd($contacts);
 
         return response($contacts,200);
     }

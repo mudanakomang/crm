@@ -20,7 +20,7 @@
                                 <div class="panel-heading" role="tab" id="headingOne_18">
                                     <h4 class="panel-title ">
                                         <a class="collapsed teal" role="button" data-toggle="collapse" data-parent="#accordion_18" href="#collapseOne_18" aria-expanded="true" aria-controls="collapseOne_18">
-                                            <i class="fa fa-user"></i> TRIPADVISOR.COM
+                                            <i class="fa fa-tripadvisor"></i> TRIPADVISOR.COM
                                         </a>
                                     </h4>
                                 </div>
@@ -80,7 +80,7 @@
                                                                 <div class="dashboard-widget-content">
 
                                                                     <ul  class="list-unstyled ">
-                                                                        @foreach($ta_reviews as $review)
+                                                                        @foreach(\App\Reviews::where('source','=','Tripadvisor')->orderBy('created_at','desc')->take(20)->get() as $review)
                                                                             <li >
                                                                                 <div class="block" style="border-bottom: 1px solid">
                                                                                     <a class="pull-left border-green profile_thumb">
@@ -88,19 +88,19 @@
                                                                                     </a>
                                                                                     <div class="media" style="padding: 10px">
                                                                                         <h4 class="title">
-                                                                                            <a href="{{ url($review->link) }}">{{ $review->quotes }}</a>
+                                                                                            <a href="{{ url($review->link_review) }}">{{ $review->title }}</a>
                                                                                         </h4>
-                                                                                        <div class="byline">{{ $review->member }}
+                                                                                        <div class="byline">{{ $review->author }}
                                                                                             <div class="star" style="color:#1ABB9C">
                                                                                                 @for($i=0;$i<5;$i++ )
-                                                                                                    @if($i<$review->rate/10)
+                                                                                                    @if($i<$review->rating/10)
                                                                                                         <span><i class="fa fa-star "></i> </span>
                                                                                                     @else
                                                                                                         <span><i class="fa fa-star-o"></i> </span>
                                                                                                     @endif
                                                                                                 @endfor
                                                                                             </div>
-                                                                                            <span> <small>{{ $review->reviewdate }}</small></span>
+                                                                                            <span> <small>{{ $review->date_posted }}</small></span>
                                                                                         </div>
                                                                                         <p class="excerpt">
                                                                                             {{ $review->review }}
@@ -109,6 +109,7 @@
                                                                                 </div>
                                                                             </li>
                                                                         @endforeach
+
                                                                     </ul>
                                                                 </div>
                                                             </div>
@@ -189,7 +190,7 @@
                                                                     <div class="dashboard-widget-content">
 
                                                                         <ul  class="list-unstyled ">
-                                                                            @foreach($booking_reviews  as $key=> $reviewlist)
+                                                                            @foreach(\App\Reviews::where('source','=','Booking')->orderBy('created_at','desc')->take(20)->get()  as $key=> $reviewlist)
 
                                                                                 <li >
                                                                                     <div class="block" style="border-bottom: 1px solid">
@@ -198,13 +199,13 @@
                                                                                         </div>
                                                                                         <div class="media" style="padding: 10px">
                                                                                             <h4 class="title">
-                                                                                                {{ $reviewlist["header"] }}
+                                                                                                {{ $reviewlist["title"] }}
                                                                                             </h4>
-                                                                                            <div class="byline">  {{ $reviewlist["name"] }}
+                                                                                            <div class="byline">  {{ $reviewlist["author"] }}
                                                                                                 <div class="star" style="color:#1ABB9C">
-                                                                                                    {{ $reviewlist["nationality"] }}
+                                                                                                    {{ $reviewlist["origin"] }}
                                                                                                 </div>
-                                                                                                <span> <small> {{ $reviewlist["date"] }}</small></span>
+                                                                                                <span> <small> {{ $reviewlist["review_date"] }}</small></span>
                                                                                             </div>
                                                                                             <span><i class="fa fa-minus-circle left" style="color:#cc0000"></i> </span>
                                                                                             <p class="excerpt " style="margin-left: 20px">
@@ -219,6 +220,7 @@
                                                                                 </li>
 
                                                                             @endforeach
+
                                                                         </ul>
                                                                     </div>
 
@@ -266,7 +268,8 @@
                                                                         <h4>Breakdown</h4>
 
                                                                         @foreach($hotels->breakdown as $bd)
-                                                                            <div class="widget_summary">                                                                            <div class="w_left w_25">
+                                                                            <div class="widget_summary">
+                                                                                <div class="w_left w_25">
                                                                                 <span>{{ $bd->score }}</span>
                                                                                 </div>
                                                                                     <div class="w_center w_55">
@@ -303,26 +306,26 @@
                                                                     <div class="dashboard-widget-content">
 
                                                                         <ul  class="list-unstyled ">
-                                                                            @foreach($hotelreview  as $key=> $reviewlist)
+                                                                            @foreach(\App\Reviews::where('source','=','Hotels')->orderBy('created_at','desc')->take(20)->get()  as $key=> $reviewlist)
 
                                                                                 <li >
                                                                                     <div class="block" style="border-bottom: 1px solid">
                                                                                         <div class="pull-left ">
-                                                                                            <h1><span class="badge badge-secondary">{{ $reviewlist->score }}</span></h1>
+                                                                                            <h1><span class="badge badge-secondary">{{ $reviewlist->rating }}</span></h1>
                                                                                         </div>
                                                                                         <div class="media" style="padding: 10px">
                                                                                             <h4 class="title">
-                                                                                                {{ $reviewlist->summary }}
+                                                                                                {{ $reviewlist->title }}
                                                                                             </h4>
-                                                                                            <div class="byline">  {{ $reviewlist->member }}
+                                                                                            <div class="byline">  {{ $reviewlist->author }}
                                                                                                 <div class="star" style="color:#1ABB9C">
-                                                                                                    {{ \App\Country::where('iso2','=',$reviewlist->nationality)->value('country') }}
+                                                                                                    {{ \App\Country::where('iso2','=',$reviewlist->origin)->value('country') }}
                                                                                                 </div>
-                                                                                                <span> <small> {{ $reviewlist->date }}</small></span>
+                                                                                                <span> <small> {{ $reviewlist->date_posted }}</small></span>
                                                                                             </div>
                                                                                             <span><i class="fa fa-comment-o left" style="color:#0b97c4"></i> </span>
                                                                                             <p class="excerpt " style="margin-left: 20px">
-                                                                                                {{ $reviewlist->content }}
+                                                                                                {{ $reviewlist->review }}
                                                                                             </p>
                                                                                             <span><i class="fa fa-comments left" style="color:#1ABB9C"></i> </span>
                                                                                             <p class="excerpt" style="margin-left: 20px">

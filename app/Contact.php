@@ -58,7 +58,7 @@ class Contact extends Model
         return $this->belongsTo('\App\Company','ccid','id');
     }
     public function transaction(){
-        return $this->belongsToMany('\App\Transaction','contact_transaction','contact_id','transaction_id','contactid','id');
+        return $this->belongsToMany('\App\Transaction','contact_transaction','contact_id','transaction_id','contactid','id')->orderBy('status','asc');
     }
     public function country(){
         return $this->belongsTo('\App\Country','country_id','iso2');

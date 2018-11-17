@@ -24,6 +24,10 @@ class Kernel extends ConsoleKernel
         //
         Commands\PostStayCommand::class,
         Commands\BirthDayCommand::class,
+        Commands\TripadvisorSync::class,
+        Commands\BookingSync::class,
+        Commands\HotelSync::class,
+        Commands\SyncEmailResponse::class,
     ];
 
     /**
@@ -42,9 +46,12 @@ class Kernel extends ConsoleKernel
 
       // })->daily();
 
-       $schedule->command('poststay')->dailyAt('11:59');
-       $schedule->command('birthdaymail')->dailyAt('11:59');
-       $schedule->command('campaign');
+//       $schedule->command('poststay')->dailyAt('11:59');
+//       $schedule->command('birthdaymail')->dailyAt('11:59');
+//       $schedule->command('campaign')->everyMinute();
+//       $schedule->command('missyou')->dailyAt('11:59');
+//       $schedule->command('tripadvisor');
+
 
 
     }

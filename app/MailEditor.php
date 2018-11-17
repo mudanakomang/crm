@@ -36,4 +36,7 @@ class MailEditor extends Model
     public function poststay(){
         return $this->belongsTo('\App\PostStay');
     }
+    public function miss(){
+        return $this->belongsTo('\App\MissYou');
+    }
 }

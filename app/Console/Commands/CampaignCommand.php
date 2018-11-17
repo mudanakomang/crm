@@ -45,11 +45,13 @@ class CampaignCommand extends Command
         $email= new EmailTemplateController();
         $campaigns=Campaign::where('status','=','Scheduled')->get();
 
-       // dd(count($campaigns));
+
 
        foreach ($campaigns as $campaign){
             $temp=$campaign->template;
+
             $schedule=$campaign->schedule->schedule;
+
           if (Carbon::now()->format('Y-m-d H:i')==Carbon::parse($schedule)->format('Y-m-d H:i')){
                foreach ($campaign->contact as $contact) {
                    if ($contact->pivot->status=='queue'){

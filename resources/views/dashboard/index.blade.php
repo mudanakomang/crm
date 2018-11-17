@@ -1,4 +1,6 @@
 @extends('layouts.master')
+@section('title')
+    @endsection
 @section('content')
     <div class="right_col" role="main">
         <!-- top tiles -->

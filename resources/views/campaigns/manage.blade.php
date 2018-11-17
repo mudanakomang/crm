@@ -41,6 +41,8 @@
     </script>
     <script>
         $(document).ready(function(){
+            $('#spending_from').maskMoney({thousands:'.', decimal:',', precision:0});
+            $('#spending_to').maskMoney({thousands:'.', decimal:',', precision:0});
            $('.selectsegment').hide();
            $('#campaignForm').parsley();
             $("#saveBtn").on('click', function(event) {
@@ -54,9 +56,6 @@
                 } else {
                     $('#campaignForm').submit();
                 }
-
-                // prevent default so the form doesn't submit. We can return true and
-                // the form will be submited or proceed with a ajax request.
                 event.preventDefault();
             });
         });
@@ -74,18 +73,7 @@
             minDate:new Date(),
 
         });
-//        $(document).ready(function () {
-////            $('#campaignForm').validate({ignore: []});
-//            $('#saveBtn').on('click',function (e) {
-//                e.preventDefault();
-//                var count = $('#campaignForm').valid();
-//                if(count){
-//                    $('#campaignForm').submit();
-//                }else {
-//                    swal("Error", "Some fields contain errors!", "warning")
-//                }
-//            })
-//        })
+
 
 
 
@@ -113,7 +101,7 @@
 
                 var url='{{ route('campaign.recepient') }}';
                 var sel=[];
-                $('.country').children('option:selected').each(function () {
+                $('.country_id').children('option:selected').each(function () {
                     sel.push($(this).val())
                 });
                 var guest=[];
@@ -137,6 +125,7 @@
                 $('.guest bs-select-all').on('click',function () {
                     guest.length=0;
                 })
+                $.blockUI({message: '<h1><i class="fa fa-spinner fa-spin"></i>Just a moment...</h1>'})
                 $.ajax({
                     url:url,
                     data:{
@@ -159,6 +148,7 @@
                     },
                     type:'POST',
                     success:function (data) {
+                        $.unblockUI();
                        var num=data.length;
                         $('.recepient').empty();
                        if (num >0 ){
@@ -175,7 +165,7 @@
     <script>
         function selectTemplate(id) {
             var url='{{ route('campaign.template') }}';
-            console.log(url);
+            $.blockUI({message: '<h1><i class="fa fa-spinner fa-spin"></i>Just a moment...</h1>'})
             $.ajax({
                 url:url,
                 type:'post',
@@ -184,6 +174,7 @@
                     _token:'{{ csrf_token() }}'
                 },
                 success:function (data) {
+                    $.unblockUI()
                     $('.preview').show();
                     $('#summernote').summernote({
                         toolbar: [
@@ -212,6 +203,7 @@
                     state='off';
                 }
                 var id='{{ $model->id }}';
+                $.blockUI({message: '<h1><i class="fa fa-spinner fa-spin"></i>Just a moment...</h1>'})
                 $.ajax({
                     url:"{{ route('campaign.activate')}}",
                     type:'post',
@@ -221,6 +213,7 @@
                         _token:'{{ csrf_token() }}',
                     },
                     success:function (data) {
+                        $.unblockUI()
                         if(data['active']==true){
                             $('#myonoffswitch').prop('checked',true);
                         }else {
@@ -235,6 +228,7 @@
     <script>
         function getType(val) {
             var value=val;
+            $.blockUI({message: '<h1><i class="fa fa-spinner fa-spin"></i>Just a moment...</h1>'})
             $.ajax({
                 url:'gettype',
                 type:'post',
@@ -244,7 +238,7 @@
                 },
 
                 success:function (data) {
-
+                        $.unblockUI()
                        $('#template').empty();
                        $('#template').append('<option value="">Select Template</option>');
                        $.each(data, function (i, v) {
@@ -317,17 +311,24 @@
                  setSwitchery(mySwitch, true);
                  $('.formsegment').hide();
                  $('.selectsegment').show();
+                 $('#saveSegment').hide()
+                 $.each($('.formsegment input'),function(i,v){
+                     $(v).val('')
+                 })
              }else {
                  setSwitchery(mySwitch, false);
                  $('.formsegment').show();
                  $('.selectsegment').hide();
+                 $('#saveSegment').show()
+
+
              }
         }
        $('#segments').on('change',function () {
            $('.formsegment').show();
 
            var id_=$('#segments option:selected').val();
-
+            $.blockUI({message: '<h1><i class="fa fa-spinner fa-spin"></i>Just a moment...</h1>'})
            $.ajax({
               url:'getsegment',
               type:'POST',
@@ -337,9 +338,9 @@
               } ,
                success:function (data) {
                    var options=data[1];
-                   $('.country').selectpicker();
-                   $('.country').selectpicker('val', '');
-                   $('.country').selectpicker('val', options);
+                   $('.country_id').selectpicker();
+                   $('.country_id').selectpicker('val','');
+                   $('.country_id').selectpicker('val',options);
 
                    var gueststatus=data[2];
                    $('.guest').selectpicker();
@@ -357,14 +358,23 @@
 
                    }
                    var campaign=data[0];
+                   $('#segmentname').val('');
+                   $('#segmentname').val(campaign["name"]);
                    $('#spending_from').val('');
                    $('#spending_from').val(campaign['spending_from']);
                    $('#spending_to').val('');
                    $('#spending_to').val(campaign['spending_to']);
                    $('#stay_from').val('');
-                   $('#stay_from').val(moment(campaign['stay_from']).format('D MMMM YYYY'));
-                   $('#stay_to').val('');
-                   $('#stay_to').val(moment(campaign['stay_to']).format('D MMMM YYYY'));
+                   if(campaign['stay_from']==null){
+                       $('#stay_from').val('');
+                   }else {
+                       $('#stay_from').val(moment(campaign['stay_from']).format('D MMMM YYYY'));
+                   }
+                   if(campaign['stay_to']==null){
+                       $('#stay_to').val('');
+                   }else {
+                       $('#stay_to').val(moment(campaign['stay_to']).format('D MMMM YYYY'));
+                   }
                    $('#total_stay_from').val('');
                    $('#total_stay_from').val(campaign['total_stay_from']);
                    $('#total_stay_to').val('');
@@ -373,8 +383,14 @@
                    $('#total_night_from').val(campaign['total_night_from']);
                    $('#total_night_to').val('');
                    $('#total_night_to').val(campaign['total_night_to']);
-
-
+                   $('#age_from').val('');
+                   $('#age_from').val(campaign['age_from']);
+                   $('#age_to').val()
+                   $('#age_to').val(campaign['age_to'])
+                   $('#booking_source').selectpicker()
+                   $('#booking_source').selectpicker('val','')
+                   $('#booking_source').selectpicker('val',data[4])
+                   $.unblockUI();
                    checkRecepient();
                    }
 
@@ -384,15 +400,78 @@
        })
     </script>
     <script>
-
         if($('#collapseOne_10').hasClass('error')){
             console.log('Error');
         }
        $('#collapseOne_10').find('.error').each(function () {
             console.log('.error').text();
         })
+        $('#saveSegment').on('click',function (e) {
+            e.preventDefault()
+            var sel=[];
+            $('.country_id').children('option:selected').each(function () {
+                sel.push($(this).val())
+            });
+            var guest=[];
+            $('.guest').children('option:selected').each(function () {
+                guest.push($(this).val())
+            })
+            var booking=[]
+            $('#booking_source').children('option:selected').each(function () {
+                booking.push($(this).val())
+            })
+            var gen=[]
+            $('#gender').children('option:selected').each(function () {
+                gen.push($(this).val())
+            })
+            $('#gender bs-select-all').on('click',function () {
+                gen.length=0;
+            })
+            $('.country_id bs-select-all').on('click',function () {
+                sel.length=0;
+            })
+            $('.guest bs-select-all').on('click',function () {
+                guest.length=0;
+            })
+
+            var data={
+                _token:'{{ csrf_token() }}',
+                name:$('#segmentname').val(),
+                guest_status:guest,
+                stay_from:$('#stay_from').val(),
+                stay_to:$('#stay_to').val(),
+                total_night_from:$('#total_night_from').val(),
+                total_night_to:$('#total_night_to').val(),
+                age_from:$('#age_from').val(),
+                age_to:$('#age_to').val(),
+                country_id:sel,
+                spending_from:$('#spending_from').val(),
+                spending_to:$('#spending_to').val(),
+                total_stay_from:$('#total_stay_from').val(),
+                total_stay_to:$('#total_stay_to').val(),
+                gender:gen,
+                booking_source:booking,
+            }
+            console.log(data)
+            $.ajax({
+                url:'savesegment',
+                type:'POST',
+                data:data,
+                success:function (data) {
+                  if(data['error']){
+                      swal('Error',data['error']['name'][0],'warning');
+                  }else {
+
+
+                      swal('Success','Segment Saved','success')
+                      setSwitchery(mySwitch, true);
+                      $('#segments').append('<option selected="selected" value="' + data['success']['id'] + '">' + data['success']['name'] + '</option>')
+                      $('#segments').trigger('change', true);
+                      $('#segments').selectpicker('refresh')
+
+                  }
+                }
+            })
+        })
     </script>
-
-
-
     @endsection

@@ -37,107 +37,123 @@ setlocale(LC_MONETARY,"id_ID");
 
 	return view('contacts.list',['data'=>$b]);
 });
-Route::get('home',function (){
-   return redirect('/');
-});
-Route::get('reviews','ContactController@reviews');
-Route::post('campaign/getsegment','CampaignController@getSegment');
-Route::post('campaign/activate','CampaignController@activateCampaign')->name('campaign.activate');
-Route::get('contacts/f/male','ContactController@male');
-Route::get('contacts/f/female','ContactController@female');
-Route::get('contacts/f/inhouse','ContactController@inhouse');
-Route::get('contacts/f/country/{country}','ContactController@country');
-Route::get('contacts/f/created/{dateadded}','ContactController@dateadded');
-Route::get('contacts/f/status/{status}','ContactController@dstatus');
-Route::get('contacts/f/longest/{contact}','ContactController@longest');
-Route::get('contacts/f/spending/{spending}','ContactController@spending');
-Route::get('contacts/f/roomtype/{type}','ContactController@type');
-Route::get('contacts/f/ages/{type}','ContactController@ages');
-Route::get('/','ContactController@dashboard');
-Route::get('contacts/birthday',function (){
-   return view('contacts.birthday');
-});
-Route::get('contacts/filter','ContactController@filter');
-Route::post('contacts/filter','ContactController@filterPost');
-Route::post('contacts/birthday/search','ContactController@search');
-Route::get('contacts/detail/{id}','ContactController@show');
-Route::post('contacts/update','ContactController@update')->name('contacts.update');
-Route::get('contacts/add','ContactController@create');
-Route::post('contacts/store','ContactController@store')->name('contacts.store');
-Route::get('contacts/delete/{id}','ContactController@destroy')->name('contacts.destroy');
+
+Route::group(['middleware'=>'auth'],function (){
+    Route::get('home',function (){
+        return redirect('/');
+    });
+    Route::get('reviews','ContactController@reviews');
+    Route::post('campaign/getsegment','CampaignController@getSegment');
+    Route::post('campaign/activate','CampaignController@activateCampaign')->name('campaign.activate');
+    Route::get('contacts/f/male','ContactController@male');
+    Route::get('contacts/f/female','ContactController@female');
+    Route::get('contacts/f/inhouse','ContactController@inhouse');
+    Route::get('contacts/f/country/{country}','ContactController@country');
+    Route::get('contacts/f/created/{dateadded}','ContactController@dateadded');
+    Route::get('contacts/f/status/{status}','ContactController@dstatus');
+    Route::get('contacts/f/longest/{contact}','ContactController@longest');
+    Route::get('contacts/f/spending/{spending}','ContactController@spending');
+    Route::get('contacts/f/roomtype/{type}','ContactController@type');
+    Route::get('contacts/f/ages/{type}','ContactController@ages');
+    Route::get('contacts/f/source/{type}','ContactController@source');
+    Route::get('/','ContactController@dashboard');
+    Route::get('contacts/birthday',function (){
+        return view('contacts.birthday');
+    });
+    Route::get('contacts/filter','ContactController@filter');
+    Route::post('contacts/filter','ContactController@filterPost')->name('filter');
+    Route::post('contacts/birthday/search','ContactController@search');
+    Route::get('contacts/detail/{id}','ContactController@show');
+    Route::post('contacts/update','ContactController@update')->name('contacts.update');
+    Route::get('contacts/add','ContactController@create');
+    Route::post('contacts/store','ContactController@store')->name('contacts.store');
+    Route::get('contacts/delete/{id}','ContactController@destroy')->name('contacts.destroy');
 
 
 
-Route::get('email/template','Emailtemplate@template')->name('email.template');
+    Route::get('email/template','Emailtemplate@template')->name('email.template');
 //birthday config
-Route::get('email/config/birthday','Emailtemplate@birthdayConfig');
-Route::post('email/config/birthday/update','Emailtemplate@birthdayUpdate')->name('birthday.update');
-Route::post('email/config/template','Emailtemplate@birthdayTemplate')->name('email.birthdayTemplate');
-Route::post('email/config/birthday/activate','Emailtemplate@birthdayActivate');
+    Route::get('email/config/birthday','Emailtemplate@birthdayConfig');
+    Route::post('email/config/birthday/update','Emailtemplate@birthdayUpdate')->name('birthday.update');
+    Route::post('email/config/template','Emailtemplate@birthdayTemplate')->name('email.birthdayTemplate');
+    Route::post('email/config/birthday/activate','Emailtemplate@birthdayActivate');
 //post stay config
-Route::get('email/config/poststay','Emailtemplate@postStayConfig');
-Route::post('email/config/poststay/update','Emailtemplate@postStayUpdate')->name('poststay.update');
-Route::post('email/config/template','Emailtemplate@poststayTemplate')->name('email.poststayTemplate');
-Route::post('email/config/poststay/activate','Emailtemplate@poststayActivate')
-;
-Route::get('email/config/confirm','Emailtemplate@confirmConfig');
-Route::post('email/config/confirm/update','Emailtemplate@confirmUpdate')->name('confirm.update');
-Route::post('email/config/confirm','Emailtemplate@confirmTemplate')->name('email.confirmTemplate');
-Route::post('email/config/confirm/activate','Emailtemplate@confirmActivate');
+    Route::get('email/config/poststay','Emailtemplate@postStayConfig');
+    Route::post('email/config/poststay/update','Emailtemplate@postStayUpdate')->name('poststay.update');
+    Route::post('email/config/template','Emailtemplate@poststayTemplate')->name('email.poststayTemplate');
+    Route::post('email/config/poststay/activate','Emailtemplate@poststayActivate')
+    ;
+    Route::get('email/config/confirm','Emailtemplate@confirmConfig');
+    Route::post('email/config/confirm/update','Emailtemplate@confirmUpdate')->name('confirm.update');
+    Route::post('email/config/confirm','Emailtemplate@confirmTemplate')->name('email.confirmTemplate');
+    Route::post('email/config/confirm/activate','Emailtemplate@confirmActivate');
 //We Miss You Letter
-Route::get('email/config/miss','Emailtemplate@missConfig');
-Route::post('email/config/miss/update','Emailtemplate@missUpdate')->name('miss.update');
-Route::post('email/config/miss','Emailtemplate@missTemplate')->name('email.missTemplate');
-Route::post('email/config/miss/activate','Emailtemplate@missActivate');
+    Route::get('email/config/miss','Emailtemplate@missConfig');
+    Route::post('email/config/miss/update','Emailtemplate@missUpdate')->name('miss.update');
+    Route::post('email/config/miss','Emailtemplate@missTemplate')->name('email.missTemplate');
+    Route::post('email/config/miss/activate','Emailtemplate@missActivate');
 
-Route::resource('email','Emailtemplate');
-
-
-Route::post('campaign/template','EmailTemplateController@getTemplate')->name('campaign.template');
-Route::post('campaign/recepient','CampaignController@getRecepient')->name('campaign.recepient');
-Route::post('campaign/{id}/recepient','CampaignController@getRecepient');
-Route::post('campaign/gettype','CampaignController@getType');
-Route::post('campaign/{id}/gettype','CampaignController@getType');
-Route::resource('campaign','CampaignController');
+    Route::resource('email','Emailtemplate');
 
 
-Route::get('mailsend/','EmailTemplateController@birthdaymail');
+    Route::post('campaign/template','EmailTemplateController@getTemplate')->name('campaign.template');
+    Route::post('campaign/recepient','CampaignController@getRecepient')->name('campaign.recepient');
+    Route::post('campaign/{id}/recepient','CampaignController@getRecepient');
+    Route::post('campaign/gettype','CampaignController@getType');
+    Route::post('campaign/{id}/gettype','CampaignController@getType');
+
+    Route::resource('campaign','CampaignController');
+
+
+    Route::get('mailsend/','EmailTemplateController@birthdaymail');
 
 
 
 //import contact
-Route::get('contacts/import','ContactController@import');
-Route::get('contacts/template/contact',function (){
-   return response()->download(public_path().'/files/contacts-template.csv');
-});
-Route::post('contacts/upload/contact','ContactController@uploadContact');
+    Route::get('contacts/import','ContactController@import');
+    Route::get('contacts/template/contact',function (){
+        return response()->download(public_path().'/files/contacts-template.csv');
+    });
+    Route::post('contacts/upload/contact','ContactController@uploadContact');
 
 //import stay
-Route::get('contacts/importstay','ContactController@importStay');
-Route::get('contacts/template/stay',function (){
-    return response()->download(public_path().'/files/stays-template.csv');
-});
-Route::post('contacts/upload/stay','ContactController@uploadStay');
+    Route::get('contacts/importstay','ContactController@importStay');
+    Route::get('contacts/template/stay',function (){
+        return response()->download(public_path().'/files/stays-template.csv');
+    });
+    Route::post('contacts/upload/stay','ContactController@uploadStay');
 
 
-Route::post('contacts/company/store','ContactController@store')->name('contacts.company.store');
-Route::get('contacts/stay/add/{id}','TransactionController@add');
-Route::get('contacts/stay/edit/{id}','TransactionController@edit');
-Route::post('contacts/stay/store','TransactionController@store')->name('stay.store');
-Route::post('contacts/stay/update','TransactionController@update')->name('stay.update');
-Route::get('contacts/stay/delete/{id}','TransactionController@delete')->name('stay.delete');
+    Route::post('contacts/company/store','ContactController@store')->name('contacts.company.store');
+    Route::get('contacts/stay/add/{id}','TransactionController@add');
+    Route::get('contacts/stay/edit/{id}','TransactionController@edit');
+    Route::post('contacts/stay/store','TransactionController@store')->name('stay.store');
+    Route::post('contacts/stay/update','TransactionController@update')->name('stay.update');
+    Route::get('contacts/stay/delete/{id}','TransactionController@delete')->name('stay.delete');
 
-Route::post('setschedule','CampaignController@setSchedule');
-Route::post('contacts/newcampaign','CampaignController@newCampaign');
-
+    Route::post('setschedule','CampaignController@setSchedule');
+    Route::post('contacts/newcampaign','CampaignController@newCampaign');
+    Route::post('email/saveclone','Emailtemplate@cloneTemplate');
+    Route::post('campaign/savesegment','CampaignController@saveSegment')->name('savesegment');
 //segmen
-Route::get('segment','SegmentController@index')->name('segment');
-Route::get('tt',function (){
-    $contacts=\App\Contact::whereRaw('floor(datediff (now(), birthday)/365)  <=25')->get();
-    foreach ($contacts as $contact){
-       dd( $contact->profilesfolio[0]->source);
-    }
+
+    Route::post('segments/filtersegment','SegmentController@filterSegment')->name('filtersegment');
+    Route::resource('segments','SegmentController');
+    Route::get('preferences',function (){
+        return view('preferences.index');
+    });
 });
 
 
+
+Route::get('tt','MailgunController@sendmail');
+Route::get('td','MailgunController@getLogs');
+Route::get('tu','MailgunController@unsub');
+
+
+
+
+Auth::routes();
+
+//Route::get('/home', 'HomeController@index')->name('home');
 

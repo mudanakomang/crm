@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+    Filter Contacts | {{ config('app.name') }}
+@endsection
 @section('content')
     <div class="right_col" role="main">
         <section class="content">
@@ -11,23 +14,14 @@
                           </div>
                           <div class="panel-body">
                               {{ Form::open() }}
-                              <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
-                                  {{ Form::label('name','Contact Name') }}
-                              </div>
-                              <div class="col-lg-4 col-md-4 col-sm-8 col-xs-12">
-                                  <div class="form-group">
-                                      <div class="form-line">
-                                          {{ Form::text('name',null,['class'=>'form-control','onchange'=>'checkRecepient()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()']) }}
-                                      </div>
-                                  </div>
-                              </div>
+
                               <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
                                   {{ Form::label('country_id','Country') }}
                               </div>
                               <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::select('country_id[]',\App\Country::pluck('country','iso2')->all(),null,['class'=>'form-control selectpicker country','multiple','onchange'=>'checkRecepient()','actionsBox'=>'true', 'data-live-search'=>'true']) }}
+                                          {{ Form::select('country_id[]',\App\Country::pluck('country','iso2')->all(),null,['class'=>'form-control selectpicker country_id','multiple','onchange'=>'checkRecepient()','actionsBox'=>'true', 'data-live-search'=>'true']) }}
                                       </div>
                                   </div>
                               </div>
@@ -149,7 +143,9 @@
                               </div>
 
                               {{ Form::close() }}
+                              <button class="btn btn-sm btn-success" id="createSegment"><i class="fa fa-plus-circle"></i> Create Segment </button>
                           </div>
+
                           <hr>
                           <div class="panel-body">
                               <table  id="filter" class="table table-bordered table-striped table-hover">
@@ -178,6 +174,41 @@
             </div>
         </section>
     </div>
+    <div class="modal fade" id="segmentModal" tabindex="-1" role="dialog" aria-labelledby="segmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog " role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="segmentModalLabel">Create New Segment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="segmentForm">
+                        <div class="col-lg-3 col-md-3 col-sm-8 col-xs-8 form-control-label">
+                            {{ Form::label('segment','Segment Name') }}
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ Form::text('segment',null,['class'=>'form-control','id'=>'segment','data-live-search'=>'true','required','placeholder'=>'Segment Name']) }}
+                                </div>
+                                <span class="text-danger">
+                                <strong id="segment-error">
+                                </strong>
+                            </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                    <a href="#" id="saveSegment" class="btn btn-sm btn-success">Save</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="campaignModal" tabindex="-1" role="dialog" aria-labelledby="campaignModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -188,7 +219,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="checkboxform">
                     <div class="col-lg-3 col-md-3 col-sm-8 col-xs-8 form-control-label">
                         {{ Form::label('cname','Campaign Name') }}
                     </div>
@@ -197,6 +228,10 @@
                             <div class="form-line">
                                 {{ Form::text('cname',null,['class'=>'form-control','id'=>'cname','data-live-search'=>'true','required','placeholder'=>'Campaign Name']) }}
                             </div>
+                            <span class="text-danger">
+                                <strong id="cname-error">
+                                </strong>
+                            </span>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-8 col-xs-8 form-control-label">
@@ -219,6 +254,16 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-3 col-md-3 col-sm-8 col-xs-8 form-control-label">
+                            {{ Form::label('segmentid','Select Segment') }}
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ Form::select('segmentid',\App\Segment::pluck('name','id')->all(),null,['class'=>'form-control selectpicker','id'=>'segmentid','actionsBox'=>'true','data-live-search'=>'true']) }}
+                                </div>
+                            </div>
+                        </div>
                       <div class="previewtemplate">
 
                       </div>
@@ -236,6 +281,85 @@
 @section('script')
 
     <script>
+        $(document).ready(function () {
+            $('#spending_from').maskMoney({thousands:'.', decimal:',', precision:0});
+            $('#spending_to').maskMoney({thousands:'.', decimal:',', precision:0});
+        })
+        $('#createSegment').on('click',function (e) {
+            e.preventDefault()
+            $('#segmentModal').modal('show')
+        })
+        $('#saveSegment').on('click',function (e) {
+            e.preventDefault()
+            var sel=[];
+            $('.country_id').children('option:selected').each(function () {
+                sel.push($(this).val())
+            });
+            var guest=[];
+            $('.status').children('option:selected').each(function () {
+                guest.push($(this).val())
+            })
+            var booking=[]
+            $('#booking_source').children('option:selected').each(function () {
+                booking.push($(this).val())
+            })
+            var gen=[]
+            $('#gender').children('option:selected').each(function () {
+                gen.push($(this).val())
+            })
+            $('#gender bs-select-all').on('click',function () {
+                gen.length=0;
+            })
+            $('.country_id bs-select-all').on('click',function () {
+                sel.length=0;
+            })
+            $('.guest bs-select-all').on('click',function () {
+                guest.length=0;
+            })
+            $('#booking_source bs-select-all').on('click',function () {
+                booking.length=0;
+            })
+            var data={
+                _token:'{{ csrf_token() }}',
+                name:$('#segment').val(),
+                guest_status:guest,
+                stay_from:$('#stay_from').val(),
+                stay_to:$('#stay_to').val(),
+                total_night_from:$('#total_night_from').val(),
+                total_night_to:$('#total_night_to').val(),
+                age_from:$('#age_from').val(),
+                age_to:$('#age_to').val(),
+                country_id:sel,
+                spending_from:$('#spending_from').val(),
+                spending_to:$('#spending_to').val(),
+                total_stay_from:$('#total_stay_from').val(),
+                total_stay_to:$('#total_stay_to').val(),
+                gender:gen,
+                booking_source:booking,
+            }
+            console.log(data)
+            $.ajax({
+                url:'{{ route('savesegment') }}',
+                data:data,
+                type:'POST',
+                success:function (data) {
+                    if(data['error']){
+                        swal('Error',data['error']['name'][0],'warning');
+                    }else {
+
+                        swal('Success','Segment Saved','success')
+                        $('#segmentModal').modal('hide')
+                        $.each(data, function (i, v) {
+                            $('#segmentid').append('<option selected="selected" value=' + data['success']['id'] + ' >' + data['success']['name'] + '</option>').selectpicker('refresh')
+                        })
+                    }
+                }
+
+            })
+
+
+
+        })
         $('#schedule').datetimepicker({
             minDate:new Date(),
             format: 'DD MMMM YYYY hh:mm A',
@@ -276,7 +400,6 @@
                 if ( $.fn.DataTable.isDataTable('#filter') ) {
                     $('#filter').DataTable().destroy();
                 }
-
                 $('#filter tbody').empty();
               //  $('.table_body').empty()
                 var nat=[];
@@ -296,10 +419,10 @@
                 var age_to=$('#age_to').val()
 
 
-                $('.country').children('option:selected').each(function () {
+                $('.country_id').children('option:selected').each(function () {
                     nat.push($(this).val())
                 });
-                $('.guest').children('option:selected').each(function () {
+                $('.status').children('option:selected').each(function () {
                     guest.push($(this).val())
                 });
                 $('#gender').children('option:selected').each(function () {
@@ -308,6 +431,7 @@
                 $('#booking_source').children('option:selected').each(function () {
                     src.push($(this).val())
                 });
+
                 var dt=$('#filter').DataTable({
 
                     'retrieve': true,
@@ -430,82 +554,64 @@
                     });
                 });
 
+
             }
             $('#createCampaign').on('click',function (e) {
                 e.preventDefault();
-                $('#campaignModal').modal('show');
+                if($('#filter input:checked').length==0){
+                    swal('Error','No Contacts Selected','warning')
+                }else{
+                    $('#campaignModal').modal('show');
+                }
+
 
             })
             $('#saveCampaign').on('click',function (e) {
                 e.preventDefault();
-                var nat=[];
-                var status=[];
-                var booking=[];
-                $('.country').children('option:selected').each(function () {
-                    nat.push($(this).val())
-                });
-                $('.status').children('option:selected').each(function () {
-                    status.push($(this).val())
-                })
-                var gen=[]
-                $('#gender').children('option:selected').each(function () {
-                    gen.push($(this).val())
-                })
-                $('#gender bs-select-all').on('click',function () {
-                    gen.length=0;
-                })
-                $('.country_id bs-select-all').on('click',function () {
-                    nat.length=0;
-                })
-                $('.guest bs-select-all').on('click',function () {
-                    status.length=0;
-                })
-                $('#booking_source').children('option:selected').each(function () {
-                    booking.push($(this).val())
-                })
-                $('#booking_source bs-select-all').on('click',function () {
-                    booking.length=0;
-                })
-                var stay_from=$('#stay_from').val()
-                var stay_to=$('#stay_to').val()
-                var spending_from=$('#spending_from').val()
-                var spending_to=$('#spending_to').val()
-                var total_stay_from=$('#total_stay_from').val()
-                var total_stay_to=$('#total_stay_to').val()
-                var total_night_from=$('#total_night_from').val()
-                var total_night_to=$('#total_night_to').val()
-                var data=$('input[type=checkbox]').serializeArray();
+
                 $.ajax({
                     url:'newcampaign',
                     type:'post',
                     data:{
-                        contact:data,
                         cname:$('#cname').val(),
-                        country_id:nat,
-                        guest_status:status,
-                        gender:gen,
-                        stay_from:stay_from,
-                        stay_to:stay_to,
-                        spending_from:spending_from,
-                        spending_to:spending_to,
-                        total_stay_from:total_stay_from,
-                        total_stay_to:total_stay_to,
-                        total_night_from:total_night_from,
-                        total_night_to:total_night_to,
-                        age_from:$('#age_from').val(),
-                        age_to:$('#age_to').val(),
-                        template:$('#template').val(),
-                        booking:booking,
+                        segment_id:$('#segmentid').val(),
+                        template_id:$('#template').val(),
+                        contacts:$('input[type=checkbox]').serializeArray(),
+                        status:'Scheduled',
+                        type:'Promo',
                         schedule:$('#schedule').val(),
                         _token:'{{ csrf_token() }}'
                     },success:function (data) {
+
                         if(data==='success'){
-                            window.location.reload();
+                            swal({
+                                title: "Sucess",
+                                text: "New Campaign added",
+                                type: "success",
+                            },function() {
+                                window.location.reload();
+                            });
+
+                        }else {
+                            if (data.errors.cname && data.errors.schedule) {
+                                swal('', 'Campaign name and schedule is required', 'warning')
+                            } else {
+                                if (data.errors.cname) {
+                                    swal('', data.errors.cname[0], 'warning')
+
+                                } else {
+                                    if (data.errors.schedule) {
+                                        swal('', data.errors.schedule[0], 'warning')
+                                    }
+                                }
+
+                            }
                         }
                     }
                 })
             })
 
         </script>
+
 
     @endsection

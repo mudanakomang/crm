@@ -69,7 +69,7 @@
                             <input type="checkbox" class="js-switch" name="getsegment" id="segment"   onchange="selectSegment()"/>  Use Existing Segment
                         </label>
                     </div>
-
+                <hr>
 
                     <div class="selectsegment" >
                         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
@@ -78,19 +78,29 @@
                         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                             <div class="form-group">
                                 <div class="form-line">
-                                    {{ Form::select('segments',[''=>'Select from campaign']+\App\Campaign::pluck('name','id')->all(),null,['class'=>'form-control selectpicker segments']) }}
+                                    {{ Form::select('segments',[''=>'Select from segment lists']+\App\Segment::pluck('name','id')->all(),null,['class'=>'form-control selectpicker segments','actionsBox'=>'true','data-size'=>8,'data-live-search'=>'true']) }}
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="formsegment">
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                            {{ Form::label('segmentname','Segment Name') }}
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ Form::text('segmentname',null,['class'=>'form-control  segmentname','required','onchange'=>'checkRecepient()' ]) }}
+                                </div>
+                            </div>
+                        </div>
                     <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
                         {{ Form::label('country_id','Country') }}
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                         <div class="form-group">
                             <div class="form-line">
-                                {{ Form::select('country_id[]',\App\Country::pluck('country','iso3')->all(),$model->country_id,['class'=>'form-control selectpicker country','multiple','onchange'=>'checkRecepient()','actionsBox'=>'true', 'data-live-search'=>'true']) }}
+                                {{ Form::select('country_id[]',\App\Country::pluck('country','iso2')->all(),null,['class'=>'form-control selectpicker  country_id','multiple','onchange'=>'checkRecepient()','actionsBox'=>'true', 'data-live-search'=>'true']) }}
                             </div>
                         </div>
                     </div>
@@ -100,7 +110,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                         <div class="form-group">
                             <div class="form-line">
-                                {{ Form::select('guest_status[]',['I'=>'Inhouse','C'=>'Prestay','O'=>'Poststay','X'=>'Cancel'],$model->guest_status,['class'=>'form-control selectpicker guest','multiple','actionsBox'=>'true', 'data-live-search'=>'true','onchange'=>'checkRecepient()']) }}
+                                {{ Form::select('guest_status[]',['I'=>'Inhouse','C'=>'Prestay','O'=>'Poststay','X'=>'Cancel'],null,['class'=>'form-control selectpicker guest','multiple','actionsBox'=>'true', 'data-live-search'=>'true','onchange'=>'checkRecepient()']) }}
                             </div>
                         </div>
                     </div>
@@ -210,6 +220,7 @@
                                 </div>
                             </div>
                         </div>
+                        <button class="btn btn-success" id="saveSegment"><i class="fa fa-save"></i> Save Segment</button>
                     </div>
                 </div>
                 <div class="panel-body">

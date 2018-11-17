@@ -7,10 +7,12 @@ use App\Contact;
 use App\Country;
 use App\MailEditor;
 use App\Schedule;
+use App\Segment;
 use Carbon\Carbon;
 use function foo\func;
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Support\Facades\Validator;
 
 class CampaignController extends Controller
 {
@@ -53,6 +55,8 @@ class CampaignController extends Controller
     {
 
         //
+      //  dd($request->all());
+
         $contacts=Contact::with('transaction','profilesfolio')->when($request->country_id !=null,function ($q) use ($request){
             return $q->whereIn('country_id',$request->country_id);
         })->when($request->guest_status !=null,function ($q) use ($request){
@@ -61,15 +65,15 @@ class CampaignController extends Controller
             });
         })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[0,$request->spending_to]);
+                return $q->whereBetween('revenue',[0,str_replace('.','',$request->spending_to)]);
             });
         })->when($request->spending_from !=null and $request->spending_to ==null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->where('revenue','>=',$request->spending_from);
+                return $q->where('revenue','>=',str_replace('.','',$request->spending_from));
             });
         })->when($request->spending_from !=null and $request->spending_to !=null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[$request->spending_from,$request->spending_to]);
+                return $q->whereBetween('revenue',[str_replace('.','',$request->spending_from),str_replace('.','',$request->spending_to)]);
             });
         })->when($request->gender !=null,function ($q) use ($request) {
             return $q->whereIn('gender', $request->gender);
@@ -117,6 +121,7 @@ class CampaignController extends Controller
             });
         })->get();
 
+        //dd($contacts);
 
        // $campaign=Campaign::find(3);
 
@@ -124,26 +129,12 @@ class CampaignController extends Controller
 
         //$campaign->contact()->attach($c);
        // $campaign->contact()->updateExistingPivot($c,['status'=>'sent']);
-
         $campaign=new Campaign();
         $campaign->name=$request->name;
         $campaign->status='Draft';
         $campaign->type=$request->type;
-        $campaign->country_id=serialize($request->country_id);
-        $campaign->guest_status=serialize($request->guest_status);
-        $campaign->spending_from=$request->spending_from;
-        $campaign->spending_to=$request->spending_to;
-        $campaign->stay_from=Carbon::parse($request->stay_from)->format('Y-m-d');
-        $campaign->stay_to=Carbon::parse($request->stay_to)->format('Y-m-d');
-        $campaign->total_stay_from=$request->total_stay_from;
-        $campaign->total_stay_to=$request->total_stay_to;
-        $campaign->total_night_from=$request->total_night_from;
-        $campaign->total_night_to=$request->total_night_to;
-        $campaign->gender=serialize($request->gender);
+        $campaign->segment_id=$request->segments;
         $campaign->template_id=$request->template;
-        $campaign->age_from=$request->age_from;
-        $campaign->age_to=$request->age_to;
-        $campaign->booking_source=serialize($request->booking_source);
         $campaign->save();
 
         foreach ($contacts as $contact) {
@@ -204,15 +195,15 @@ class CampaignController extends Controller
             });
         })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[0,$request->spending_to]);
+                return $q->whereBetween('revenue',[0,str_replace('.','',$request->spending_to)]);
             });
         })->when($request->spending_from !=null and $request->spending_to ==null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->where('revenue','>=',$request->spending_from);
+                return $q->where('revenue','>=',str_replace('.','',$request->spending_from));
             });
         })->when($request->spending_from !=null and $request->spending_to !=null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[$request->spending_from,$request->spending_to]);
+                return $q->whereBetween('revenue',[str_replace('.','',$request->spending_from),str_replace('.','',$request->spending_to)]);
             });
         })->when($request->gender !=null,function ($q) use ($request) {
             return $q->whereIn('gender', $request->gender);
@@ -266,8 +257,8 @@ class CampaignController extends Controller
         $campaign->type=$request->type;
         $campaign->country_id=serialize($request->country_id);
         $campaign->guest_status=$request->guest_status;
-        $campaign->spending_from=$request->spending_from;
-        $campaign->spending_to=$request->spending_to;
+        $campaign->spending_from=str_replace('.','',$request->spending_from);
+        $campaign->spending_to=str_replace('.','',$request->spending_to);
         $campaign->stay_from=Carbon::parse($request->stay_from)->format('Y-m-d');
         $campaign->stay_to=Carbon::parse($request->stay_to)->format('Y-m-d');
         $campaign->total_stay_from=$request->total_stay_from;
@@ -309,24 +300,23 @@ class CampaignController extends Controller
 
     public function getRecepient(Request $request){
 
-
-        $contacts=Contact::with('transaction')->when($request->country_id !=null,function ($q) use ($request){
-            return $q->whereIn('country_id',$request->country_id);
+        $contacts=Contact::with('transaction','profilesfolio')->when($request->country_id !=null,function ($q) use ($request) {
+            return $q->whereIn('country_id', $request->country_id);
         })->when($request->guest_status !=null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
                 return $q->whereIn('status',$request->guest_status);
             });
         })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-               return $q->whereBetween('revenue',[0,$request->spending_to]);
+               return $q->whereBetween('revenue',[0,str_replace('.','',$request->spending_to)]);
             });
         })->when($request->spending_from !=null and $request->spending_to ==null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->where('revenue','>=',$request->spending_from);
+                return $q->where('revenue','>=',str_replace('.','',$request->spending_from));
             });
         })->when($request->spending_from !=null and $request->spending_to !=null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[$request->spending_from,$request->spending_to]);
+                return $q->whereBetween('revenue',[str_replace('.','',$request->spending_from),str_replace('.','',$request->spending_to)]);
             });
         })->when($request->gender !=null,function ($q) use ($request) {
             return $q->whereIn('gender', $request->gender);
@@ -359,10 +349,20 @@ class CampaignController extends Controller
             return $q->has('transaction','>=',$request->total_stay_from);
         })->when($request->total_stay_from == null and $request->total_stay_to !=null ,function ($q) use ($request){
             return $q->has('transaction','<=',$request->total_stay_to);
-        })->when($request->total_stay_from !=null and $request->total_stay_to !=null, function ($q) use ($request){
-            return $q->has('transaction','>=',$request->total_stay_from)->has('transaction','<=',$request->total_stay_to);
-
+        })->when($request->total_stay_from !=null and $request->total_stay_to !=null, function ($q) use ($request) {
+            return $q->has('transaction', '>=', $request->total_stay_from)->has('transaction', '<=', $request->total_stay_to);
+        })->when($request->age_from!=null and $request->age_to!=null ,function ($q) use ($request){
+            return $q->whereRaw('birthday <= date_sub(now(), INTERVAL \''.$request->age_from.'\' YEAR) and birthday >= date_sub(now(),interval \''.$request->age_to.'\' year)');
+        })->when($request->age_from!=null ,function($q) use ($request){
+            return $q->whereRaw('birthday <= date_sub(now(),INTERVAL \''.$request->age_from.'\' YEAR)');
+        })->when($request->age_to!=null,function ($q) use ($request){
+            return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$request->age_to.'\' YEAR)');
+        })->when($request->booking_source!=null,function ($q) use ($request){
+            $q->whereHas('profilesfolio',function ($q) use ($request){
+                $q->whereIn('source',$request->booking_source);
+            });
         })->get();
+
         return response($contacts,200);
     }
 
@@ -400,42 +400,116 @@ class CampaignController extends Controller
     }
     public function getSegment(Request $request){
 
-        $campaign=Campaign::find($request->id);
-        $country=unserialize($campaign->country_id);
-        $guestsatus=unserialize($campaign->guest_status);
-       $gender = unserialize($campaign->gender);
-        $booking=unserialize($campaign->booking_source);
+        $campaign=Segment::find($request->id);
+        if (!empty($campaign->country_id)){
+           $country=unserialize($campaign->country_id);
+        }else{
+            $country='';
+        }
+        if(!empty($campaign->guest_status)){
+            $guestsatus=unserialize($campaign->guest_status);
+        }else{
+            $guestsatus='';
+        }
+        if(!empty($campaign->gender)){
+            $gender=unserialize($campaign->gender);
+        }else{
+            $gender='';
+        }
+        if(!empty($campaign->booking_source)){
+            $booking=unserialize($campaign->booking_source);
+        }else{
+            $booking='';
+        }
+
         return response([$campaign,$country,$guestsatus,$gender,$booking],200);
     }
     public function newCampaign(Request $request){
-       $campaign=new Campaign();
-        $campaign->name=$request->cname;
-        $campaign->status='Draft';
-        $campaign->type='Promo';
-        $campaign->country_id=serialize($request->country_id);
-        $campaign->guest_status=serialize($request->guest_status);
-        $campaign->spending_from=$request->spending_from;
-        $campaign->spending_to=$request->spending_to;
-        $campaign->stay_from=Carbon::parse($request->stay_from)->format('Y-m-d');
-        $campaign->stay_to=Carbon::parse($request->stay_to)->format('Y-m-d');
-        $campaign->total_stay_from=$request->total_stay_from;
-        $campaign->total_stay_to=$request->total_stay_to;
-        $campaign->total_night_from=$request->total_night_from;
-        $campaign->total_night_to=$request->total_night_to;
-        $campaign->gender=serialize($request->gender);
-        $campaign->age_from=$request->age_from;
-        $campaign->age_to=$request->age_to;
-        $campaign->booking_source=serialize($request->booking);
-        $campaign->template_id=$request->template;
-        $campaign->save();
 
-        foreach ($request->contact as $cid){
-           $contact=Contact::find($cid['value']);
-           $campaign->contact()->attach($contact);
-           $campaign->contact()->updateExistingPivot($contact,['status'=>'queue']);
+        $rules=[
+           'cname'=>'required',
+          'schedule'=>'required',
+        ];
+        $messages=[
+            'cname.required'=>'Campaign name Required',
+           'schedule.required'=>'Schedule Required',
+        ];
+
+        $validator =Validator::make($request->all(),$rules,$messages);
+        if(!$validator->fails()){
+            $campaign=new Campaign();
+            $campaign->name=$request->cname;
+            $campaign->status='Draft';
+            $campaign->type='Promo';
+            $campaign->segment_id=$request->segment_id;
+            $campaign->template_id=$request->template_id;
+            $campaign->save();
+
+            foreach ($request->contacts as $cid){
+                $contact=Contact::find($cid['value']);
+                $campaign->contact()->attach($contact);
+                $campaign->contact()->updateExistingPivot($contact,['status'=>'queue']);
+            }
+            $campaign->template()->attach($request->template_id);
+            $this->setSheduleFunc($campaign->id,$request->schedule);
+            return response('success',200);
+        } else{
+            return response(['errors'=>$validator->errors()]);
         }
-        $campaign->template()->attach($request->template);
-        $this->setSheduleFunc($campaign->id,$request->schedule);
-       return response('success',200);
+
     }
+    public function saveSegment(Request $request){
+        //dd($request->spending_from);
+        $rules=['name'=>'required'];
+        $message=['name.required'=>'Segment Name Required'];
+        $validator=Validator::make($request->all(),$rules,$message);
+        if(!$validator->fails()){
+            $guest_status=serialize($request->guest_status);
+            $country_id=serialize($request->country_id);
+            $gender=serialize($request->gender);
+            $booking_source=serialize($request->booking_source);
+            $segment=new Segment();
+            $segment->name=$request->name;
+            $segment->guest_status=$guest_status;
+            $segment->country_id=$country_id;
+            $segment->gender=$gender;
+            $segment->booking_source=$booking_source;
+            if($request->stay_from!=null){
+                $segment->stay_from=Carbon::parse($request->stay_from)->format('Y-m-d');
+            } else
+            {
+                $segment->stay_from=null;
+            }
+            if($request->stay_to!=null){
+                $segment->stay_to=Carbon::parse($request->stay_to)->format('Y-m-d');
+            } else{
+                $segment->stay_to=null;
+            }
+            if($request->spending_from!=null){
+                $segment->spending_from=str_replace('.','',$request->spending_from);
+            }else{
+                $segment->spending_from=null;
+            }
+            if($request->spending_to!=null){
+                $segment->spending_to=str_replace('.','',$request->spending_to);
+            }else{
+                $segment->spending_to=null;
+            }
+
+            $segment->total_stay_from=$request->total_stay_from;
+            $segment->total_stay_to=$request->total_stay_to;
+            $segment->total_night_from=$request->total_night_from;
+            $segment->total_night_to=$request->total_night_to;
+            $segment->age_from=$request->age_from;
+            $segment->age_to=$request->age_to;
+            $segment->save();
+            return response(['success'=>['id'=>$segment->id,'name'=>$request->name]],200);
+        }else{
+            return response(['error'=>$validator->errors()],200);
+        }
+
+
+
+    }
+
 }

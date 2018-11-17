@@ -6,8 +6,10 @@ use App\Birthday;
 use App\ConfirmEmail;
 use App\MailEditor;
 use App\PostStay;
+use App\MissYou;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class Emailtemplate extends Controller
 {
@@ -289,6 +291,52 @@ class Emailtemplate extends Controller
             return response(['active'=>true],200);
         }else{
             $birthday->update(['active'=>'n']);
+            return response(['active'=>false],200);
+        }
+
+    }
+    public function cloneTemplate(Request $request){
+       $old=MailEditor::find($request->tid);
+       $rules=[
+           'name'=>'required',
+       ];
+       $message=['name.required'=>'Template Name is Required'];
+       $validator=Validator::make($request->all(),$rules,$message);
+       if(!$validator->fails()) {
+           $new = $old->replicate();
+           $new->name = $request->name;
+           $new->save();
+           return response('success', 200);
+       }else{
+
+          return response(['errors'=>$validator->errors()]);
+        }
+
+    }
+    //We Miss You
+    public function missConfig(){
+        $miss = MissYou::find(1);
+        return view('email.manage.miss',['miss'=>$miss]);
+    }
+
+    public function missTemplate(Request $request){
+        $templ=MailEditor::find($request->id);
+        return response($templ,200);
+    }
+    public function missUpdate(Request $request){
+        $miss=MissYou::find(1);
+        $miss->sendafter=$request->sendafter+1;
+        $miss->template_id=$request->template;
+        $miss->save();
+        return redirect()->back();
+    }
+    public function missActivate(Request $request){
+        $miss=MissYou::find(1);
+        if ($request->state=='on'){
+            $miss->update(['active'=>'y']);
+            return response(['active'=>true],200);
+        }else{
+            $miss->update(['active'=>'n']);
             return response(['active'=>false],200);
         }
 

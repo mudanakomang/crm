@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+	Contact List | {{ config('app.name') }}
+	@endsection
 @section('content')
 	<div class="right_col" role="main">
 		<section class="content">
@@ -7,7 +10,7 @@
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card">
 							<div class="header">
-								<h2>Guest Profile List</h2>
+								<h2>Contact List</h2>
 							</div>
 							<div class="row clearfix">
 								<div class="col-lg-12">
@@ -56,17 +59,21 @@
 												<img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($contact->country['iso2'])}} pull-right" alt="{{$contact->country['country']}}" />
 											</td>
 
+											<td>
+												@if(count($contact->transaction)<>0)
+													@if($contact->transaction[0]->status=='I')
+														Inhouse
+														@elseif($contact->transaction[0]->status=='C')
+														Confirm
+														@elseif($contact->transaction[0]->status=='X')
+														Cancel
+														@else
+														Check Out
+														@endif
+												@endif
+											</td>
 
 
-											@if(DB::table('profilesfolio')->where('profileid','=',$contact->contactid)->value('foliostatus')=='X' )
-												<td> Cancel </td>
-											@elseif(DB::table('profilesfolio')->where('profileid','=',$contact->contactid)->value('foliostatus')=='C')
-												<td> Confirm </td>
-											@elseif(DB::table('profilesfolio')->where('profileid','=',$contact->contactid)->value('foliostatus')=='I')
-												<td> Inhouse </td>
-											@else
-												<td> Checked Out </td>
-											@endif
 											<td> @if(count($contact->campaign) <> 0)
 													 	<i class="fa fa-envelope success"></i>
 														{{ $contact->campaign->where('status','=','Sent')->count()}} Campaign
