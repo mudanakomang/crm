@@ -62,7 +62,7 @@ class ExternalEmailController extends Controller
             if ($request->getcategory!=='on'){
 
                 $categories=$request->new_category;
-                dd($categories);
+               // dd($categories);
                 foreach ($categories as $category){
                     $cat=ExternalContactCategory::updateOrCreate(['category'=>$category],['category'=>$category]);
                     foreach ($emails as $list){
