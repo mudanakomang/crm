@@ -18,7 +18,12 @@ class CreateConfigsTable extends Migration
             $table->string('hotel_name');
             $table->string('gm_name');
             $table->string('gm_signature');
-
+            $table->string('app_title');
+            $table->string('mailgun_domain');
+            $table->string('mailgun_password');
+            $table->string('mailgun_apikey');
+            $table->string('sender_email');
+            $table->string('sender_name');
             $table->timestamps();
         });
     }

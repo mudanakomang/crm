@@ -66,23 +66,49 @@
 
                     <div class="">
                         <label>   New Segment
-                            <input type="checkbox" class="js-switch" name="getsegment" id="segment"   onchange="selectSegment()"/>  Use Existing Segment
+                            <input type="checkbox" class="js-switch" name="getsegment" id="segment"   />  Use Existing Segment
                         </label>
                     </div>
                 <hr>
 
+
+
+
                     <div class="selectsegment" >
-                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
-                            {{ Form::label('segments','Segment') }}
+
+
+                     <input type="checkbox" name="external" id="checkexternal" value=""> External Contact
+
+                        <br>
+                        <br>
+                        <div class="categoryselect">
+                            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                                {{ Form::label('category','Category') }}
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ Form::select('category',[''=>'Select from category lists']+\App\ExternalContactCategory::pluck('category','id')->all(),null,['class'=>'form-control selectpicker segments','actionsBox'=>'true','data-size'=>8,'data-live-search'=>'true']) }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
-                            <div class="form-group">
-                                <div class="form-line">
-                                    {{ Form::select('segments',[''=>'Select from segment lists']+\App\Segment::pluck('name','id')->all(),null,['class'=>'form-control selectpicker segments','actionsBox'=>'true','data-size'=>8,'data-live-search'=>'true']) }}
+                        <div class="segmentselect">
+                            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                                {{ Form::label('segments','Segment') }}
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ Form::select('segments',[''=>'Select from segment lists']+\App\Segment::pluck('name','id')->all(),null,['class'=>'form-control selectpicker segments','actionsBox'=>'true','data-size'=>8,'data-live-search'=>'true']) }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
+
                     <div class="formsegment">
                         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
                             {{ Form::label('segmentname','Segment Name') }}
@@ -104,6 +130,16 @@
                             </div>
                         </div>
                     </div>
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                            {{ Form::label('area','Area/Origin') }}
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ Form::select('area[]',\App\Contact::groupBy('area')->pluck('area','area')->all(),null,['class'=>'form-control selectpicker area','id'=>'area','multiple','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true']) }}
+                                </div>
+                            </div>
+                        </div>
                     <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
                         {{ Form::label('guest_status','Guest Status') }}
                     </div>
@@ -210,6 +246,44 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                            {{ Form::label('','Birthday') }}
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ Form::text('bday_from',null,['class'=>'datepicker form-control','id'=>'bday_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ Form::text('bday_to',null,['class'=>'datepicker form-control', 'id'=>'bday_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                            {{ Form::label('','Wedding Birthday') }}
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ Form::text('wedding_bday_from',null,['class'=>'datepicker form-control','id'=>'wedding_bday_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ Form::text('wedding_bday_to',null,['class'=>'datepicker form-control', 'id'=>'wedding_bday_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
                             {{ Form::label('','Booking Source') }}
                         </div>
@@ -224,13 +298,15 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <h5>Schedule</h5>
-                   <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                    <div class="form-group">
-                        <div class="form-line">
-                            <input type="text" class="datetimepicker form-control" name="schedule" id="schedule" required placeholder="Set Schedule">
-                        </div>
+                    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                        {{ Form::label('','Schedule') }}
                     </div>
+                    <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
+                        <div class="form-group">
+                            <div class="form-line">
+                                {{ Form::text('schedule',null,['class'=>'datepicker form-control','id'=>'schedule','placeholder'=>'Schedule' ,'required']) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -244,6 +320,7 @@
                     </a>
                 </h4>
             </div>
+
             <div id="collapseThree_11" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree_11">
                 <div class="panel-body">
                     <div class="row clearfix">

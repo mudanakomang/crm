@@ -19,11 +19,12 @@
 							</div>
 
 							<div class="body">
-								<table class="table table-bordered table-striped table-hover datatable responsive js-basic-example" id="datatable-responsive">
+								<table style="font-size: 13px" class="table table-bordered table-striped table-hover responsive js-basic-example  " id="loadcontacts">
 									<thead class="bg-teal">
 									<tr>
-										<th class="align-center">#</th>
+										<th class="align-center">No</th>
 										<th class="align-center">Full Name</th>
+										<th class="align-center">Last Name</th>
 										<th class="align-center">Birthday</th>
 										<th class="align-center">Wedding Birthday</th>
 										<th class="align-center">Country</th>
@@ -35,67 +36,7 @@
 										<th class="align-center">Total Spending (Rp.)</th>
 									</tr>
 									</thead>
-									<tbody>
-									@foreach($data as $key=>$contact)
-						@if($contact->transaction->sum('revenue')>=0)
-						<tr class="align-center">
-						<td>{{ $key+1 }}</td>
-						<td>
-                                                @if(!empty($contact->lname))
-                                                    <a href="{{ url('contacts/detail/').'/'.$contact->contactid }}" >{{ ucwords(strtolower($contact->fname)).' '.ucwords(strtolower($contact->lname)) }}</a>
-                                                @else
-                                                    <a href="{{ url('contacts/detail/').'/'.$contact->contactid }}" >{{ ucwords(strtolower($contact->fname)) }}</a>
-                                                @endif
-                                                @if( $contact->birthday=='' ? '': \Carbon\Carbon::parse($contact->birthday)->format('m-d')==\Carbon\Carbon::now()->format('m-d'))
-                                                    <i class="fa fa-birthday-cake " style="color: #009688" ></i>
-                                                @endif
-											</td>
-											<td>{{ $contact->birthday=='' ? "": \Carbon\Carbon::parse($contact->birthday)->format('M d') }}</td>
-											<td>{{ $contact->wedding_bday=='' ? "": \Carbon\Carbon::parse($contact->wedding_bday)->format('M d') }}</td>
-											<td>{{ \App\Country::where('iso2',$contact->country_id)->first()['country'] }}
-												<img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($contact->country['iso2'])}} pull-right" alt="{{$contact->country['country']}}" />
-											</td>
-											<td>{{ $contact->area }}</td>
-											<td>
-												@if(count($contact->profilesfolio)<>0)
-													@if($contact->profilesfolio->max()->foliostatus=='I')
-														Inhouse
-														@elseif($contact->profilesfolio->max()->foliostatus=='C')
-														Confirm
-														@elseif($contact->profilesfolio->max()->foliostatus=='X')
-														Cancel
-														@elseif($contact->profilesfolio->max()->foliostatus=='G')
-														Guaranteed
-														@else
-														Check Out
-														@endif
-												@endif
-											</td>
 
-
-											<td> @if(count($contact->campaign) <> 0)
-													 	<i class="fa fa-envelope success"></i>
-														{{ $contact->campaign->where('status','=','Sent')->count()}} Campaign
-												@endif
-											</td>
-
-											<td>
-												{{ $contact->transaction->whereIn('status',['O','I'])->count() }}
-												{{--{{ ($contact->transaction->first()['status']=='X' || $contact->transaction->first()['status']=='C') ? 0: $contact->transaction->count() }}--}}
-											</td>
-											<td>
-												{{ $contact->transaction->max('checkin')==NULL ? "": \Carbon\Carbon::parse($contact->transaction->max('checkin'))->format('d M Y') }}
-											</td>
-											<td>
-												{{ number_format($contact->transaction->sum('revenue'),0,'.',',')}}
-											</td>
-											{{--<td>--}}
-												{{--<a href="{{url('contacts/stay/add/').'/'.$contact->contactid}}" title="Add Stay"><i class="fa fa-hotel fa-2x "></i></a>--}}
-											{{--</td>--}}
-										</tr>
-									@endif
-									@endforeach
-									</tbody>
 								</table>
 
 							</div>
@@ -107,4 +48,154 @@
 	</div>
 @endsection
 @section('script')
+	<script>
+		$(document).ready(function () {
+		    var item=[];
+		    var path="{{ asset('countries.json') }}"
+		    var json = $.getJSON(path,function (d) {
+				$.each(d,function (i) {
+					item.push(d[i])
+                })
+            })
+
+			var t=$('#loadcontacts').DataTable({
+               //"deferRender":    true,
+             //  "scrollY":        500,
+             //  "scrollCollapse": true,
+			//	"scroller":       true,
+				"paging":true,
+             //  "lengthChange": false,
+				"stateSave":true,
+                "ajax":{
+                    "url":"{{ route('loadcontacts') }}",
+                    "dataSrc":"",
+                    "type":"POST",
+                    "data":{
+                        "_token":"{{ csrf_token() }}"
+                    }
+                },
+                "processing": true,
+                "language":{
+                  "processing":"<i class='fa fa-spinner fa-spin fa-3x fa-fw'></i><span class='sr-only'>Loading...</span> "
+				},
+                "columns": [
+                    {"data":null},
+                    { "data": "fname" },
+                    { "data": "lname" },
+                    { "data": "birthday" },
+                    { "data": "wedding_bday" },
+                    { "data": "country_id" },
+                    { "data": "area" },
+                    { "data": "transaction.0.status" },
+                    { "data": "campaign_count" },
+                    { "data": "transaction_count" },
+                    { "data": "transaction.0.checkin" },
+                    { "data": "transaction" },
+
+                ],
+                "columnDefs": [
+                    {
+                        "targets": 0,
+                        "data": "id",
+                        // My problem occurs when
+                        // commenting the "data": = "id" line and uncommenting the 2 lines below,
+                        // results in an AJAX error
+
+                        // "data": null,
+                        // "defaultContent": '',
+                    },{
+                        "targets":1,
+                        "render":function (data,type,row) {
+                            var id=row.contactid
+
+                            return '<a href="{{ url('contacts/detail/') }}'+'/'+id+'" >'+ data +' ' +row.lname+'</a>'
+//							data +' '+ row.lname
+                        }
+                    },{
+                        "visible":false,"targets":2
+                    },{
+                    	"targets":[3,4],
+						"render":function (data,type,row) {
+							if(moment(data).isValid()){
+                                return moment(data).format("MMM DD")
+							}else {
+							    return ''
+							}
+                        }
+					},{
+                    	"targets":5,
+						"render":function (data,type,row) {
+							for(var i in item){
+							    if(data===item[i]['iso3']){
+                                    var d=''
+                                    d=(item[i]["iso2"])
+                                    d=d.toLowerCase()
+                                 	var  country=item[i]["country"];
+                                    return country +'<img src="../flags/blank.gif"  class="flag flag-'+d+' pull-right"  alt="'+data+'" />';
+								}
+							}
+                        }
+					},{
+                    	"targets":7,
+						"render":function (data,type,row) {
+							switch (data){
+								case 'C':
+								    return "Confirm";
+								    break
+								case 'O':
+								    return "Checkout"
+									break
+								case "I":
+								    return "Inhouse"
+									break
+								case "X":
+								    return "Cancel"
+									break
+								case "G":
+								    return "Guaranteed"
+									break
+								default:""
+							}
+                        }
+					},{
+                    	"targets":8,
+						"render":function (data,type,row) {
+                            if(data>0){
+                                return "<i class='fa fa-envelope success'></i> "+ data +" Campaign"
+							}else
+							{
+							    return ""
+							}
+                        }
+					},{
+                    	"targets":10,
+						"render":function (data,type,row) {
+							if(data!==''){
+							    return moment(data).format('DD MMM YYYY')
+							}
+                        }
+					},{
+                    	"targets":11,
+						"render":function (d,t,r) {
+                    	    var s=0
+							for(var i=0; i<=d.length-1;i++){
+                    	        s+=d[i].revenue
+							}
+                            d=Math.floor(s)
+							return d.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+                        }
+					}],
+                "pageLength":20,
+                "createdRow": function( row, data, dataIndex){
+                    $('td',row).eq(1).css('text-transform', "capitalize")
+                },
+
+			})
+            t.on( 'order.dt search.dt ', function () {
+                t.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                } );
+            } ).draw();
+        })
+	</script>
 @endsection

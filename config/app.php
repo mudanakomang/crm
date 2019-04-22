@@ -146,6 +146,9 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        ZanySoft\Cpanel\CpanelServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+
 
 
         /*
@@ -211,8 +214,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
-
+        'Cpanel' => ZanySoft\Cpanel\CpanelFacade::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
 

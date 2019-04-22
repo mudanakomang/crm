@@ -61,7 +61,7 @@ class Contact extends Model
         return $this->belongsToMany('\App\Transaction','contact_transaction','contact_id','transaction_id','contactid','id')->orderBy('status','asc');
     }
     public function country(){
-        return $this->belongsTo('\App\Country','country_id','iso2');
+        return $this->belongsTo('\App\Country','country_id','iso3');
     }
     public function attribute(){
         return $this->belongsToMany('\App\Attribute');
@@ -71,6 +71,12 @@ class Contact extends Model
     }
     public function profilesfolio(){
         return $this->hasMany('\App\ProfileFolio','profileid','contactid');
+    }
+    public function sumRevenue(){
+        return $this->transaction->sum('revenue');
+    }
+    public function latestTransaction(){
+        return $this->belongsToMany('\App\Transaction','contact_transaction','contact_id','transaction_id','contactid','id')->orderBy('checkout','desc')->limit(1);
     }
 
 }

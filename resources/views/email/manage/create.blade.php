@@ -7,7 +7,7 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="x_panel tile">
                         <div class="x_title">
-                            <h2>Create Email Template</h2>
+                            <h3>Create Email Template</h3>
                             <ul class="nav navbar-right panel_toolbox">
                                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 <li><a class="close-link"><i class="fa fa-close"></i></a>
@@ -28,7 +28,7 @@
 @section('script')
 <script>
     $('#summernote').summernote({
-        height:100,
+       // height:100,
         popover: {
             image: [
                 ['custom', ['imageAttributes']],
@@ -44,6 +44,7 @@
             removeEmpty:false, // true = remove attributes | false = leave empty if present
             disableUpload: false // true = don't display Upload Options | Display Upload Options
         },
+        fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36', '48' , '64', '82', '150']
 
 
     });

@@ -15,7 +15,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
 	//
+    $configuration=\App\Configuration::find(1);
+    view()->share('configuration',$configuration);
 	Schema::defaultStringLength(191);
+
     }
 
     /**
@@ -26,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+
     }
 
 

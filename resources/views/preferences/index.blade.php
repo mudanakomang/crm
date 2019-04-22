@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Preferences | {{ config('app.name') }}
+    Preferences | {{ $configuration->hotel_name .' '.$configuration->app_title }}
     @endsection
 @section('content')
     <div class="right_col" role="main">
@@ -46,9 +46,126 @@
                                         <label>
                                             <input type="checkbox" class="flat dashboard"  id="collapseSidebar"> Collapse Sidebar
                                         </label><br>
+                                        <label>
+                                            <input type="checkbox" class="flat dashboard"  id="closeEmail"> Email Reports
+                                        </label><br>
                                     </div>
                                 </div>
                             </div>
+                            <hr>
+                            <div class="header">
+                                <h2>Configuration</h2>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6 form-control-label">
+                                    {{ Form::label('hotel_name','Hotel Name') }}
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            {{ Form::text('hotel_name',$configuration->hotel_name,['class'=>'datepicker form-control','id'=>'hotel_name', 'data-live-search'=>'true','placeholder'=>'Hotel Name']) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6 form-control-label">
+                                    {{ Form::label('app_title','App Title') }}
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            {{ Form::text('app_title',$configuration->app_title,['class'=>'datepicker form-control','id'=>'app_title', 'data-live-search'=>'true','placeholder'=>'App Title']) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6 form-control-label">
+                                    {{ Form::label('gm_name','GM Name') }}
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            {{ Form::text('gm_name',$configuration->gm_name,['class'=>'datepicker form-control','id'=>'gm_name', 'data-live-search'=>'true','placeholder'=>'GM Name']) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6 form-control-label">
+                                    {{ Form::label('mailgun_domain','Mailgun Domain') }}
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            {{ Form::text('mailgun_domain',$configuration->mailgun_domain,['class'=>'datepicker form-control','id'=>'mailgun_domain', 'data-live-search'=>'true','placeholder'=>'Mailgun Domain']) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6 form-control-label">
+                                    {{ Form::label('mailgun_password','Mailgun Password') }}
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            {{ Form::input('password','mailgun_password',$configuration->mailgun_password,['class'=>'datepicker form-control','id'=>'mailgun_password', 'data-live-search'=>'true','placeholder'=>'Mailgun Password']) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6 form-control-label">
+                                    {{ Form::label('mailgun_apikey','Mailgun API Key') }}
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            {{ Form::input('password','mailgun_apikey',$configuration->mailgun_apikey,['class'=>'datepicker form-control','id'=>'mailgun_apikey', 'data-live-search'=>'true','placeholder'=>'Mailgun API Key']) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6 form-control-label">
+                                    {{ Form::label('sender_email','Sender Email') }}
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            {{ Form::email('sender_email',$configuration->sender_email,['class'=>'datepicker form-control','id'=>'sender_email', 'data-live-search'=>'true','placeholder'=>'Sender Email']) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6 form-control-label">
+                                    {{ Form::label('sender_name','Sender Name') }}
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            {{ Form::email('sender_name',$configuration->sender_name,['class'=>'datepicker form-control','id'=>'sender_name', 'data-live-search'=>'true','placeholder'=>'Sender Name']) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-1 col-md-1 col-sm-6 col-xs-6 form-control-label">
+
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <a href="#" id="savepreferences" class="btn btn-success btn-sm">Save</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -58,6 +175,28 @@
     @endsection
 @section('script')
         <script>
+            $('#savepreferences').on('click',function (e) {
+                e.preventDefault()
+                $.ajax({
+                    url:'savepreferences',
+                    type:'POST',
+                    data:{
+                        _token:'{{ csrf_token() }}',
+                        hotel_name:$('#hotel_name').val(),
+                        app_title:$('#app_title').val(),
+                        gm_name:$('#gm_name').val(),
+                        mailgun_domain:$('#mailgun_domain').val(),
+                        mailgun_password:$('#mailgun_password').val(),
+                        mailgun_apikey:$('#mailgun_apikey').val(),
+                        sender_email:$('#sender_email').val(),
+                        sender_name:$('#sender_name').val()
+                    },success:function (d) {
+                        if(d==='success'){
+                            swal('Success','Preferences updated','success')
+                        }
+                    }
+                })
+            })
 
             $(document).ready(function () {
 

@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+   Campaign Management | {{ $configuration->hotel_name.' '.$configuration->app_title }}
+@endsection
 @section('content')
     @foreach($campaigns as $item)
         <!-- Button trigger modal -->
@@ -11,7 +14,9 @@
                         <h4 class="modal-title" id="myModalLabel">{{ $item->name }}</h4>
                     </div>
                     <div class="modal-body">
-                        {!!   $item->template[0]->content !!}
+                       @if(!empty($item->template[0]))
+                            {!!   $item->template[0]->content !!}
+                           @endif
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -300,7 +305,7 @@
                     <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
                         <div class="x_panel tile ">
                             <div class="x_title">
-                                <h2>Campaign Management</h2>
+                                <h3>Campaign Management</h3>
                                 <ul class="nav navbar-right panel_toolbox">
                                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                     <li><a class="close-link"><i class="fa fa-close"></i></a>

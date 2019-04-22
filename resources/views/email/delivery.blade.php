@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Template Management  | {{ $configuration->hotel_name.' '.$configuration->app_title }}
+    Email Delivery Status  | {{ $configuration->hotel_name.' '.$configuration->app_title }}
 @endsection
 @section('content')
     <div class="right_col" role="main">
@@ -10,74 +10,133 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel title">
                             <div class="x_title">
-                                <h3>Email Template Management</h3>
+                                <h3>Email Delivery Status</h3>
                                 <ul class="nav navbar-right panel_toolbox">
                                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
                                     <li><a class="close-link"><i class="fa fa-close"></i></a>
                                     </li>
                                 </ul>
-                                <div class="clearfix"></div>
-                                <a href="{{ url('email/create') }}" title="Create New Template" class=" btn btn-sm btn-success"> <i class="fa fa-plus"></i> Create New Template</a>
+                                <div class="clearfix">
+                                    <div class="card">
+                                        <div class="header">
+
+                                        </div>
+                                        <div class="body">
+                                            <div class="dashboard-widget-content col-md-4 col-sm-12 col-lg-4">
+                                                <div id="poststayChart" class="dashboard-donut-chart"></div>
+                                            </div>
+                                            <div class="dashboard-widget-content col-md-4 col-sm-12 col-lg-4">
+                                                <div id="birthdayChart" class="dashboard-donut-chart"></div>
+                                            </div>
+                                            <div class="dashboard-widget-content col-md-4 col-sm-12 col-lg-4">
+                                                <div id="missyouChart" class="dashboard-donut-chart"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{--<a href="{{ url('email/create') }}" title="Create New Template" class=" btn btn-sm btn-success"> <i class="fa fa-plus"></i> Create New Template</a>--}}
                             </div>
                             <div class="x_content">
-                                <table class="table table-bordered table-striped table-hover dataTable js-basic-example">
-                                    <thead>
-                                    <th width="10px">No</th>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th >Manage</th>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($template as $key=>$tem)
-                                        <tr>
-                                            <td>{{ $key+1 }}</td>
-                                            <td> {{ $tem->name }} </td>
-                                            <td>{{ $tem->type }}</td>
-                                            <td>{!! Form::open(['method' => 'DELETE','route' => ['email.destroy', $tem->id],'id'=>'form'.$tem->id]) !!}
-                                                {!! Form::close() !!}
-                                                <a href="#" title="Delete Template" onclick="
-                                                        return swal({title:'Delete Confirmation',text:'This Template will permanently deleted',type:'warning',                                                        showCancelButton: true,
-                                                            confirmButtonColor: '#DD6B55',
-                                                            confirmButtonText:'Delete',
-                                                            cancelButtonText: 'No',
-                                                            closeOnConfirm: false,
-                                                            closeOnCancel: false
-                                                        },
-                                                        function(isConfirm){
-                                                            if (isConfirm) {
-                                                        //$('#form{{$tem->id}}').submit();
-                                                            $.ajax({
-                                                                url:'{{ url("template/destroy") }}',
-                                                                type:'POST',
-                                                                data:{
-                                                                _token:'{{ csrf_token() }}',
-                                                                id:'{{ $tem->id }}',
+                                <div class="panel-group full-body" id="accordion_18" role="tablist" aria-multiselectable="true">
+                                    <div class="panel">
+                                        <div class="panel-heading" role="tab" id="headingOne_18">
+                                            <h4 class="panel-title ">
+                                                <a class="collapsed teal"  role="button" data-toggle="collapse" data-parent="#accordion_18" href="#collapseOne_18" aria-expanded="true" aria-controls="collapseOne_18">
+                                                    <i class="fa fa-hotel"></i> Poststay
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseOne_18" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne_18">
+                                            <div class="panel-body">
+                                                <div class="row clearfix">
+                                                    <div class="card">
+                                                        <div class="body">
+                                                            <table class="table table-bordered table-striped table-hover responsive js-basic-example " style="font-size: 11px" id="poststay">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>No</th>
+                                                                    <th>Event</th>
+                                                                    <th>Severity</th>
+                                                                    <th>URL</th>
+                                                                    <th>Recipient</th>
+                                                                    <th>Status</th>
+                                                                    <th>Sent</th>
+                                                                </tr>
+                                                                </thead>
+                                                            </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    <div class="panel ">
+                                        <div class="panel-heading" role="tab" id="headingTwo_18">
+                                            <h4 class="panel-title">
+                                                <a class="collapsed bg-teal" role="button" data-toggle="collapse" data-parent="#accordion_18" href="#collapseTwo_18" aria-expanded="false"                              aria-controls="collapseTwo_18">
+                                                    <i class="fa fa-birthday-cake"></i> Birthday
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseTwo_18" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo_18">
+                                            <div class="panel-body">
+                                                <div class="row clearfix">
+                                                    <div class="card">
+                                                        <div class="body">
+                                                            <table class="table table-bordered table-striped table-hover responsive js-basic-example " style="font-size: 11px" id="birthday">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>No</th>
+                                                                    <th>Event</th>
+                                                                    <th>Severity</th>
+                                                                    <th>URL</th>
+                                                                    <th>Recipient</th>
+                                                                    <th>Status</th>
+                                                                    <th>Sent</th>
+                                                                </tr>
+                                                                </thead>
+                                                            </table>
 
-                                                        },success:function(data) {
-                                                        if(data.status==='error'){
-                                                        var tmpl='{{$tem->campaign }}'
-                                                        tmpl=JSON.parse(tmpl);
-                                                        swal('Delete Failed', 'This template is being used in campaign or scheduled email, please delete the campaign/schedule first','error')
-                                                        } else {
-                                                        swal({title: 'Success', text: 'Template deleted', type: 'success'},
-                                                        function(){
-                                                            location.reload();
-                                                             }
-                                                         );
-                                                         }
-                                                            }
-                                                            })
-                                                        } else {
-                                                        swal('Cancelled', 'Delete Template Cancelled','error');
-                                                        }
-                                                        });"><i class="fa  fa-trash" style="font-size: 1.5em"></i> </a> <a href="{{ url('email/'.$tem->id.'/edit') }}" title="Edit"><i class="fa  fa-edit" style="font-size: 1.5em"></i> </a>  <a href="#myModal{{$tem->id}}" data-toggle="modal" data-target="#myModal{{$tem->id}}"><i class="fa  fa-eye" style="font-size: 1.5em"></i> </a>
-                                                <a href="#cloneTemplate{{$tem->id}}" data-toggle="modal" data-target="#cloneTemplate{{$tem->id}}" id="copyTempalte" title="Copy Template" ><i class="fa fa-copy" style="font-size: 1.5em"></i> </a>
-                                                <a href="#testEmail{{ $tem->id }}" data-toggle="modal" data-target="#testEmail{{ $tem->id }}" id="testSendEmail" title="Send Email Test"> <i class="fa fa-send"></i>   </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel ">
+                                        <div class="panel-heading" role="tab" id="headingThree_18">
+                                            <h4 class="panel-title">
+                                                <a class="collapsed bg-teal" role="button" data-toggle="collapse" data-parent="#accordion_18" href="#collapseThree_18" aria-expanded="false"  aria-controls="collapseThree_18">
+                                                    <i class="fa fa-cloud"></i> Miss You
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseThree_18" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree_18">
+                                            <div class="panel-body">
+                                                <div class="row clearfix">
+                                                    <div class="card">
+                                                        <div class="body">
+                                                            <table class="table table-bordered table-striped table-hover responsive js-basic-example " style="font-size: 11px" id="missyou">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>No</th>
+                                                                    <th>Event</th>
+                                                                    <th>Severity</th>
+                                                                    <th>URL</th>
+                                                                    <th>Recipient</th>
+                                                                    <th>Status</th>
+                                                                    <th>Date</th>
+                                                                </tr>
+                                                                </thead>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -85,170 +144,194 @@
             </div>
         </section>
     </div>
-    @foreach($template as $item)
-        <div  class="modal " id="myModal{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content" >
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">{{ $item->name }}</h4>
-                    </div>
-                    <div class="modal-body">
-                        {!! $item->content !!}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="cloneTemplate{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="cloneTemplateLable" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="cloneTemplateLable{{ $item->id }}">Clone Template</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="templateClone{{ $item->id }}" >
-                            <div class="col-lg-3 col-md-3 col-sm-8 col-xs-8 form-control-label">
-                                {{ Form::label('tname','New Template Name') }}
-                            </div>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <div class="form-group">
-                                    <div class="form-line">
-                                        {{ Form::text('tname',null,['class'=>'form-control','id'=>'tname','data-live-search'=>'true','required','placeholder'=>'New Template Name']) }}
-                                    </div>
-                                    <span class="text-danger">
-                                            <strong id="tname-error">
-                                            </strong>
-                                            </span>
-                                </div>
-                            </div>
-                            <input type="hidden" name="template_id" id="template_id{{$item->id}}" value="{{$item->id}}">
-                            <div class="col-lg-3 col-md-3 col-sm-8 col-xs-8 form-control-label">
-                                {{ Form::label('','Preview:') }}
-                            </div>
-                            {!! $item->content !!}
-                            <div class="previewtemplate">
-
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
-                        <a href="#" id="{{ $item->id }}" class="btn btn-sm btn-success" onclick="return submitClone(this.id)">Save</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="testEmail{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="testEmailLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="testEmailLabel{{ $item->id }}">Send Email Test</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="emailTest{{ $item->id }}" >
-                            <div class="col-lg-3 col-md-3 col-sm-8 col-xs-8 form-control-label">
-                                {{ Form::label('email','Email Address') }}
-                            </div>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <div class="form-group">
-                                    <div class="form-line">
-                                        {{ Form::email('email',null,['class'=>'form-control','id'=>'email','data-live-search'=>'true','required','placeholder'=>'Email Address']) }}
-                                    </div>
-                                    <span class="text-danger">
-                                            <strong id="email-error">
-                                            </strong>
-                                            </span>
-                                </div>
-                            </div>
-                            <input type="hidden" name="template_id" id="template_id{{$item->id}}" value="{{$item->id}}">
-                            <div class="col-lg-3 col-md-3 col-sm-8 col-xs-8 form-control-label">
-                                {{ Form::label('','Preview:') }}
-                            </div>
-                            {!! $item->content !!}
-                            <div class="previewtemplate">
-
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
-                        <a href="#" id="{{ $item->id }}" class="btn btn-sm btn-success" onclick="return sendEmailTest(this.id)">Send</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endforeach
 
 @endsection
 @section('script')
-    <script>
-        function sendEmailTest(id) {
-            var form =$('#emailTest'+id);
-            var email=form.find('#email');
-            $.ajax({
-                url:'sendtest',
-                type:'post',
-                data:{
-                    id:id,
-                    email:email.val(),
-                    _token:'{{ csrf_token() }}'
-                },success:function (data) {
-                    if(data==='success'){
-                        swal({
-                            title:"Success",
-                            text:"Email Sent",
-                            type:"success",
-                        },function () {
-                            window.location.reload();
-                        })
-                    }else {
-                        if(data.errors.email){
-                            swal('', data.errors.email[0], 'warning')
-                        }
-                    }
-                }
-            })
-        }
-        function submitClone(id) {
+<script>
+    $('.datetimepicker').datetimepicker({
+        format: 'DD MMM YYYY H:mm',
+        showClear:true,
+    });
+    function escapeHtml(text) {
+        'use strict';
+        return text.replace(/[\"&'\/<>]/g, function (a) {
+            return {
+                '"': '&quot;', '&': '&amp;', "'": '&#39;',
+                '/': '&#47;',  '<': '&lt;',  '>': '&gt;'
+            }[a];
+        });
+    }
+    function getClick(recipient) {
+        var arr = "";
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "{{ route('getClick') }}",
+            data:{
+                recipient:recipient,
+                type:'clicked',
+                _token:"{{ csrf_token() }}"
+            },
+            success: function (data) {
+                arr=data
 
-            var form=$('#templateClone'+id)
-            var name=form.find('#tname');
+            }
+        });
+        return arr
+    }
+
+    $(document).ready(function () {
+
+        $.each(['poststay','birthday','missyou'],function (i,v) {
             $.ajax({
-                url:'saveclone',
-                type:'post',
+                url:"{{ route('deliverystatus') }}" ,
+                type:'POST',
                 data:{
-                    tid:id,
-                    name:name.val(),
-                    _token:'{{ csrf_token() }}'
-                },success:function (data) {
-                    if(data==='success'){
-                        swal({
-                            title: "Sucess",
-                            text: "Template Cloned",
-                            type: "success",
-                        },function() {
-                            window.location.reload();
-                        });
-                    }else {
-                        if(data.errors.name){
-                            swal('', data.errors.name[0], 'warning')
+                    d:v,
+                    _token:"{{ csrf_token() }}"
+                },success:function (d) {
+                    var op=0;
+                    var cl=0;
+                    var fa=0;
+                    var de=0;
+                    for(var i =0;i<=d.length-1;i++){
+                        if(d[i]['event']==='opened'){
+                            op+=1
                         }
+                        if (d[i]['event']==='clicked'){
+                            cl+=1
+                        }
+                        if(d[i]['event']==='failed'){
+                            fa+=1
+                        }
+                        if(d[i]['event']==='delivered'){
+                            de+=1
+                        }
+                    }
+                    var res=[{'label':'Clicked','value':cl},{'label':'Opened','value':op},{'label':'Failed','value':fa},{'label':'Delivered','value':de}];
+                    //res.push([{'label':'Opened','value':op}],[{'label':'Clicked','value':cl}],[{'label':'Failed','value':fa}],[{'label':'Delivered','value':de}])
+                    if(d.length>0){
+                        Morris.Donut({
+                            element: v+'Chart',
+                            data:  res,
+                            resize:true,
+                            colors: ['rgb(77, 163, 3)', 'rgb(1, 124, 124)', 'rgb(206, 79, 37)', 'rgb(0, 150, 136)', 'rgb(191, 191, 191)'],
+
+                            formatter: function (y) {
+                                var xx=y/d.length * 100;
+                                xx=Math.round(xx);
+                                return v.toUpperCase()+' \n'+ xx  + '%'
+                            }
+                        })
+                    }
+                }
+            });
+
+            var t=$('#'+v).DataTable({
+                "ajax":{
+                    "url":"{{ route('deliverystatus') }}",
+                    "dataSrc":"",
+                    "type":"POST",
+                    "data":{
+                        "d":v,
+                        "_token":"{{ csrf_token() }}"
+                    }
+                },
+                "columnDefs": [
+                    {
+                        "targets": 0,
+                        "data": "id",
+                        "width":"15px"
+
+                    },{
+                        "targets":6,
+                        "render":function (d) {
+                            return moment(d).format('DD MMM YYYY H:mm')
+                        }
+                    },{
+                        "targets":3,
+                        "visible":false,
+                    },{
+                        "targets":5,
+                        "render":function (d,t,r) {
+
+                            if(r.event==='clicked'){
+                             var tt= getClick(r.recipient)
+                             var text='<ul class="list-group">';
+                             for(var i =0;i<=tt.length-1;i++){
+                                 text+='<li class="list-group-item">'+tt[i].url+'</li>'
+                             }
+                             text+='</ul>'
+                                return " <a href='#' onclick='event.preventDefault()' class='' data-toggle='popover' title='Detail' data-content='"+text+"'>Detail</a>"
+                            }else if(r.event==='failed'){
+                              var txt=r.delivery_status
+                                return " <a href='#' onclick='event.preventDefault()' class='' data-toggle='popover' title='Detail' data-content='"+escapeHtml(txt)+"'>Detail</a>"
+                            }else if(r.event==='delivered'){
+                                return ''
+                            } else if(r.event==='unsubscribed') {
+                                return  " <a href='#' onclick='event.preventDefault()' class='' data-toggle='popover' title='Detail' data-content='Unsubscribed'>Detail</a>"
+                            } else if(r.event==='opened'){
+                                return " "
+                            }
+                        }
+                    }],
+                "columns": [
+                    {"data":null},
+                    { "data": "event" },
+                    { "data": "severity" },
+                    { "data": "url" },
+                    { "data": "recipient" },
+                    { "data": "delivery_status" },
+                    { "data": 'timestamp' }
+
+                ],
+                "pageLength":25,
+                "createdRow": function( row, data, dataIndex){
+                    $('td',row).eq(1).css('text-transform', "capitalize")
+                    $('td',row).eq(2).css('text-transform', "capitalize")
+                    switch (data['event']){
+                        case "failed":
+                            return $('td',row).eq(1).addClass('alert alert-danger')
+                            break
+                        case "delivered":
+                            return $('td',row).eq(1).addClass('alert')
+                            break
+                        case "opened":
+                            return $('td',row).eq(1).addClass('alert alert-info')
+                            break
+                        case "clicked":
+                            return $('td',row).eq(1).addClass('alert alert-success')
+                        case "unsubscribed":
+                            return $('td',row).eq(1).addClass('alert alert-warning')
+                            break
+                        default: $('td',row).eq(1).addClass('alert alert-light')
                     }
                 }
             })
-        }
-        $('.dataTable').dataTable();
-    </script>
+
+            t.on( 'order.dt search.dt', function () {
+                t.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                } );
+            } ).draw();
+        })
+        $(document).popover({
+            selector: '[data-toggle=popover]',
+            html: true,
+            trigger: 'click',
+            placement:'left',container: 'body'
+        }).on("show.bs.popover", function() {
+            return $(this).data("bs.popover").tip().css({
+                width: "700px"
+            });
+        });
+        $('html').on('click', function(e) {
+            if (typeof $(e.target).data('original-title') == 'undefined' &&
+                !$(e.target).parents().is('.popover.in')) {
+                $('[data-original-title]').popover('hide');
+            }
+        });
+    })
+</script>
 @endsection

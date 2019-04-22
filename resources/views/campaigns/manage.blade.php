@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+    Create Campaign  | {{ $configuration->hotel_name.' '.$configuration->app_title }}
+@endsection
 @section('content')
     <div class="right_col" role="main">
         <section class="content">
@@ -7,7 +10,7 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel tile ">
                             <div class="x_title">
-                                <h2>Create Campaign</h2>
+                                <h3>Create Campaign</h3>
                                 <ul class="nav navbar-right panel_toolbox">
                                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                     <li><a class="close-link"><i class="fa fa-close"></i></a>
@@ -41,6 +44,8 @@
     </script>
     <script>
         $(document).ready(function(){
+            $('.categoryselect').hide()
+
             $('#spending_from').maskMoney({thousands:'.', decimal:',', precision:0});
             $('#spending_to').maskMoney({thousands:'.', decimal:',', precision:0});
            $('.selectsegment').hide();
@@ -64,14 +69,43 @@
         $('#stay_from').datetimepicker({
             format: 'DD MMMM YYYY',
             showClear:true,
+        }).on('dp.change',function(){
+            checkRecepient()
         });
+        $('#schedule').datetimepicker({
+            format: 'DD MMMM YYYY hh:mm',
+            showClear:true,
+
+        })
         $('#stay_to').datetimepicker({
             format: 'DD MMMM YYYY',
             showClear:true,
+        }).on('dp.change',function() {
+            checkRecepient();
         });
-        $('#schedule').datetimepicker({
-            minDate:new Date(),
-
+        $('#bday_from').datetimepicker({
+            format: 'DD MMMM YYYY',
+            showClear:true,
+        }).on('dp.change',function(){
+            checkRecepient()
+        });
+        $('#bday_to').datetimepicker({
+            format: 'DD MMMM YYYY',
+            showClear:true,
+        }).on('dp.change',function() {
+            checkRecepient();
+        });
+        $('#wedding_bday_from').datetimepicker({
+            format: 'DD MMMM YYYY',
+            showClear:true,
+        }).on('dp.change',function(){
+            checkRecepient()
+        });
+        $('#wedding_bday_to').datetimepicker({
+            format: 'DD MMMM YYYY',
+            showClear:true,
+        }).on('dp.change',function() {
+            checkRecepient();
         });
 
 
@@ -91,7 +125,7 @@
                 $('.preview').hide();
                 checkRecepient();
                var data= {!!  json_encode($model) !!};
-              if(data != null || undefined){
+              if(data['template'].length>0 ){
                   var id_=data['template'][0]['id'];
                   var name_=data['template'][0]['name'];
                  $('#template').append('<option value="'+id_+'" selected="selected">'+name_+'</option>');
@@ -104,6 +138,10 @@
                 $('.country_id').children('option:selected').each(function () {
                     sel.push($(this).val())
                 });
+                var ar=[];
+                $('.area').children('option:selected').each(function () {
+                    ar.push($(this).val())
+                })
                 var guest=[];
                 $('.guest').children('option:selected').each(function () {
                     guest.push($(this).val())
@@ -122,6 +160,9 @@
                 $('.country_id bs-select-all').on('click',function () {
                     sel.length=0;
                 })
+                $('.area bs-select-all').on('click',function () {
+                    ar.length=0;
+                })
                 $('.guest bs-select-all').on('click',function () {
                     guest.length=0;
                 })
@@ -130,12 +171,17 @@
                     url:url,
                     data:{
                         country_id:sel,
+                        area:ar,
                         _token:'{{ csrf_token() }}',
                         guest_status:guest,
                         spending_from:$('#spending_from').val(),
                         spending_to:$('#spending_to').val(),
                         stay_from:$('#stay_from').val(),
                         stay_to:$('#stay_to').val(),
+                        bday_from:$('#bday_from').val(),
+                        bday_to:$('#bday_to').val(),
+                        wedding_bday_from:$('#wedding_bday_from').val(),
+                        wedding_bday_to:$('#wedding_bday_to').val(),
                         total_stay_from:$('#total_stay_from').val(),
                         total_stay_to:$('#total_stay_to').val(),
                         total_night_from:$('#total_night_from').val(),
@@ -180,7 +226,7 @@
                         toolbar: [
 
                         ],
-                        height:400,
+                       // height:400,
                     });
                    $('#summernote').summernote('code', '');
                  $('#summernote').summernote('editor.pasteHTML',data['content']);
@@ -190,6 +236,24 @@
     </script>
     <script>
         $(document).ready(function () {
+
+            $('#checkexternal').on('click',function () {
+                if($(this).prop('checked')){
+                    $('.categoryselect').show()
+                    $('.segmentselect').hide()
+                    $('.formsegment').hide();
+                    $('.formsegment').parsley({
+                        excluded:'#segmentname'
+                    })
+
+                } else {
+                    $('.formsegment').parsley()
+                    $('.categoryselect').hide()
+                    $('.segmentselect').show()
+
+                }
+            });
+
             var status= '{{ $model->status }}';
             if (status==='Inactive'){
                 $('#myonoffswitch').prop('checked',false);
@@ -304,26 +368,28 @@
         });
     </script>
     <script>
-        function selectSegment(){
 
-             var $this=$('#segment');
-             if($this.is(':checked')){
-                 setSwitchery(mySwitch, true);
-                 $('.formsegment').hide();
-                 $('.selectsegment').show();
-                 $('#saveSegment').hide()
-                 $.each($('.formsegment input'),function(i,v){
-                     $(v).val('')
-                 })
-             }else {
-                 setSwitchery(mySwitch, false);
-                 $('.formsegment').show();
-                 $('.selectsegment').hide();
-                 $('#saveSegment').show()
+        $('#segment').on('click',function () {
+            var $this=$('#segment');
+            if($this.is(':checked')){
+                setSwitchery(mySwitch, true);
+                $('.formsegment').hide();
+                $('.selectsegment').show();
+                $('#saveSegment').hide()
+                $.each($('.formsegment input'),function(i,v){
+                    $(v).val('')
+                })
+            }else {
+                setSwitchery(mySwitch, false);
+                $('.formsegment').show();
+                $('.selectsegment').hide();
+                $('#saveSegment').show()
 
 
-             }
-        }
+            }
+        })
+
+
        $('#segments').on('change',function () {
            $('.formsegment').show();
 
@@ -341,6 +407,11 @@
                    $('.country_id').selectpicker();
                    $('.country_id').selectpicker('val','');
                    $('.country_id').selectpicker('val',options);
+
+                   var area=data[5];
+                   $('.area').selectpicker();
+                   $('.area').selectpicker('val','');
+                   $('.area').selectpicker('val',area);
 
                    var gueststatus=data[2];
                    $('.guest').selectpicker();
@@ -375,6 +446,28 @@
                    }else {
                        $('#stay_to').val(moment(campaign['stay_to']).format('D MMMM YYYY'));
                    }
+
+                   if(campaign['bday_from']==null){
+                       $('#bday_from').val('');
+                   }else {
+                       $('#bday_from').val(moment(campaign['bday_from']).format('D MMMM'));
+                   }
+                   if(campaign['bday_to']==null){
+                       $('#bday_to').val('');
+                   }else {
+                       $('#bday_to').val(moment(campaign['bday_to']).format('D MMMM'));
+                   }
+                   if(campaign['wedding_bday_from']==null){
+                       $('#wedding_bday_from').val('');
+                   }else {
+                       $('#wedding_bday_from').val(moment(campaign['wedding_bday_from']).format('D MMMM'));
+                   }
+                   if(campaign['wedding_bday_to']==null){
+                       $('#wedding_bday_to').val('');
+                   }else {
+                       $('#wedding_bday_to').val(moment(campaign['wedding_bday_to']).format('D MMMM'));
+                   }
+
                    $('#total_stay_from').val('');
                    $('#total_stay_from').val(campaign['total_stay_from']);
                    $('#total_stay_to').val('');

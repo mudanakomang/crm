@@ -4,7 +4,8 @@ namespace App\Console\Commands;
 
 use App\Birthday;
 use App\Contact;
-use App\Http\Controllers\EmailTemplateController;
+
+use App\Http\Controllers\MailgunController;
 use App\MailEditor;
 use Illuminate\Console\Command;
 
@@ -43,12 +44,12 @@ class BirthDayCommand extends Command
     {
         //
         $birthday=Birthday::find(1);
-        $email=new EmailTemplateController();
+        $mg=new MailgunController();
         if ($birthday->active=='y'){
             $template=MailEditor::find($birthday->template_id);
-            $contacts=Contact::whereRaw('DATE_FORMAT(birthday,\'%m-%d\')=DATE_FORMAT(DATE_ADD(now(),INTERVAL \''.$birthday->sendafter.'\' day),\'%m-%d\') ')->get();
+         $contacts=Contact::whereRaw('DATE_FORMAT(birthday,\'%m-%d\')=DATE_FORMAT(DATE_ADD(now(),INTERVAL \''.$birthday->sendafter.'\' day),\'%m-%d\') ')->get();
             foreach ($contacts as $contact){
-                $email->emailsend($contact,$template,$contact->gender=='M' ? $template->subject.' Mr.'.$contact->fname.' '.$contact->lname:$template->subject.' Ms./Mrs.'.$contact->fname.' '.$contact->lname);
+                $mg->bdayemail($contact,$template,'birthday');
             }
         }
     }

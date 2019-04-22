@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-   Dashboard | {{ config('app.name') }}
+   Dashboard | {{ $configuration->hotel_name.' '.$configuration->app_title }}
     @endsection
 @section('content')
     <div class="right_col" role="main">
@@ -8,7 +8,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel tile " >
                     <div class="x_title">
-                        <h2>Data of last 3 months</h2>
+                        <h2>Last 3 months data</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -39,14 +39,14 @@
                             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                 <span class="count_top"><i class="fa fa-user"></i> Inhouse </span>
                                 <div class="count green"> <a href="{{ url('contacts/f/status/Inhouse') }}" class="green" >{{ \App\Contact::whereHas('transaction',function($q){
-                                    return $q->where('status','=','I');
+                                    return $q->where('status','=','I')->groupBy('id')->havingRaw('sum(revenue)>=0');
                                 })->count() }} </a> </div>
 
                             </div>
                             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                 <span class="count_top"><i class="fa fa-user"></i> Confirm </span>
-                                <div class="count red"> <a href="{{ url('contacts/f/status/Confirm') }}" class="green" > {{ \App\Contact::whereHas('transaction',function ($q){
-                                    return $q->where('status','=','C')->whereRaw('checkin > date_format(now(),\'%y-%m-%d\')');
+                                <div class="count red"> <a href="{{ url('contacts/f/status/Confirm') }}" class="green" > {{ \App\Contact::whereHas('profilesfolio',function ($q){
+                                    return $q->where('foliostatus','=','C');
                                     })->count()  }} </a></div>
 
                             </div>
@@ -59,6 +59,7 @@
         <!-- top tiles -->
         <!-- /top tiles -->
         <div class="row">
+
             <div class="col-md-4 col-sm-4 col-xs-12 paneld" id="closeAdded">
                 <div class="x_panel tile " style="height: 420px">
                     <div class="x_title">
@@ -121,6 +122,25 @@
                         <div class="dashboard-widget-content">
                             <div id="top10rev" class="dashboard-donut-chart"></div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12 paneld" id="closeEmail">
+                <div class="x_panel tile " style="height: 420px">
+                    <div class="x_title">
+                        <h2>Email Reports</h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            <li><a class="close-link" id="closeEmail"><i class="fa fa-close"></i></a>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content" >
+                        <div class="dashboard-widget-content">
+                            <div id="emailreport" class="dashboard-donut-chart "></div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -260,6 +280,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 @endsection
@@ -352,6 +373,7 @@
     <script>
         var total={!! $total !!};
         var data={!! $country !!};
+        console.log({!! $country !!})
         Morris.Donut({
             element: 'donut_chart',
             data:  data,
@@ -425,6 +447,7 @@
                 var red = Math.ceil((255 * row.y / this.ymax)+255/5 );
                 return 'rgb(57, 128, 181)';
             }
+	
         }).on('click',function(i,row){
             window.location.href='contacts/f/longest/'+row.x;
         });
@@ -464,6 +487,7 @@
             data:{!! $databookingsource !!},
             resize:true,
             formatter:function (y) {
+				console.log(y)
                 var res=y/tbookingsource*100;
                 res=Math.round(res);
                 return res + '%'
@@ -471,5 +495,17 @@
         }).on('click',function (i,row) {
             window.location.href='contacts/f/source/'+row.label;
         });
+        var temailcount='{!! $temailcount !!}'
+        var month="{{ \Carbon\Carbon::now()->format('M Y') }}"
+        Morris.Donut({
+            element:'emailreport',
+            data:{!! $dataemailreport !!},
+            resize:true,
+            formatter:function (y) {
+                var res=y/temailcount*100;
+                res=Math.round(res);
+                return '('+y+') '+ res + '% of ' + temailcount +' email sent\n\n'+ month
+            }
+        })
     </script>
     @endsection

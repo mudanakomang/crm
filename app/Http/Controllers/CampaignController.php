@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Campaign;
 use App\Contact;
-use App\Country;
+use App\ExternalContact;
+use App\ExternalContactCategory;
 use App\MailEditor;
 use App\Schedule;
 use App\Segment;
 use Carbon\Carbon;
-use function foo\func;
 use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Validator;
@@ -21,15 +21,15 @@ class CampaignController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function activate(Request $request){
-        dd($request->all());
+    public function activate(Request $seg){
+        dd($seg->all());
     }
     public function index()
     {
         //
-        $campaign=Campaign::all();
-
-        return view('campaigns.index',['campaigns'=>$campaign]);
+        $campaign=Campaign::orderBy('created_at','desc')->get();
+       // dd($campaign);
+        return view('campaign.index',['campaigns'=>$campaign]);
     }
 
     /**
@@ -42,86 +42,100 @@ class CampaignController extends Controller
         //
         $action='create';
         $model=new Campaign();
-        return view('campaigns.manage',['action'=>$action,'model'=>$model,'option'=>[]]);
+        return view('campaign.manage',['action'=>$action,'model'=>$model,'option'=>[]]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $seg
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
+//        $contacts=Contact::with('transaction','profilesfolio')->when($seg->country_id !=null,function ($q) use ($seg){
+//            return $q->whereIn('country_id',$seg->country_id);
+//        })->when($seg->area!=null,function ($q) use ($seg){
+//            return $q->whereIn('area',$seg->area);
+//        })->when($seg->guest_status !=null,function ($q) use ($seg){
+//            return $q->whereHas('transaction',function ($q) use ($seg){
+//                return $q->whereIn('status',$seg->guest_status);
+//            });
+//        })->when($seg->spending_from ==null and $seg->spending_to !=null ,function ($q) use ($seg){
+//            return $q->whereHas('transaction',function ($q) use ($seg){
+//                return $q->whereBetween('revenue',[0,str_replace('.','',$seg->spending_to)]);
+//            });
+//        })->when($seg->spending_from !=null and $seg->spending_to ==null,function ($q) use ($seg){
+//            return $q->whereHas('transaction',function ($q) use ($seg){
+//                return $q->where('revenue','>=',str_replace('.','',$seg->spending_from));
+//            });
+//        })->when($seg->spending_from !=null and $seg->spending_to !=null,function ($q) use ($seg){
+//            return $q->whereHas('transaction',function ($q) use ($seg){
+//                return $q->whereBetween('revenue',[str_replace('.','',$seg->spending_from),str_replace('.','',$seg->spending_to)]);
+//            });
+//        })->when($seg->gender !=null,function ($q) use ($seg) {
+//            return $q->whereIn('gender', $seg->gender);
+//        })->when($seg->stay_from == null and $seg->stay_to != null,function ($q) use ($seg) {
+//            return $q->whereHas('transaction', function ($q) use ($seg) {
+//                return $q->where('checkout', '<=', Carbon::parse($seg->stay_to)->format('Y-m-d'));
+//            });
+//        })->when($seg->stay_from !=null and $seg->stay_to ==null ,function ($q) use ($seg){
+//            return $q->whereHas('transaction',function ($q) use ($seg){
+//                return $q->where('checkin','>=',Carbon::parse($seg->stay_from)->format('Y-m-d'));
+//            });
+//        })->when($seg->stay_from !=null and $seg->stay_to !=null,function ($q) use ($seg) {
+//            return $q->whereHas('transaction', function ($q) use ($seg) {
+//                return $q->where('checkin', '>=', Carbon::parse($seg->stay_from)->format('Y-m-d'))
+//                    ->where('checkout', '<=', Carbon::parse($seg->stay_to)->format('Y-m-d'));
+//            });
+//        })->when($seg->total_night_from !=null and $seg->total_night_to==null, function ($q) use ($seg) {
+//            return $q->whereHas('transaction', function ($q) use ($seg) {
+//                return $q->whereRaw('DATEDIFF(checkout,checkin) >= ' . $seg->total_night_from);
+//            });
+//        })->when($seg->total_night_from == null and $seg->total_night_to !=null ,function ($q) use ($seg){
+//            return $q->whereHas('transaction',function ($q) use ($seg){
+//                return $q->whereRaw('DATEDIFF(checkout,checkin) <='.$seg->total_night_to);
+//            });
+//        })->when($seg->total_night_from !=null and $seg->total_night_to !=null, function ($q) use ($seg) {
+//            return  $q->whereHas('transaction', function ($q) use ($seg) {
+//                return    $q->whereRaw('DATEDIFF(checkout,checkin) between ' . $seg->total_night_from . ' and ' . $seg->total_night_to . '');
+//            });
+//        })->when($seg->total_stay_from !=null and $seg->total_stay_to ==null ,function ($q) use ($seg){
+//            return $q->has('transaction','>=',$seg->total_stay_from);
+//        })->when($seg->total_stay_from == null and $seg->total_stay_to !=null ,function ($q) use ($seg){
+//            return $q->has('transaction','<=',$seg->total_stay_to);
+//        })->when($seg->total_stay_from !=null and $seg->total_stay_to !=null, function ($q) use ($seg){
+//            return $q->has('transaction','>=',$seg->total_stay_from)->has('transaction','<=',$seg->total_stay_to);
+//
+//        })->when($seg->age_from!=null and $seg->age_to!=null ,function ($q) use ($seg){
+//            return $q->whereRaw('birthday <= date_sub(now(), INTERVAL \''.$seg->age_from.'\' YEAR) and birthday >= date_sub(now(),interval \''.$seg->age_to.'\' year)');
+//        })->when($seg->age_from!=null ,function($q) use ($seg){
+//            return $q->whereRaw('birthday <= date_sub(now(),INTERVAL \''.$seg->age_from.'\' YEAR)');
+//        })->when($seg->age_to!=null,function ($q) use ($seg){
+//            return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$seg->age_to.'\' YEAR)');
+//        })->when($seg->booking_source!=null,function ($q) use ($seg){
+//            $q->whereHas('profilesfolio',function ($q) use ($seg){
+//                $q->whereIn('source',$seg->booking_source);
+//            });
+//        })->when($seg->wedding_bday_from ==null and $seg->wedding_bday_to !=null , function ($q) use ($seg){
+//            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') = ?',[Carbon::parse($seg->wedding_bday_to)->format('m-d')]);
+//        })->when($seg->wedding_bday_from !=null and $seg->wedding_bday_to == null , function ($q) use ($seg){
+//            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') = ?',[Carbon::parse($seg->wedding_bday_from)->format('m-d')]);
+//        })->when($seg->wedding_bday_from != null and $seg->wedding_bday_to !=null, function ($q) use ($seg){
+//            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') >= ?',[Carbon::parse($seg->wedding_bday_from)->format('m-d')])
+//                ->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') <= ?',[Carbon::parse($seg->wedding_bday_to)->format('m-d')]);
+//        })
+//            ->get();
 
-        //
-      //  dd($request->all());
+     //   dd($seg->all());
+        if ($request->category=='' || $request->category==null){
+            $type='internal';
+            $segment=$request->segments;
+        }else{
+            $type='external';
+            $segment=$request->category;
+        }
 
-        $contacts=Contact::with('transaction','profilesfolio')->when($request->country_id !=null,function ($q) use ($request){
-            return $q->whereIn('country_id',$request->country_id);
-        })->when($request->guest_status !=null,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereIn('status',$request->guest_status);
-            });
-        })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[0,str_replace('.','',$request->spending_to)]);
-            });
-        })->when($request->spending_from !=null and $request->spending_to ==null,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->where('revenue','>=',str_replace('.','',$request->spending_from));
-            });
-        })->when($request->spending_from !=null and $request->spending_to !=null,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[str_replace('.','',$request->spending_from),str_replace('.','',$request->spending_to)]);
-            });
-        })->when($request->gender !=null,function ($q) use ($request) {
-            return $q->whereIn('gender', $request->gender);
-        })->when($request->stay_from == null and $request->stay_to != null,function ($q) use ($request) {
-            return $q->whereHas('transaction', function ($q) use ($request) {
-                return $q->where('checkout', '<=', Carbon::parse($request->stay_to)->format('Y-m-d'));
-            });
-        })->when($request->stay_from !=null and $request->stay_to ==null ,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->where('checkin','>=',Carbon::parse($request->stay_from)->format('Y-m-d'));
-            });
-        })->when($request->stay_from !=null and $request->stay_to !=null,function ($q) use ($request) {
-            return $q->whereHas('transaction', function ($q) use ($request) {
-                return $q->where('checkin', '>=', Carbon::parse($request->stay_from)->format('Y-m-d'))
-                    ->where('checkout', '<=', Carbon::parse($request->stay_to)->format('Y-m-d'));
-            });
-        })->when($request->total_night_from !=null and $request->total_night_to==null, function ($q) use ($request) {
-            return $q->whereHas('transaction', function ($q) use ($request) {
-                return $q->whereRaw('DATEDIFF(checkout,checkin) >= ' . $request->total_night_from);
-            });
-        })->when($request->total_night_from == null and $request->total_night_to !=null ,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereRaw('DATEDIFF(checkout,checkin) <='.$request->total_night_to);
-            });
-        })->when($request->total_night_from !=null and $request->total_night_to !=null, function ($q) use ($request) {
-            return  $q->whereHas('transaction', function ($q) use ($request) {
-                return    $q->whereRaw('DATEDIFF(checkout,checkin) between ' . $request->total_night_from . ' and ' . $request->total_night_to . '');
-            });
-        })->when($request->total_stay_from !=null and $request->total_stay_to ==null ,function ($q) use ($request){
-            return $q->has('transaction','>=',$request->total_stay_from);
-        })->when($request->total_stay_from == null and $request->total_stay_to !=null ,function ($q) use ($request){
-            return $q->has('transaction','<=',$request->total_stay_to);
-        })->when($request->total_stay_from !=null and $request->total_stay_to !=null, function ($q) use ($request){
-            return $q->has('transaction','>=',$request->total_stay_from)->has('transaction','<=',$request->total_stay_to);
-
-        })->when($request->age_from!=null and $request->age_to!=null ,function ($q) use ($request){
-            return $q->whereRaw('birthday <= date_sub(now(), INTERVAL \''.$request->age_from.'\' YEAR) and birthday >= date_sub(now(),interval \''.$request->age_to.'\' year)');
-        })->when($request->age_from!=null ,function($q) use ($request){
-            return $q->whereRaw('birthday <= date_sub(now(),INTERVAL \''.$request->age_from.'\' YEAR)');
-        })->when($request->age_to!=null,function ($q) use ($request){
-            return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$request->age_to.'\' YEAR)');
-        })->when($request->booking_source!=null,function ($q) use ($request){
-            $q->whereHas('profilesfolio',function ($q) use ($request){
-                $q->whereIn('source',$request->booking_source);
-            });
-        })->get();
-
-        //dd($contacts);
 
        // $campaign=Campaign::find(3);
 
@@ -129,23 +143,117 @@ class CampaignController extends Controller
 
         //$campaign->contact()->attach($c);
        // $campaign->contact()->updateExistingPivot($c,['status'=>'sent']);
+        //dd($seg->template);
         $campaign=new Campaign();
         $campaign->name=$request->name;
         $campaign->status='Draft';
-        $campaign->type=$request->type;
-        $campaign->segment_id=$request->segments;
+        $campaign->type=$type;
         $campaign->template_id=$request->template;
         $campaign->save();
 
-        foreach ($contacts as $contact) {
-            $campaign->contact()->attach($contact);
-            $campaign->contact()->updateExistingPivot($contact,['status'=>'queue']);
+        $seg=Segment::find($segment);
+        $cat=ExternalContactCategory::find($segment);
+
+        //dd(unserialize($seg->country_id));
+        if($type=='internal') {
+            $contacts = Contact::with('transaction', 'profilesfolio')->when(unserialize($seg->country_id)[0] != null, function ($q) use ($seg) {
+                return $q->where('country_id',unserialize($seg->country_id)[0]);
+        })->when(unserialize($seg->area)[0]!=null,function ($q) use ($seg){
+            return $q->where('area',unserialize($seg->area)[0]);
+        })->when(unserialize($seg->guest_status)[0] !=null,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->where('status',unserialize($seg->guest_status)[0]);
+            });
+        })->when($seg->spending_from ==null and $seg->spending_to !=null ,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->whereBetween('revenue',[0,str_replace('.','',$seg->spending_to)]);
+            });
+        })->when($seg->spending_from!=null and $seg->spending_to ==null,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->where('revenue','>=',str_replace('.','',$seg->spending_from));
+            });
+        })->when($seg->spending_from!=null and $seg->spending_to !=null,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->whereBetween('revenue',[str_replace('.','',$seg->spending_from),str_replace('.','',$seg->spending_to)]);
+            });
+        })->when(unserialize($seg->gender)[0] !=null,function ($q) use ($seg) {
+            return $q->whereIn('gender', unserialize($seg->gender)[0]);
+        })->when($seg->stay_from == null and $seg->stay_to != null,function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->where('checkout', '<=', Carbon::parse($seg->stay_to)->format('Y-m-d'));
+            });
+        })->when($seg->stay_from !=null and $seg->stay_to ==null ,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->where('checkin','>=',Carbon::parse($seg->stay_from)->format('Y-m-d'));
+            });
+        })->when($seg->stay_from !=null and $seg->stay_to !=null,function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->where('checkin', '>=', Carbon::parse($seg->stay_from)->format('Y-m-d'))
+                    ->where('checkout', '<=', Carbon::parse($seg->stay_to)->format('Y-m-d'));
+            });
+        })->when($seg->total_night_from !=null and $seg->total_night_to==null, function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->whereRaw('DATEDIFF(checkout,checkin) >= ' . $seg->total_night_from);
+            });
+        })->when($seg->total_night_from == null and $seg->total_night_to !=null ,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->whereRaw('DATEDIFF(checkout,checkin) <='.$seg->total_night_to);
+            });
+        })->when($seg->total_night_from !=null and $seg->total_night_to !=null, function ($q) use ($seg) {
+            return  $q->whereHas('transaction', function ($q) use ($seg) {
+                return    $q->whereRaw('DATEDIFF(checkout,checkin) between ' . $seg->total_night_from . ' and ' . $seg->total_night_to . '');
+            });
+        })->when($seg->total_stay_from !=null and $seg->total_stay_to ==null ,function ($q) use ($seg){
+            return $q->has('transaction','>=',$seg->total_stay_from);
+        })->when($seg->total_stay_from == null and $seg->total_stay_to !=null ,function ($q) use ($seg){
+            return $q->has('transaction','<=',$seg->total_stay_to);
+        })->when($seg->total_stay_from !=null and $seg->total_stay_to !=null, function ($q) use ($seg){
+            return $q->has('transaction','>=',$seg->total_stay_from)->has('transaction','<=',$seg->total_stay_to);
+        })->when($seg->age_from!=null and $seg->age_to!=null ,function ($q) use ($seg){
+            return $q->whereRaw('birthday <= date_sub(now(), INTERVAL \''.$seg->age_from.'\' YEAR) and birthday >= date_sub(now(),interval \''.$seg->age_to.'\' year)');
+        })->when($seg->age_from !=null ,function($q) use ($seg){
+            return $q->whereRaw('birthday <= date_sub(now(),INTERVAL \''.$seg->age_from.'\' YEAR)');
+        })->when($seg->age_to !=null,function ($q) use ($seg){
+            return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$seg->age_to.'\' YEAR)');
+        })->when(unserialize($seg->booking_source)[0]!=null,function ($q) use ($seg){
+            $q->whereHas('profilesfolio',function ($q) use ($seg){
+                $q->whereIn('source',unserialize($seg->booking_source)[0]);
+            });
+        })->when($seg->wedding_bday_from ==null and $seg->wedding_bday_to !=null , function ($q) use ($seg){
+            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') = ?',[Carbon::parse($seg->wedding_bday_to)->format('m-d')]);
+        })->when($seg->wedding_bday_from !=null and $seg->wedding_bday_to == null , function ($q) use ($seg){
+            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') = ?',[Carbon::parse($seg->wedding_bday_from)->format('m-d')]);
+        })->when($seg->wedding_bday_from != null and $seg->wedding_bday_to !=null, function ($q) use ($seg){
+            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') >= ?',[Carbon::parse($seg->wedding_bday_from)->format('m-d')])
+                ->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') <= ?',[Carbon::parse($seg->wedding_bday_to)->format('m-d')]);
+        })->get();
+
+            foreach ($contacts as $contact) {
+                $campaign->contact()->attach($contact);
+                $campaign->contact()->updateExistingPivot($contact,['status'=>'queue']);
+            }
+            $campaign->segment()->attach($segment);
+            $campaign->template()->attach($request->template);
+            $this->setSheduleFunc($campaign->id,$request->schedule);
+            return redirect('campaign');
+        } else {
+            $contacts=$cat->email;
+            foreach ($contacts as $contact){
+                $campaign->external()->attach($contact);
+                $campaign->external()->updateExistingPivot($contact,['status'=>'queue']);
+            }
+            $campaign->externalSegment()->attach($segment);
+            $campaign->template()->attach($request->template);
+            $this->setSheduleFunc($campaign->id,$request->schedule);
+            return redirect('campaign');
+
         }
 
+//
 
-        $campaign->template()->attach($request->template);
-        $this->setSheduleFunc($campaign->id,$request->schedule);
-        return redirect('campaign');
+
+
+
 
     }
 
@@ -178,102 +286,102 @@ class CampaignController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $seg
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $seg, $id)
     {
         //
 
 
-        $contacts=Contact::with('transaction','profilesfolio')->when($request->country_id !=null,function ($q) use ($request){
-            return $q->whereIn('country_id',$request->country_id);
-        })->when($request->guest_status !=null,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereIn('status',$request->guest_status);
+        $contacts=Contact::with('transaction','profilesfolio')->when($seg->country_id !=null,function ($q) use ($seg){
+            return $q->whereIn('country_id',$seg->country_id);
+        })->when($seg->guest_status !=null,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->whereIn('status',$seg->guest_status);
             });
-        })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[0,str_replace('.','',$request->spending_to)]);
+        })->when($seg->spending_from ==null and $seg->spending_to !=null ,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->whereBetween('revenue',[0,str_replace('.','',$seg->spending_to)]);
             });
-        })->when($request->spending_from !=null and $request->spending_to ==null,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->where('revenue','>=',str_replace('.','',$request->spending_from));
+        })->when($seg->spending_from !=null and $seg->spending_to ==null,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->where('revenue','>=',str_replace('.','',$seg->spending_from));
             });
-        })->when($request->spending_from !=null and $request->spending_to !=null,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[str_replace('.','',$request->spending_from),str_replace('.','',$request->spending_to)]);
+        })->when($seg->spending_from !=null and $seg->spending_to !=null,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->whereBetween('revenue',[str_replace('.','',$seg->spending_from),str_replace('.','',$seg->spending_to)]);
             });
-        })->when($request->gender !=null,function ($q) use ($request) {
-            return $q->whereIn('gender', $request->gender);
-        })->when($request->stay_from == null and $request->stay_to != null,function ($q) use ($request) {
-            return $q->whereHas('transaction', function ($q) use ($request) {
-                return $q->where('checkout', '<=', Carbon::parse($request->stay_to)->format('Y-m-d'));
+        })->when($seg->gender !=null,function ($q) use ($seg) {
+            return $q->whereIn('gender', $seg->gender);
+        })->when($seg->stay_from == null and $seg->stay_to != null,function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->where('checkout', '<=', Carbon::parse($seg->stay_to)->format('Y-m-d'));
             });
-        })->when($request->stay_from !=null and $request->stay_to ==null ,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->where('checkin','>=',Carbon::parse($request->stay_from)->format('Y-m-d'));
+        })->when($seg->stay_from !=null and $seg->stay_to ==null ,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->where('checkin','>=',Carbon::parse($seg->stay_from)->format('Y-m-d'));
             });
-        })->when($request->stay_from !=null and $request->stay_to !=null,function ($q) use ($request) {
-            return $q->whereHas('transaction', function ($q) use ($request) {
-                return $q->where('checkin', '>=', Carbon::parse($request->stay_from)->format('Y-m-d'))
-                    ->where('checkout', '<=', Carbon::parse($request->stay_to)->format('Y-m-d'));
+        })->when($seg->stay_from !=null and $seg->stay_to !=null,function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->where('checkin', '>=', Carbon::parse($seg->stay_from)->format('Y-m-d'))
+                    ->where('checkout', '<=', Carbon::parse($seg->stay_to)->format('Y-m-d'));
             });
-        })->when($request->total_night_from !=null and $request->total_night_to==null, function ($q) use ($request) {
-            return $q->whereHas('transaction', function ($q) use ($request) {
-                return $q->whereRaw('DATEDIFF(checkout,checkin) >= ' . $request->total_night_from);
+        })->when($seg->total_night_from !=null and $seg->total_night_to==null, function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->whereRaw('DATEDIFF(checkout,checkin) >= ' . $seg->total_night_from);
             });
-        })->when($request->total_night_from == null and $request->total_night_to !=null ,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereRaw('DATEDIFF(checkout,checkin) <='.$request->total_night_to);
+        })->when($seg->total_night_from == null and $seg->total_night_to !=null ,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->whereRaw('DATEDIFF(checkout,checkin) <='.$seg->total_night_to);
             });
-        })->when($request->total_night_from !=null and $request->total_night_to !=null, function ($q) use ($request) {
-            return  $q->whereHas('transaction', function ($q) use ($request) {
-                return    $q->whereRaw('DATEDIFF(checkout,checkin) between ' . $request->total_night_from . ' and ' . $request->total_night_to . '');
+        })->when($seg->total_night_from !=null and $seg->total_night_to !=null, function ($q) use ($seg) {
+            return  $q->whereHas('transaction', function ($q) use ($seg) {
+                return    $q->whereRaw('DATEDIFF(checkout,checkin) between ' . $seg->total_night_from . ' and ' . $seg->total_night_to . '');
             });
-        })->when($request->total_stay_from !=null and $request->total_stay_to ==null ,function ($q) use ($request){
-            return $q->has('transaction','>=',$request->total_stay_from);
-        })->when($request->total_stay_from == null and $request->total_stay_to !=null ,function ($q) use ($request){
-            return $q->has('transaction','<=',$request->total_stay_to);
-        })->when($request->total_stay_from !=null and $request->total_stay_to !=null, function ($q) use ($request){
-            return $q->has('transaction','>=',$request->total_stay_from)->has('transaction','<=',$request->total_stay_to);
+        })->when($seg->total_stay_from !=null and $seg->total_stay_to ==null ,function ($q) use ($seg){
+            return $q->has('transaction','>=',$seg->total_stay_from);
+        })->when($seg->total_stay_from == null and $seg->total_stay_to !=null ,function ($q) use ($seg){
+            return $q->has('transaction','<=',$seg->total_stay_to);
+        })->when($seg->total_stay_from !=null and $seg->total_stay_to !=null, function ($q) use ($seg){
+            return $q->has('transaction','>=',$seg->total_stay_from)->has('transaction','<=',$seg->total_stay_to);
 
-        })->when($request->age_from!=null and $request->age_to!=null ,function ($q) use ($request){
-            return $q->whereRaw('birthday <= date_sub(now(), INTERVAL \''.$request->age_from.'\' YEAR) and birthday >= date_sub(now(),interval \''.$request->age_to.'\' year)');
-        })->when($request->age_from!=null ,function($q) use ($request){
-            return $q->whereRaw('birthday <= date_sub(now(),INTERVAL \''.$request->age_from.'\' YEAR)');
-        })->when($request->age_to!=null,function ($q) use ($request){
-            return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$request->age_to.'\' YEAR)');
-        })->when($request->booking_source!=null,function ($q) use ($request){
-            $q->whereHas('profilesfolio',function ($q) use ($request){
-                $q->whereIn('source',$request->booking_source);
+        })->when($seg->age_from!=null and $seg->age_to!=null ,function ($q) use ($seg){
+            return $q->whereRaw('birthday <= date_sub(now(), INTERVAL \''.$seg->age_from.'\' YEAR) and birthday >= date_sub(now(),interval \''.$seg->age_to.'\' year)');
+        })->when($seg->age_from!=null ,function($q) use ($seg){
+            return $q->whereRaw('birthday <= date_sub(now(),INTERVAL \''.$seg->age_from.'\' YEAR)');
+        })->when($seg->age_to!=null,function ($q) use ($seg){
+            return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$seg->age_to.'\' YEAR)');
+        })->when($seg->booking_source!=null,function ($q) use ($seg){
+            $q->whereHas('profilesfolio',function ($q) use ($seg){
+                $q->whereIn('source',$seg->booking_source);
             });
         })
             ->get();
-     // dd($request->all());
+     // dd($seg->all());
         $campaign=Campaign::find($id);
-        $campaign->name=$request->name;
-        $campaign->type=$request->type;
-        $campaign->country_id=serialize($request->country_id);
-        $campaign->guest_status=$request->guest_status;
-        $campaign->spending_from=str_replace('.','',$request->spending_from);
-        $campaign->spending_to=str_replace('.','',$request->spending_to);
-        $campaign->stay_from=Carbon::parse($request->stay_from)->format('Y-m-d');
-        $campaign->stay_to=Carbon::parse($request->stay_to)->format('Y-m-d');
-        $campaign->total_stay_from=$request->total_stay_from;
-        $campaign->total_stay_to=$request->total_stay_to;
-        $campaign->total_night_from=$request->total_night_from;
-        $campaign->total_night_to=$request->total_night_to;
-        $campaign->gender=serialize($request->gender);
-        $campaign->age_from=$request->age_from;
-        $campaign->age_to=$request->age_to;
-        $campaign->booking_source=serialize($request->booking);
-        if ($request->template<>'') {
-            $campaign->template_id = $request->template;
+        $campaign->name=$seg->name;
+        $campaign->type=$seg->type;
+        $campaign->country_id=serialize($seg->country_id);
+        $campaign->guest_status=$seg->guest_status;
+        $campaign->spending_from=str_replace('.','',$seg->spending_from);
+        $campaign->spending_to=str_replace('.','',$seg->spending_to);
+        $campaign->stay_from=Carbon::parse($seg->stay_from)->format('Y-m-d');
+        $campaign->stay_to=Carbon::parse($seg->stay_to)->format('Y-m-d');
+        $campaign->total_stay_from=$seg->total_stay_from;
+        $campaign->total_stay_to=$seg->total_stay_to;
+        $campaign->total_night_from=$seg->total_night_from;
+        $campaign->total_night_to=$seg->total_night_to;
+        $campaign->gender=serialize($seg->gender);
+        $campaign->age_from=$seg->age_from;
+        $campaign->age_to=$seg->age_to;
+        $campaign->booking_source=serialize($seg->booking);
+        if ($seg->template<>'') {
+            $campaign->template_id = $seg->template;
         }
         $campaign->save();
-        $campaign->template()->sync($request->template);
+        $campaign->template()->sync($seg->template);
         $campaign->contact()->detach();
         foreach ($contacts as $contact) {
             $campaign->contact()->attach($contact);
@@ -292,89 +400,123 @@ class CampaignController extends Controller
     {
         //
        $campaign=Campaign::find($id);
+       foreach ($campaign->contact as $key => $contact) {
+           $campaign->contact()->detach($contact->id);
+       }
+       foreach ($campaign->segment as $key => $value) {
+           $campaign->segment()->detach($value->id);
+       }
+       foreach ($campaign->external as $key => $value) {
+           $campaign->external()->detach($value->id);
+       }
+       foreach ($campaign->externalSegment as $key => $value) {
+           $campaign->externalSegment()->detach($value->id);
+       }
        $campaign->delete();
 
        return redirect()->back();
 
     }
 
-    public function getRecepient(Request $request){
-
-        $contacts=Contact::with('transaction','profilesfolio')->when($request->country_id !=null,function ($q) use ($request) {
-            return $q->whereIn('country_id', $request->country_id);
-        })->when($request->guest_status !=null,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereIn('status',$request->guest_status);
+    public function getRecepient(Request $seg){
+        $contacts=Contact::with('transaction','profilesfolio')->when($seg->country_id !=null,function ($q) use ($seg) {
+            return $q->whereIn('country_id', $seg->country_id);
+        })->when($seg->area!=null,function($q) use ($seg){
+            return $q->whereIn('area',$seg->area);
+        })->when($seg->guest_status !=null,function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->whereIn('status', $seg->guest_status);
+            })->orderBy('created_at', 'desc');
+        })->when($seg->spending_from ==null and $seg->spending_to !=null ,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->whereBetween('revenue',[0,str_replace('.','',$seg->spending_to)]);
             });
-        })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-               return $q->whereBetween('revenue',[0,str_replace('.','',$request->spending_to)]);
+        })->when($seg->spending_from !=null and $seg->spending_to ==null,function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->where('revenue', '>=', str_replace('.', '', $seg->spending_from));
             });
-        })->when($request->spending_from !=null and $request->spending_to ==null,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->where('revenue','>=',str_replace('.','',$request->spending_from));
+        })->when($seg->spending_from !=null and $seg->spending_to !=null,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->whereBetween('revenue',[str_replace('.','',$seg->spending_from),str_replace('.','',$seg->spending_to)]);
             });
-        })->when($request->spending_from !=null and $request->spending_to !=null,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[str_replace('.','',$request->spending_from),str_replace('.','',$request->spending_to)]);
+        })->when($seg->gender !=null,function ($q) use ($seg) {
+            return $q->whereIn('gender', $seg->gender);
+        })->when($seg->stay_from == null and $seg->stay_to != null,function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->where('checkout', '<=', Carbon::parse($seg->stay_to)->format('Y-m-d'));
             });
-        })->when($request->gender !=null,function ($q) use ($request) {
-            return $q->whereIn('gender', $request->gender);
-        })->when($request->stay_from == null and $request->stay_to != null,function ($q) use ($request) {
-            return $q->whereHas('transaction', function ($q) use ($request) {
-                return $q->where('checkout', '<=', Carbon::parse($request->stay_to)->format('Y-m-d'));
+        })->when($seg->stay_from !=null and $seg->stay_to ==null ,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->where('checkin','>=',Carbon::parse($seg->stay_from)->format('Y-m-d'));
             });
-        })->when($request->stay_from !=null and $request->stay_to ==null ,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->where('checkin','>=',Carbon::parse($request->stay_from)->format('Y-m-d'));
+        })->when($seg->stay_from !=null and $seg->stay_to !=null,function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->where('checkin', '>=', Carbon::parse($seg->stay_from)->format('Y-m-d'))
+                    ->where('checkout', '<=', Carbon::parse($seg->stay_to)->format('Y-m-d'));
             });
-        })->when($request->stay_from !=null and $request->stay_to !=null,function ($q) use ($request) {
-            return $q->whereHas('transaction', function ($q) use ($request) {
-                return $q->where('checkin', '>=', Carbon::parse($request->stay_from)->format('Y-m-d'))
-                    ->where('checkout', '<=', Carbon::parse($request->stay_to)->format('Y-m-d'));
+        })->when($seg->bday_from ==null and $seg->bday_to !=null, function ($q) use ($seg){
+            return $q->whereRaw('DATE_FORMAT(birthday,\'%m-%d\') = ?',[Carbon::parse($seg->bday_to)->format('m-d')]);
+        })->when($seg->bday_from!=null and $seg->bday_to ==null, function ($q) use ($seg){
+            return $q->whereRaw('DATE_FORMAT(birthday,\'%m-%d\') = ?',[Carbon::parse($seg->bday_from)->format('m-d')]);
+        })->when($seg->bday_from !=null and $seg->bday_to !=null , function ($q) use ($seg){
+            return $q->whereRaw('DATE_FORMAT(birthday,\'%m-%d\') >= ?',[Carbon::parse($seg->bday_from)->format('m-d')])
+                ->whereRaw('DATE_FORMAT(birthday,\'%m-%d\') <= ?',[Carbon::parse($seg->bday_to)->format('m-d')]);
+        })->when($seg->wedding_bday_from ==null and $seg->wedding_bday_to !=null , function ($q) use ($seg){
+            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') = ?',[Carbon::parse($seg->wedding_bday_to)->format('m-d')]);
+        })->when($seg->wedding_bday_from !=null and $seg->wedding_bday_to == null , function ($q) use ($seg){
+            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') = ?',[Carbon::parse($seg->wedding_bday_from)->format('m-d')]);
+        })->when($seg->wedding_bday_from != null and $seg->wedding_bday_to !=null, function ($q) use ($seg){
+            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') >= ?',[Carbon::parse($seg->wedding_bday_from)->format('m-d')])
+                ->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') <= ?',[Carbon::parse($seg->wedding_bday_to)->format('m-d')]);
+        })->when($seg->total_night_from !=null and $seg->total_night_to==null, function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->whereRaw('DATEDIFF(checkout,checkin) >= ' . $seg->total_night_from);
             });
-        })->when($request->total_night_from !=null and $request->total_night_to==null, function ($q) use ($request) {
-            return $q->whereHas('transaction', function ($q) use ($request) {
-                return $q->whereRaw('DATEDIFF(checkout,checkin) >= ' . $request->total_night_from);
+        })->when($seg->total_night_from !=null and $seg->total_night_to==null, function ($q) use ($seg) {
+            return $q->whereHas('transaction', function ($q) use ($seg) {
+                return $q->whereRaw('DATEDIFF(checkout,checkin) >= ' . $seg->total_night_from);
             });
-        })->when($request->total_night_from == null and $request->total_night_to !=null ,function ($q) use ($request){
-            return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereRaw('DATEDIFF(checkout,checkin) <='.$request->total_night_to);
+        })->when($seg->total_night_from == null and $seg->total_night_to !=null ,function ($q) use ($seg){
+            return $q->whereHas('transaction',function ($q) use ($seg){
+                return $q->whereRaw('DATEDIFF(checkout,checkin) <='.$seg->total_night_to);
             });
-        })->when($request->total_night_from !=null and $request->total_night_to !=null, function ($q) use ($request) {
-           return  $q->whereHas('transaction', function ($q) use ($request) {
-             return    $q->whereRaw('DATEDIFF(checkout,checkin) between ' . $request->total_night_from . ' and ' . $request->total_night_to . '');
+        })->when($seg->total_night_from !=null and $seg->total_night_to !=null, function ($q) use ($seg) {
+            return  $q->whereHas('transaction', function ($q) use ($seg) {
+                return    $q->whereRaw('DATEDIFF(checkout,checkin) between ' . $seg->total_night_from . ' and ' . $seg->total_night_to . '');
             });
-        })->when($request->total_stay_from !=null and $request->total_stay_to ==null ,function ($q) use ($request){
-            return $q->has('transaction','>=',$request->total_stay_from);
-        })->when($request->total_stay_from == null and $request->total_stay_to !=null ,function ($q) use ($request){
-            return $q->has('transaction','<=',$request->total_stay_to);
-        })->when($request->total_stay_from !=null and $request->total_stay_to !=null, function ($q) use ($request) {
-            return $q->has('transaction', '>=', $request->total_stay_from)->has('transaction', '<=', $request->total_stay_to);
-        })->when($request->age_from!=null and $request->age_to!=null ,function ($q) use ($request){
-            return $q->whereRaw('birthday <= date_sub(now(), INTERVAL \''.$request->age_from.'\' YEAR) and birthday >= date_sub(now(),interval \''.$request->age_to.'\' year)');
-        })->when($request->age_from!=null ,function($q) use ($request){
-            return $q->whereRaw('birthday <= date_sub(now(),INTERVAL \''.$request->age_from.'\' YEAR)');
-        })->when($request->age_to!=null,function ($q) use ($request){
-            return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$request->age_to.'\' YEAR)');
-        })->when($request->booking_source!=null,function ($q) use ($request){
-            $q->whereHas('profilesfolio',function ($q) use ($request){
-                $q->whereIn('source',$request->booking_source);
+        })->when($seg->total_stay_from !=null and $seg->total_stay_to ==null ,function ($q) use ($seg){
+            return $q->has('transaction','>=',$seg->total_stay_from);
+        })->when($seg->total_stay_from == null and $seg->total_stay_to !=null ,function ($q) use ($seg){
+            return $q->has('transaction','<=',$seg->total_stay_to);
+        })->when($seg->total_stay_from !=null and $seg->total_stay_to !=null, function ($q) use ($seg){
+            return $q->has('transaction','>=',$seg->total_stay_from)->has('transaction','<=',$seg->total_stay_to);
+        })->when($seg->name !=null,function ($q) use ($seg){
+            return $q->whereRaw('CONCAT(fname,lname) like \'%'.$seg->name.'%\'');
+        })->when($seg->age_from!=null and $seg->age_to!=null ,function ($q) use ($seg){
+            return $q->whereRaw('birthday <= date_sub(now(), INTERVAL \''.$seg->age_from.'\' YEAR) and birthday >= date_sub(now(),interval \''.$seg->age_to.'\' year)');
+        })->when($seg->age_from!=null ,function($q) use ($seg){
+            return $q->whereRaw('birthday <= date_sub(now(),INTERVAL \''.$seg->age_from.'\' YEAR)');
+        })->when($seg->age_to!=null,function ($q) use ($seg){
+            return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$seg->age_to.'\' YEAR)');
+        })->when($seg->booking_source!=null,function ($q) use ($seg){
+            $q->whereHas('profilesfolio',function ($q) use ($seg){
+                $q->whereIn('source',$seg->booking_source);
             });
-        })->get();
+        })
+            ->get();
 
         return response($contacts,200);
     }
 
-    public function getType(Request $request){
+    public function getType(Request $seg){
 
-        $template=MailEditor::where('type',$request->type)->pluck('name','id')->all();
+        $template=MailEditor::where('type',$seg->type)->pluck('name','id')->all();
         return response()->json($template);
     }
-    public function activateCampaign(Request $request){
+    public function activateCampaign(Request $seg){
 
-       $campaign=Campaign::find($request->id);
-       if ($request->status=='on'){
+       $campaign=Campaign::find($seg->id);
+       if ($seg->status=='on'){
            $campaign->status='Active';
            $campaign->save();
        }else{
@@ -395,16 +537,23 @@ class CampaignController extends Controller
         $campaign->save();
         return response(['status'=>'success','id'=>$schedule->id,'campstatus'=>$campaign->status,'schedule'=>$schedule->schedule,'campaignid'=>$campaign_id],200);
     }
-    public function setSchedule(Request $request){
-        $this->setSheduleFunc($request->id,$request->value);
+    public function updateschedule(Request $seg){
+    
+        $this->setSheduleFunc($seg->id,$seg->value);
     }
-    public function getSegment(Request $request){
+    
+    public function getSegment(Request $seg){
 
-        $campaign=Segment::find($request->id);
+        $campaign=Segment::find($seg->id);
         if (!empty($campaign->country_id)){
            $country=unserialize($campaign->country_id);
         }else{
             $country='';
+        }
+        if (!empty($campaign->area)){
+            $area=unserialize($campaign->area);
+        }else{
+            $area='';
         }
         if(!empty($campaign->guest_status)){
             $guestsatus=unserialize($campaign->guest_status);
@@ -422,9 +571,9 @@ class CampaignController extends Controller
             $booking='';
         }
 
-        return response([$campaign,$country,$guestsatus,$gender,$booking],200);
+        return response([$campaign,$country,$guestsatus,$gender,$booking,$area],200);
     }
-    public function newCampaign(Request $request){
+    public function newCampaign(Request $seg){
 
         $rules=[
            'cname'=>'required',
@@ -435,75 +584,96 @@ class CampaignController extends Controller
            'schedule.required'=>'Schedule Required',
         ];
 
-        $validator =Validator::make($request->all(),$rules,$messages);
+        $validator =Validator::make($seg->all(),$rules,$messages);
         if(!$validator->fails()){
             $campaign=new Campaign();
-            $campaign->name=$request->cname;
+            $campaign->name=$seg->cname;
             $campaign->status='Draft';
             $campaign->type='Promo';
-            $campaign->segment_id=$request->segment_id;
-            $campaign->template_id=$request->template_id;
+            $campaign->segment_id=$seg->segment_id;
+            $campaign->template_id=$seg->template_id;
             $campaign->save();
 
-            foreach ($request->contacts as $cid){
+            foreach ($seg->contacts as $cid){
                 $contact=Contact::find($cid['value']);
                 $campaign->contact()->attach($contact);
                 $campaign->contact()->updateExistingPivot($contact,['status'=>'queue']);
             }
-            $campaign->template()->attach($request->template_id);
-            $this->setSheduleFunc($campaign->id,$request->schedule);
+            $campaign->template()->attach($seg->template_id);
+            $this->setSheduleFunc($campaign->id,$seg->schedule);
             return response('success',200);
         } else{
             return response(['errors'=>$validator->errors()]);
         }
 
     }
-    public function saveSegment(Request $request){
-        //dd($request->spending_from);
+    public function saveSegment(Request $seg){
+
         $rules=['name'=>'required'];
         $message=['name.required'=>'Segment Name Required'];
-        $validator=Validator::make($request->all(),$rules,$message);
+        $validator=Validator::make($seg->all(),$rules,$message);
         if(!$validator->fails()){
-            $guest_status=serialize($request->guest_status);
-            $country_id=serialize($request->country_id);
-            $gender=serialize($request->gender);
-            $booking_source=serialize($request->booking_source);
+            $guest_status=serialize($seg->guest_status);
+            $country_id=serialize($seg->country_id);
+            $gender=serialize($seg->gender);
+            $booking_source=serialize($seg->booking_source);
             $segment=new Segment();
-            $segment->name=$request->name;
+            $segment->name=$seg->name;
             $segment->guest_status=$guest_status;
             $segment->country_id=$country_id;
+            $segment->area=serialize($seg->area);
             $segment->gender=$gender;
             $segment->booking_source=$booking_source;
-            if($request->stay_from!=null){
-                $segment->stay_from=Carbon::parse($request->stay_from)->format('Y-m-d');
+            if($seg->stay_from!=null){
+                $segment->stay_from=Carbon::parse($seg->stay_from)->format('Y-m-d');
             } else
             {
                 $segment->stay_from=null;
             }
-            if($request->stay_to!=null){
-                $segment->stay_to=Carbon::parse($request->stay_to)->format('Y-m-d');
+            if($seg->stay_to!=null){
+                $segment->stay_to=Carbon::parse($seg->stay_to)->format('Y-m-d');
             } else{
                 $segment->stay_to=null;
             }
-            if($request->spending_from!=null){
-                $segment->spending_from=str_replace('.','',$request->spending_from);
+            if($seg->spending_from!=null){
+                $segment->spending_from=str_replace('.','',$seg->spending_from);
             }else{
                 $segment->spending_from=null;
             }
-            if($request->spending_to!=null){
-                $segment->spending_to=str_replace('.','',$request->spending_to);
+            if($seg->spending_to!=null){
+                $segment->spending_to=str_replace('.','',$seg->spending_to);
             }else{
                 $segment->spending_to=null;
             }
 
-            $segment->total_stay_from=$request->total_stay_from;
-            $segment->total_stay_to=$request->total_stay_to;
-            $segment->total_night_from=$request->total_night_from;
-            $segment->total_night_to=$request->total_night_to;
-            $segment->age_from=$request->age_from;
-            $segment->age_to=$request->age_to;
+            $segment->total_stay_from=$seg->total_stay_from;
+            $segment->total_stay_to=$seg->total_stay_to;
+            $segment->total_night_from=$seg->total_night_from;
+            $segment->total_night_to=$seg->total_night_to;
+            $segment->age_from=$seg->age_from;
+            $segment->age_to=$seg->age_to;
+            if($seg->bday_from){
+                $segment->bday_from=Carbon::parse($seg->bday_from)->format('Y-m-d');
+            }else{
+                $segment->bday_from=NULL;
+            }
+            if ($seg->bday_to){
+                $segment->bday_to=Carbon::parse($seg->bday_to)->format('Y-m-d');
+            }else{
+                $segment->bday_to=NULL;
+            }
+            if($seg->wedding_bday_from){
+                $segment->wedding_bday_from=Carbon::parse($seg->wedding_bday_from)->format('Y-m-d');
+            }else{
+                $segment->wedding_bday_from=NULL;
+            }
+            if($seg->wedding_bday_to){
+                $segment->wedding_bday_to=Carbon::parse($seg->wedding_bday_to)->format('Y-m-d');
+            }else{
+                $segment->wedding_bday_to=NULL;
+            }
             $segment->save();
-            return response(['success'=>['id'=>$segment->id,'name'=>$request->name]],200);
+            return response(['success'=>['id'=>$segment->id,'name'=>$seg->name]],200);
         }else{
             return response(['error'=>$validator->errors()],200);
         }

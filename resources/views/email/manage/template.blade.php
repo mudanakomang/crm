@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+    Create Email Template  | {{ $configuration->hotel_name.' '.$configuration->app_title }}
+@endsection
 @section('content')
     <div class="right_col" role="main">
     <section class="content">
@@ -7,7 +10,7 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="x_panel tile">
                         <div class="x_title">
-                            <h2>Template Editor</h2>
+                            <h3>Template Editor</h3>
                             <ul class="nav navbar-right panel_toolbox">
                                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 <li><a class="close-link"><i class="fa fa-close"></i></a>
@@ -28,7 +31,7 @@
 @section('script')
     <script>
       $('#summernote').summernote({
-          height:350,
+         // height:350,
           popover: {
               image: [
                   ['custom', ['imageAttributes']],
@@ -36,7 +39,6 @@
                   ['float', ['floatLeft', 'floatRight', 'floatNone']],
                   ['remove', ['removeMedia']]
               ],
-
           },
           imageAttributes:{
               icon:'<i class="note-icon-pencil"/>',
@@ -61,7 +63,6 @@
                   $('.editorInput').show();
                    $('#priority').remove();
                    $('#templateForm').append('<input type="hidden" name="active" id="priority" value="1" />');
-
                }else {
                    $('#summernote').summernote('disable');
                    $('.fileImport').show();
@@ -70,6 +71,16 @@
                    $('#templateForm').append('<input type="hidden" name="active" id="priority" value="2" />');
                }
             });
+        })
+    </script>
+	 <script>
+        $('#saveTemplate').on('click',function () {
+            var c='{{ \App\MailEditor::count() }}'
+            if(c >=10){
+                swal('Save Failed', 'Delete some template to Continue','error');
+            }else{
+               $('#templateForm').submit()
+            }
         })
     </script>
 @endsection

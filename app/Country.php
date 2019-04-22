@@ -8,6 +8,6 @@ class Country extends Model
 {
     //
     public function contact(){
-        return $this->hasOne('\App\Contact','country_id','iso3');
+        return $this->hasOne('\App\Contact','country_id','iso2');
     }
 }

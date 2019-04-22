@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Birthday;
 use App\ConfirmEmail;
+use App\Contact;
+use App\EmailReview;
 use App\MailEditor;
 use App\PostStay;
 use App\MissYou;
+use FtpClient\FtpClient;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use SebastianBergmann\Comparator\FactoryTest;
 
 class Emailtemplate extends Controller
 {
@@ -45,7 +49,7 @@ class Emailtemplate extends Controller
     public function store(Request $request)
     {
         //
-
+      //  dd($request->all());
         if ($request->file('file') != null && $request->active==2){
             $detail=file_get_contents($request->file('file'));
         }else{
@@ -57,6 +61,7 @@ class Emailtemplate extends Controller
 
         $templ->content=$detail;
         $templ->name=$str;
+        $templ->type=$request->type;
         $templ->subject=$request->subject;
         $templ->save();
        // $file_handle=fopen(base_path().'/resources/views/email/templates/'.$request->get('name').'.blade.php','w+');
@@ -78,6 +83,7 @@ class Emailtemplate extends Controller
     public function show($id)
     {
         $temp=MailEditor::find($id);
+        dd($temp);
         $name=$temp->name;
         return view('email.templates.'.$name);
     }
@@ -91,10 +97,10 @@ class Emailtemplate extends Controller
     public function edit($id)
     {
         //
-
+        
         $action='edit';
         $templ=MailEditor::find($id);
-
+//dd($templ);
         return view('email.manage.template',['action'=>$action,'template'=>$templ]);
 
     }
@@ -108,7 +114,7 @@ class Emailtemplate extends Controller
      */
     public function update(Request $request, $id)
     {
-
+      
         if ($request->file('file') != null && $request->active==2){
             $detail=file_get_contents($request->file('file'));
         }else{
@@ -117,7 +123,6 @@ class Emailtemplate extends Controller
 
         $templ=MailEditor::find($id);
         $str=str_replace(' ','_',$request->name);
-
         $templ->content=$detail;
         $templ->name=$str;
         $templ->type=$request->type;
@@ -137,44 +142,109 @@ class Emailtemplate extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $template=MailEditor::find($request->id);
+        $campaign=$template->campaign;
+        $poststay=$template->poststay;
+        $birthday=$template->birthday;
+        $miss=$template->miss;
+//        if (!empty($poststay)){
+//            return response('empty');
+//        }else{
+//            return response('not empty');
+//        }
+        if($campaign->isEmpty() && empty($poststay) && empty($birthday) && empty($miss)){
+            $dom = new \DomDocument();
+            libxml_use_internal_errors(true);
+            $dom->loadHtml($template->content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            $images = $dom->getElementsByTagName('img');
+            foreach($images as $k => $img) {
+                $name = $img->getAttribute('src');
+//                $ftp=new FtpClient();
+//                $ftp->connect(env('FTP_HOST'));
+//                $ftp->login(env('FTP_USERNAME'),env('FTP_PASSWORD'));
+//                $ftp->pasv(true);
+//
+//                $ftp->remove($name);
+//                $ftp->close();
+                Storage::disk('sftp')->delete($name);
 
-        $template=MailEditor::find($id);
+            }
 
-        $template->delete();
-      //  unlink(base_path().'/resources/views/email/templates/'.$template->name.'.blade.php');
-        $tmpl=MailEditor::all();
-        return view('email.manage.list',['template'=>$tmpl]);
+            $template->delete();
+            return response(['status'=>'success']);
+        }else{
+            return response(['status'=>'error']);
+        }
     }
+
+
+
     public function upload(Request $request){
+        //dd($request->all());
+
         $dom = new \DomDocument();
         libxml_use_internal_errors(true);
         $dom->loadHtml($request->contents, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
         $images = $dom->getElementsByTagName('img');
-
+        $s=[];
         foreach($images as $k => $img) {
             $data = $img->getAttribute('src');
+            $name=$img->getAttribute('data-filename');
+
 
             if (!empty(explode(';', $data)[1])) {
+
                 list($type, $data) = explode(';', $data);
 
                 list(, $data) = explode(',', $data);
+               // dd($data);
 
                 $data = base64_decode($data);
 
-                $image_name = "images/upload/" . time() . $k . '.png';
+                if($request->type=='Birthday'){
+                    $pth='birthday';
+                }elseif ($request->type=='Poststay'){
+                    $pth='poststay';
+                }elseif ($request->type=='Miss You'){
+                    $pth='wemissu';
+                }elseif ($request->type=='Promo') {
+                    $pth = 'campaign';
+                }elseif ($request->type=='Prestay'){
+                    $pth='prestay';
+                }else{
+                    $pth='other';
+                }
+                $base='crm.kutaseaviewhotel.com/themes/kutaseaview/assets/mail-template';
+                //$image_name = "images/upload/" . time() . $k . '.png';
+                $image_name = $base.'/'.$pth.'/'.$name;
 
-                $path = asset('/'.$image_name) ;
-                $publicpath=public_path().'/'.$image_name;
-                file_put_contents($publicpath, $data);
+              //  Storage::disk('sftp')->put($image_name,$data);
+//                $ftp=new FtpClient();
+//                $ftp->connect(env('FTP_HOST'));
+//                $ftp->login(env('FTP_USERNAME'),env('FTP_PASSWORD'));
+//                $ftp->pasv(true);
+
+
+
+//                $path = asset('/'.$image_name) ;
+//                $publicpath=$image_name;
+                if (Storage::disk('sftp')->exists($image_name)){
+                   Storage::disk('sftp')->delete($image_name);
+                    Storage::disk('sftp')->put($image_name,$data);
+                }else{
+                    Storage::disk('sftp')->put($image_name,$data);
+                }
+
+              //  file_put_contents($publicpath, $data);
+               // Storage::disk('ftp')->put($publicpath,$data);
 
                 $img->removeAttribute('src');
 
-                $img->setAttribute('src', $path);
-                $img->setAttribute('url',$path);
+                $img->setAttribute('src', 'http://'.$image_name);
+                $img->setAttribute('url','');
                 $img->setAttribute('target','_blank');
 
             }
@@ -231,7 +301,7 @@ class Emailtemplate extends Controller
     }
 
     public function postStayConfig(){
-        $poststay=PostStay::find(1);
+        $poststay=PostStay::first();
         return view('email.manage.poststay',['poststay'=>$poststay]);
     }
 
@@ -324,8 +394,9 @@ class Emailtemplate extends Controller
         return response($templ,200);
     }
     public function missUpdate(Request $request){
+    
         $miss=MissYou::find(1);
-        $miss->sendafter=$request->sendafter+1;
+        $miss->sendafter=$request->sendafter;
         $miss->template_id=$request->template;
         $miss->save();
         return redirect()->back();
@@ -340,6 +411,47 @@ class Emailtemplate extends Controller
             return response(['active'=>false],200);
         }
 
+    }
+    public function saveRating(Request $request,$id){
+        $review=EmailReview::where('contact_id','=',$id)->first();
+        $contact=Contact::find($id);
+        if($review==null){
+            $ids=$request->id;
+            $r=new EmailReview();
+            $r->contact_id=$id;
+            $r->fname=$contact->fname;
+            $r->lname=$contact->lname;
+            $r->$ids=$request->val;
+            $r->save();
+            return response('success');
+        }else{
+            $ids=$request->id;
+            $review->contact_id=$id;
+            $review->fname=$contact->fname;
+            $review->lname=$contact->lname;
+            $review->$ids=$request->val;
+            $review->save();
+            return response('success');
+        }
+    }
+    public function sendTest(Request $request){
+
+        $email=new EmailTemplateController();
+        $rules=[
+            'email'=>'required',
+        ];
+        $message=['email.required'=>'Email Address is Required'];
+        $validator=Validator::make($request->all(),$rules,$message);
+        if(!$validator->fails()){
+            $email->testmail($request);
+            return response('success', 200);
+        }else{
+            return response(['errors'=>$validator->errors()]);
+        }
+
+    }
+    public function blast(){
+        return view('contacts.blast');
     }
 
 

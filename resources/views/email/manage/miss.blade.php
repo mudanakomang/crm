@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+    Miss You Letter Configuration  | {{ $configuration->hotel_name.' '.$configuration->app_title }}
+@endsection
 @section('content')
     <div class="right_col" role="main">
         <section class="content">
@@ -7,7 +10,7 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel title">
                             <div class="x_title">
-                                <h2>Miss You Letter Configuration</h2>
+                                <h3>Miss You Letter Configuration</h3>
                                 <ul class="nav navbar-right panel_toolbox">
                                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                     <li><a class="close-link"><i class="fa fa-close"></i></a>
@@ -34,7 +37,7 @@
                                             <div class="col-lg-12 col-md-12">
                                                 <div class="form-group">
                                                     <label class="control-label">
-                                                        Send before / after miss</label>
+                                                        Send before / after ( month )</label>
                                                     {{ Form::select('sendafter',[''=>'Month/s After']+range(1,12,1),$miss->sendafter,['class'=>'form-control selectpicker']) }}
                                                 </div>
                                             </div>
@@ -123,7 +126,7 @@
     </script>
     <script>
         $('#summernote').summernote({
-            height:350,
+           // height:350,
             popover: {
                 image: [
                     ['custom', ['imageAttributes']],

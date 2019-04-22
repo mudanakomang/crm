@@ -3,18 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Attribute;
+use App\CheckContact;
 use App\Contact;
 use App\Country;
+
+use App\EmailReview;
+use App\ExcludedEmail;
 use App\ProfileFolio;
 use App\RoomType;
 use App\Transaction;
 use Carbon\Carbon;
-use function foo\func;
+
 use Illuminate\Http\Request;
 use DB;
 use League\Csv\Reader;
-use PHPUnit\Framework\Constraint\Count;
-use function Sodium\add;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ContactController extends Controller
@@ -49,7 +52,10 @@ class ContactController extends Controller
     }
     public function reviews(){
         $ta=json_decode(file_get_contents('tripadvisor.json'));
-        $ta_reviews=collect($ta->reviews);
+        //dd($ta);
+       // $ta_reviews=collect($ta->reviews);
+	$ta_reviews=\App\Reviews::where('source','=','tripadvisor')->orderBy('created_at','desc')->take(15)->get();
+	//dd($ta_reviews);
         $currentPageTa = LengthAwarePaginator::resolveCurrentPage('ta');
         $currentPageB=LengthAwarePaginator::resolveCurrentPage('bo');
         $currentPageH=LengthAwarePaginator::resolveCurrentPage('ht');
@@ -68,20 +74,23 @@ class ContactController extends Controller
         $ht_reviews=collect($ht->reviews);
         $currentResultsH=$ht_reviews->slice(($currentPageH-1)* $perPage,$perPage)->take(10);
         $resutlsHotel=new LengthAwarePaginator($currentResultsH,$ht_reviews->count(),$perPage);
-
-        return view('review.index',['tripadvisor'=>$ta,'ta_reviews'=>$resultsta,'booking'=>$databooking,'booking_reviews'=>$resultsbooking,'hotels'=>$ht,'hotelreview'=>$resutlsHotel]);
+        $poststay=DB::select(DB::raw('select sum(cleanliness)/count(*) as cleanliness,sum(comfort)/count(*) as comfort ,sum(location)/count(*) as location,sum(facilities)/count(*) as facilities,sum(staff)/count(*) as staff,sum(vfm)/count(*) as vfm,sum(wifi)/count(*) as wifi, (cleanliness+comfort+location+facilities+staff+vfm+wifi)*2/7 as total from email_reviews '));
+        $poststaydata=EmailReview::all();
+        return view('review.index',['tripadvisor'=>$ta,'ta_reviews'=>$ta_reviews,'booking'=>$databooking,'booking_reviews'=>$resultsbooking,'hotels'=>$ht,'hotelreview'=>$resutlsHotel,'poststay'=>$poststay,'poststaydata'=>$poststaydata]);
     }
     public function dashboard(){
+
         $total=0;
         $contact=Contact::whereRaw('DATE_FORMAT(birthday,"%m-%d") >= ?',[\Carbon\Carbon::now()->format('m-d')])
             ->whereRaw('DATE_FORMAT(birthday,"%m-%d") <= ?',[\Carbon\Carbon::now()->addDays(7)->format('m-d')])
             ->orderBy(DB::raw('ABS( DATEDIFF( birthday, NOW() ) )'),'asc')->limit(10)->get();
-        $contacts=DB::select(DB::raw('select country as label, count(*) as value from contacts left join countries on contacts.country_id=countries.iso2 left join contact_transaction on contact_transaction.contact_id=contacts.contactid left join transactions on transactions.id=contact_transaction.transaction_id where transactions.checkin between DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\')  group by label order by value asc'));
+        $contacts=DB::select(DB::raw('select country as label, count(*) as value from contacts left join countries on contacts.country_id=countries.iso3 left join contact_transaction on contact_transaction.contact_id=contacts.contactid left join transactions on transactions.id=contact_transaction.transaction_id where transactions.checkin between DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\')  group by label order by value asc'));
         $country=json_encode($contacts);
+
         foreach ($contacts as $value){
             $total=$total+$value->value;
         }
-        $added=DB::select(DB::raw('select DATE_FORMAT(created_at,\'%Y %M\') as created,count(*) as count from contacts where created_at between DATE_SUB(now(),INTERVAL 90 day) and now() group by created order by created desc'));
+        $added=DB::select(DB::raw('select DATE_FORMAT(created_at,\'%Y %M\') as created,count(*) as count from contacts where created_at between DATE_SUB(now(),INTERVAL 90 day) and now() group by DATE_FORMAT(created_at,\'%Y %m\')'));
         $data=[];
         foreach ($added as $item) {
             $tmp=['x'=>$item->created,'y'=>$item->count];
@@ -90,7 +99,7 @@ class ContactController extends Controller
 
         $data=json_encode($data);
 
-        $status=DB::select(DB::raw('select status , count(*) as count from transactions group by status'));
+        $status=DB::select(DB::raw('select foliostatus as status,count(*) as count from profilesfolio p inner join contacts c on c.contactid=p.profileid group by foliostatus'));
         $datastatus=[];
         foreach ($status as $item){
             if($item->status=='I'){
@@ -99,13 +108,16 @@ class ContactController extends Controller
                 $st='Checked Out';
             } elseif ($item->status=='C'){
                 $st='Confirm';
-            } else{
+            } elseif($item->status='G'){
+		$st='Guaranteed';
+	    }else{
                 $st='Cancel';
             }
             $tmp=['x'=>$st,'y'=>$item->count];
             array_push($datastatus,$tmp);
         }
         $datastatus=json_encode($datastatus);
+       // dd($datastatus);
        // $spending=Transaction::orderBy('revenue','desc')->take(10)->get();
         $spending=DB::select(DB::raw('select fname,lname,revenue from transactions a left join contact_transaction b on b.transaction_id=a.id left join contacts c on b.contact_id=c.contactid where contact_id is not NULL and a.checkin BETWEEN  DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') order by revenue desc limit 10'));
         $dataspending=[];
@@ -115,7 +127,8 @@ class ContactController extends Controller
        }
        $dataspending=json_encode($dataspending);
 
-        $stays=DB::select(DB::raw('select contacts.contactid as ids,fname, lname,sum(c.revenue) as rev ,count(b.contact_id) as stays from contacts left join contact_transaction b on b.contact_id=contacts.contactid left join transactions c on c.id=contacts.contactid where contact_id is not NULL and c.checkin BETWEEN  DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') group by ids,c.revenue order by stays desc,rev desc limit 10'));
+        $stays=DB::select(DB::raw('select contactid,count(contactid) stays ,fname,lname, sum(revenue) revenue from contacts ,contact_transaction,transactions
+where contactid is not NULL and transactions.checkin BETWEEN  DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') and contacts.contactid=contact_transaction.contact_id and contact_transaction.transaction_id=transactions.id and status=\'O\' group by contactid order  by stays desc,revenue desc limit 10'));
         $datastays=[];
         foreach ($stays as $stay){
             $tempstay=['x'=>$stay->fname.' '.$stay->lname,'y'=>$stay->stays];
@@ -124,8 +137,8 @@ class ContactController extends Controller
 
         $datatrx=[];
         $date=\Carbon\Carbon::now();
-        $first=$date->firstOfQuarter()->format('Y-m-d');
-        $last=$date->lastOfQuarter()->format('Y-m-d');
+
+
         $trx=DB::select(DB::raw('select fname,lname,datediff(checkout,checkin) as hari ,sum(revenue) as rev from transactions a left join contact_transaction b on b.transaction_id=a.id left join contacts c on c.contactid=b.contact_id where contact_id is not null and a.checkin BETWEEN DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') group by fname order by hari desc, rev desc limit 10 '));
 
         foreach ($trx as $tr){
@@ -136,7 +149,7 @@ class ContactController extends Controller
 
 
 
-        $contacts_age=DB::select(DB::raw('select  sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) <30,1,0)) as low, sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) >=30  and floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365)<=60,1,0)) as mid,sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) >=60,1,0)) as high from contacts where created_at BETWEEN DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\')'));
+        $contacts_age=DB::select(DB::raw('select  sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) <30,1,0)) as low, sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) >=30  and floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365)<=60,1,0)) as mid,sum(if(floor(datediff(DATE_FORMAT(now(),\'%Y-%m-%d\'),birthday)/365) >=60,1,0)) as high from contacts where created_at BETWEEN (DATE_SUB(now(),INTERVAL 90 day)) and (Now())'));
         $data_age=[];
         array_push($data_age,['label'=>'Under 30','value'=>$contacts_age[0]->low,'type'=>'low']);
         array_push($data_age,['label'=>'Between 30 and 60','value'=>$contacts_age[0]->mid,'type'=>'mid']);
@@ -144,7 +157,7 @@ class ContactController extends Controller
         $data_age=json_encode($data_age);
         $tages=$contacts_age[0]->low+$contacts_age[0]->mid+$contacts_age[0]->high;
 
-        $room_type=DB::select(DB::raw('select room_name as label, count(*)  as value from transactions,room_type where room_type is not null and room_type.room_code=transactions.room_type and checkin between DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') group by room_type'));
+        $room_type=DB::select(DB::raw('select room_name as label, count(*)  as value from transactions,room_type where room_type is not null and room_type.room_code=transactions.room_type and checkin between DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') group by room_type order by value ASC'));
         $data_room_type=[];
         $troom=0;
         foreach ($room_type as $item) {
@@ -158,14 +171,28 @@ class ContactController extends Controller
         $databooking=json_decode($filebooking,true);
         //dd($databooking["reviews"]["total"]);
         $bookingsource=[];
-        $booking=DB::select(DB::raw('select count(*) as count ,source from contacts left join contact_transaction on contact_transaction.contact_id=contacts.contactid LEFT JOIN transactions on contact_transaction.transaction_id=transactions.id LEFT JOIN profilesfolio on contactid=profileid  where contacts.created_at between DATE_FORMAT(DATE_SUB(now(),INTERVAL 90 day),\'%Y-%m-%d\') and DATE_FORMAT(Now(),\'%Y-%m-%d\') group by source order by count ASC'));
+	 $tbookingsource=0;
+        $booking=DB::select(DB::raw('select count(*) as count ,source from contacts left join contact_transaction on contact_transaction.contact_id=contacts.contactid LEFT JOIN transactions on contact_transaction.transaction_id=transactions.id LEFT JOIN profilesfolio on contactid=profileid  where contacts.created_at between DATE_SUB(now(),INTERVAL 90 day) and Now() group by source order by count ASC'));
         foreach ($booking as $b){
-            array_push($bookingsource,['label'=>$b->source,'value'=>$b->count]);
+        	if($b->source!=null){ 
+		   array_push($bookingsource,['label'=>$b->source,'value'=>$b->count]);
+		}
+		$tbookingsource+=$b->count;
         }
         $datastays=json_encode($datastays);
+
         $databookingsource=json_encode($bookingsource);
-        $tbookingsource=Contact::with('profilesfolio')->count();
-        return view('main.index',['data'=>$contact,'datastay'=>$datastays,'country'=>$country,'total'=>$total,'monthcount'=>$data,'countstatus'=>$datastatus,'spending'=>$dataspending,'longstay'=>$datatrx,'data_age'=>$data_age,'tages'=>$tages,'room_type'=>$data_room_type,'troom'=>$troom,'reviews'=>$reviews,'booking_com'=>$databooking,'databookingsource'=>$databookingsource,'tbookingsource'=>$tbookingsource]);
+        $temailcount=0;
+        $dataemail=[];
+      //  $emails=DB::select(DB::raw('select count(*) as count, event from mailgun_logs where tags not in (\'Testing\') and DATE_FORMAT(now(),\'%Y-%m\')=DATE_FORMAT(timestamp,\'%Y-%m\') group by event'));
+        $emails=DB::select(DB::raw('select event,count(*) as count from (select event from mailgun_logs  where timestamp in (select max(timestamp) from mailgun_logs group by message_id,recipient)  and event<>\'Testing\' and DATE_FORMAT(now(),\'%Y-%m\')=DATE_FORMAT(timestamp,\'%Y-%m\') group by recipient,message_id ) a group by event'));
+        foreach ($emails as $email){
+            array_push($dataemail,['label'=>ucfirst($email->event),'value'=>$email->count]);
+            $temailcount+=$email->count;
+        }
+
+        $dataemailreport=json_encode($dataemail);
+        return view('main.index',['data'=>$contact,'datastay'=>$datastays,'country'=>$country,'total'=>$total,'monthcount'=>$data,'countstatus'=>$datastatus,'spending'=>$dataspending,'longstay'=>$datatrx,'data_age'=>$data_age,'tages'=>$tages,'room_type'=>$data_room_type,'troom'=>$troom,'reviews'=>$reviews,'booking_com'=>$databooking,'databookingsource'=>$databookingsource,'tbookingsource'=>$tbookingsource,'dataemailreport'=>$dataemailreport,'temailcount'=>$temailcount]);
     }
     /**
      * Show the form for creating a new resource.
@@ -217,8 +244,129 @@ class ContactController extends Controller
               array_merge($b,$c);
           }
        }
+
         return view('contacts.list',['data'=>$b]);
     }
+public function loadcontacts(Request $request){
+    $contacts=Contact::with(['transaction'=>function($qq){
+	      	return $qq->sum('revenue');
+	    }])->whereHas('transaction',function ($q){
+       	 return $q->whereNotNull('status')->where('revenue','>=',0);
+	    })->withCount('campaign')->withCount('transaction')->get();
+		return response($contacts);
+
+}
+public function contactslist(Request $request){
+    $contacts=Contact::with(['transaction'=>function($qq){
+        return $qq->sum('revenue');
+    }])->whereHas('transaction',function ($q){
+        return $q->where('status','<>',NULL)->where('revenue','>=',0);
+    })->withCount('campaign')->withCount('transaction')
+        ->get();
+
+    $columns = array(
+        0 =>'contactid',
+        1 =>'fname',
+        2 =>'lname',
+        3 =>'birthday',
+        4 =>'wedding_bday',
+        5 =>'country_id',
+        6 =>'area',
+        8 =>'campaign_count',
+        9 =>'transaction_count',
+        11=>'revenue'
+    );
+    $totalData = $contacts->count();
+    $totalFiltered = $totalData;
+    $limit = $request->input('length');
+    $start = $request->input('start');
+    $order = $columns[$request->input('order.0.column')];
+    $dir = $request->input('order.0.dir');
+    if (empty($request->input('search.value'))){
+        $contactslist=Contact::with(['transaction'=>function($qq){
+            return $qq->sum('revenue');
+        }])->whereHas('transaction',function ($q){
+            return $q->where('status','<>',NULL)->where('revenue','>=',0);
+        })->withCount('campaign')->withCount('transaction')
+            ->offset($start)->limit($limit)->orderBy($order,$dir)
+            ->get();
+    }else{
+        $search = $request->input('search.value');
+        $contactslist=Contact::with(['transaction'=>function($qq){
+            return $qq->sum('revenue');
+        }])->whereHas('transaction',function ($q){
+            return $q->where('status','<>',NULL)->where('revenue','>=',0);
+        })->withCount('campaign')->withCount('transaction')
+            ->select(DB::raw("sum(revenue) as revenue"))
+            ->where('contactid','LIKE',"%{$search}%")
+            ->orWhere('fname','LIKE',"%{$search}%")
+            ->orWhere('lname','LIKE',"%{$search}%")
+            ->orWhere('birthday','LIKE',"%{$search}%")
+            ->orWhere('wedding_bday','LIKE',"%{$search}%")
+            ->orWhereHas('country',function ($q) use ($search){
+                return $q->where('country','LIKE',"%{$search}%");
+            })->orWhereHas('transaction',function ($q) use ($search){
+                return $q->where('status','LIKE',"%{$search}%");
+            })
+            ->orWhere('area','LIKE',"%{$search}%")
+            ->orWhereHas('transaction',function ($q) use ($search){
+                return $q->where('checkin','LIKE',"%{$search}%");
+            })
+            ->offset($start)
+            ->limit($limit)
+            ->orderBy($order,$dir)
+            ->get();
+
+        $totalFiltered=Contact::with(['transaction'=>function($qq){
+            return $qq->sum('revenue');
+        }])->whereHas('transaction',function ($q){
+            return $q->where('status','<>',NULL)->where('revenue','>=',0);
+        })->withCount('campaign')->withCount('transaction')
+            ->select(DB::raw("sum(revenue) as revenue"))
+            ->where('contactid','LIKE',"%{$search}%")
+            ->orWhere('fname','LIKE',"%{$search}%")
+            ->orWhere('lname','LIKE',"%{$search}%")
+            ->orWhere('birthday','LIKE',"%{$search}%")
+            ->orWhere('wedding_bday','LIKE',"%{$search}%")
+            ->orWhereHas('country',function ($q) use ($search){
+                return $q->where('country','LIKE',"%{$search}%");
+            })->orWhereHas('transaction',function ($q) use ($search){
+                return $q->where('status','LIKE',"%{$search}%");
+             })
+            ->orWhere('area','LIKE',"%{$search}%")
+            ->orWhereHas('transaction',function ($q) use ($search){
+                return $q->where('checkin','LIKE',"%{$search}%");
+            })
+            ->count();
+    }
+    $data=array();
+    if (!empty($contactslist)){
+        foreach ($contactslist as $key=>$list){
+            $nestedData['contactid']=$key+1;
+            $nestedData['fname']=$list->fname;
+            $nestedData['lname']=$list->lname;
+            $nestedData['birthday']=$list->birthday;
+            $nestedData['wedding_bday']=$list->wedding_bday;
+            $nestedData['country_id']=$list->country_id;
+            $nestedData['area']=$list->area;
+            $nestedData['status']=$list->transaction[0]->status;
+            $nestedData['campaign']=count($list->campaign);
+            $nestedData['stay']=count($list->transaction);
+            $nestedData['checkin']=$list->transaction[0]->checkin;
+            $nestedData['revenue']=$list->transaction;
+            $data[]=$nestedData;
+        }
+    }
+    $json_data=array(
+        "draw"=>intval($request->input('draw')),
+        "recordsTotal"=>intval($totalData),
+        "recordsFiltered"=>intval($totalFiltered),
+        "data"=>$data
+    );
+//    echo json_encode($json_data);
+
+    return response($json_data);
+}
     public function store(Request $request)
     {
         //dd($request->all());
@@ -254,7 +402,7 @@ class ContactController extends Controller
     {
         //
 
-    $contacts=\App\Contact::where('contactid','=',$id)->first();
+
 //    $contacts=\App\Contact::with(['transaction'=>function($q){
 //        return $q->orderBy('checkin','asc');
 //    }])->where('contactid','=',$id)->first();
@@ -280,6 +428,10 @@ class ContactController extends Controller
     {
         //
     }
+    public  function getcountry(Request $request){
+        $country=Country::where('iso3','=',$request->code)->first()['country'];
+        return response($country);
+    }
 
     /**
      * Update the specified resource in storage.
@@ -304,14 +456,25 @@ class ContactController extends Controller
        // }
 
         $contact=\App\Contact::where('contactid','=',$request->id)->first();
-
        $contact->fname=$request->fname;
        $contact->lname=$request->lname;
        $contact->salutation=$request->salutation;
        $contact->marital_status=$request->marital_status;
        $contact->gender=$request->gender;
-       $contact->birthday=\Carbon\Carbon::parse($request->birthday)->format('Y-m-d');
+       if($request->birthday){
+           $contact->birthday=\Carbon\Carbon::parse($request->birthday)->format('Y-m-d');
+       }else{
+           $contact->birthday=NULL;
+       }
+
+       if($request->wedding_bday){
+           $contact->wedding_bday=\Carbon\Carbon::parse($request->wedding_bday)->format('Y-m-d');
+       } else{
+           $contact->wedding_bday=NULL;
+       }
+
        $contact->country_id=$request->country_id;
+       $contact->area=$request->area;
        $contact->email=$request->email;
        $contact->idnumber=$request->idnumber;
        $contact->save();
@@ -592,31 +755,20 @@ class ContactController extends Controller
     }
     public function dstatus($stat)
     {
-        switch ($stat) {
-            case "Inhouse":
-                $status = 'I';
-                break;
-            case "Confirm":
-                $status = 'C';
-                break;
-            default:
-                $status = 'X';
-        }
-
-
 
         setlocale(LC_MONETARY, "id_ID");
-        if($status=='I') {
-            $contacts = Contact::whereHas('transaction', function ($q) use ($status) {
-                return $q->where('status', '=', $status);
+        if($stat=='Inhouse') {
+            $contacts = Contact::whereHas('transaction', function ($q) {
+                //return $q->where('status','=', 'I');
+		return $q->where('status','=','I')->groupBy('id')->havingRaw('sum(revenue)>=0');
             })->get();
         }
-        elseif ($status=='C'){
-            $contacts = Contact::whereHas('transaction', function ($q) use ($status) {
-                return $q->where('status', '=', $status)->whereRaw('date_format(now(),\'%Y-%m-%d\') < checkin')->groupBy('folio')->orderBy('checkin','desc');
-            })->get();
+        elseif ($stat=='Confirm'){
+            $contacts = Contact::whereHas('profilesfolio', function ($q) {
+               return $q->where('foliostatus', '=', 'C');
+           })->get();
         }
-        //dd($contacts);
+       // dd($contacts[2]->profilesfolio);
             return view('contacts.list', ['data' => $contacts]);
         }
 
@@ -732,8 +884,9 @@ class ContactController extends Controller
 
         return view('contacts.import_stay',['create'=>$created,'update'=>$update,'created_data'=>$created_data,'updated_data'=>$updated_data]);
     }
-    public function filter(Request $request){
-        $retval=Contact::with('transaction')->get();
+    public function filter(){
+        $retval=Contact::with('transaction','profilesfolio')->get();
+
         return view('contacts.filter',['data'=>$retval]);
     }
 
@@ -741,21 +894,27 @@ class ContactController extends Controller
 
         $contacts=Contact::with('transaction','profilesfolio')->when($request->country_id !=null,function ($q) use ($request){
             return $q->whereIn('country_id',$request->country_id);
+        })->when($request->area !=null,function($q) use ($request){
+            return $q->whereIn('area',$request->area);
         })->when($request->guest_status !=null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
                 return $q->whereIn('status',$request->guest_status);
             })->orderBy('created_at','desc');
         })->when($request->spending_from ==null and $request->spending_to !=null ,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[0,str_replace('.','',$request->spending_to)]);
+             return $q->havingRaw('SUM(revenue) between ? and ?',[0,str_replace('.','',$request->spending_to)]);
+                //return $q->whereBetween($rev,[0,str_replace('.','',$request->spending_to)]);
+                //return $q->whereBetween(DB::raw('sum(revenue)'),[0,str_replace('.','',$request->spending_to)]);
             });
         })->when($request->spending_from !=null and $request->spending_to ==null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->where('revenue','>=',str_replace('.','',$request->spending_from));
+                //return $q->where('revenue','>=',str_replace('.','',$request->spending_from));
+                return $q->havingRaw('SUM(revenue) >= ?',[str_replace('.','',$request->spending_from)]);
             });
         })->when($request->spending_from !=null and $request->spending_to !=null,function ($q) use ($request){
             return $q->whereHas('transaction',function ($q) use ($request){
-                return $q->whereBetween('revenue',[str_replace('.','',$request->spending_from),str_replace('.','',$request->spending_to)]);
+                //return $q->whereBetween('revenue',[str_replace('.','',$request->spending_from),str_replace('.','',$request->spending_to)]);
+                return $q->havingRaw('SUM(revenue) between ? and ?',[str_replace('.','',$request->spending_from),str_replace('.','',$request->spending_to)]);
             });
         })->when($request->gender !=null,function ($q) use ($request) {
             return $q->whereIn('gender', $request->gender);
@@ -772,6 +931,20 @@ class ContactController extends Controller
                 return $q->where('checkin', '>=', Carbon::parse($request->stay_from)->format('Y-m-d'))
                     ->where('checkout', '<=', Carbon::parse($request->stay_to)->format('Y-m-d'));
             });
+        })->when($request->bday_from ==null and $request->bday_to !=null, function ($q) use ($request){
+            return $q->whereRaw('DATE_FORMAT(birthday,\'%m-%d\') = ?',[Carbon::parse($request->bday_to)->format('m-d')]);
+        })->when($request->bday_from!=null and $request->bday_to ==null, function ($q) use ($request){
+            return $q->whereRaw('DATE_FORMAT(birthday,\'%m-%d\') = ?',[Carbon::parse($request->bday_from)->format('m-d')]);
+        })->when($request->bday_from !=null and $request->bday_to !=null , function ($q) use ($request){
+            return $q->whereRaw('DATE_FORMAT(birthday,\'%m-%d\') >= ?',[Carbon::parse($request->bday_from)->format('m-d')])
+                ->whereRaw('DATE_FORMAT(birthday,\'%m-%d\') <= ?',[Carbon::parse($request->bday_to)->format('m-d')]);
+        })->when($request->wedding_bday_from ==null and $request->wedding_bday_to !=null , function ($q) use ($request){
+            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') = ?',[Carbon::parse($request->wedding_bday_to)->format('m-d')]);
+        })->when($request->wedding_bday_from !=null and $request->wedding_bday_to == null , function ($q) use ($request){
+            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') = ?',[Carbon::parse($request->wedding_bday_from)->format('m-d')]);
+        })->when($request->wedding_bday_from != null and $request->wedding_bday_to !=null, function ($q) use ($request){
+            return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') >= ?',[Carbon::parse($request->wedding_bday_from)->format('m-d')])
+                ->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') <= ?',[Carbon::parse($request->wedding_bday_to)->format('m-d')]);
         })->when($request->total_night_from !=null and $request->total_night_to==null, function ($q) use ($request) {
             return $q->whereHas('transaction', function ($q) use ($request) {
                 return $q->whereRaw('DATEDIFF(checkout,checkin) >= ' . $request->total_night_from);
@@ -804,8 +977,46 @@ class ContactController extends Controller
             });
         })
             ->get();
-       // dd($contacts);
+
 
         return response($contacts,200);
+    }
+    public function review($id){
+        $contacts=Contact::find($id);
+        $contacts=$contacts->toJson();
+        $review=EmailReview::where('contact_id','=',$id)->get();
+        $review=$review->toJson();
+        return view('review.feedback',['contacts'=>$contacts,'review'=>$review]);
+    }
+    public function incomplete(){
+        $incomplete=CheckContact::where('checked','=','N')->orWhere('checked','=',NULL)->get();
+        return view('contacts.incomplete',['incompletes'=>$incomplete]);
+    }
+    public function updateStatus(Request $request){
+      $contact=CheckContact::where('folio','=',$request->id)->first();
+      //dd($contact);
+      $contact->checked='Y';
+      $contact->update();
+      return response('success',200);
+    }
+    public function excluded(){
+       $excs=ExcludedEmail::all();
+       return view('contacts.excluded',['data'=>$excs]);
+    }
+    public  function addEmail(Request $request){
+        $rules=[
+            'email'=>'unique:excluded_emails'
+        ];
+        $message=['email.unique'=>'Email/Domain exists in dataset'];
+        $validator=Validator::make($request->all(),$rules,$message);
+        if(!$validator->fails()){
+            $exc=new ExcludedEmail();
+            $exc->email=$request->email;
+            $exc->save();
+            return response('success');
+        } else{
+            return response(['errors'=>$validator->errors()]);
+        }
+
     }
 }

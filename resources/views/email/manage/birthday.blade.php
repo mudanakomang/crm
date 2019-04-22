@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+   Birthday Configuration  | {{ $configuration->hotel_name.' '.$configuration->app_title }}
+@endsection
 @section('content')
     <div class="right_col" role="main">
         <section class="content">
@@ -7,7 +10,7 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel title">
                             <div class="x_title">
-                                <h2>Birthday Configuration</h2>
+                                <h3>Birthday Configuration</h3>
                                 <ul class="nav navbar-right panel_toolbox">
                                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                     <li><a class="close-link"><i class="fa fa-close"></i></a>
@@ -17,6 +20,7 @@
                             </div>
                             <div class="x_content">
                                 <div class="form-inline">
+                                    @if($birthday)
                                     {{ Form::model($birthday,['route'=>['birthday.update',$birthday->id],'files'=>'true','id'=>'templateForm']) }}
                                     <div class="form-group">
 
@@ -35,7 +39,7 @@
                                                 <div class="form-group">
                                                     <label class="control-label">
                                                        Send before / after birthday</label>
-                                                    {{ Form::select('sendafter',[''=>'Day/s before']+range(-2,2,1),$birthday->sendafter,['class'=>'form-control selectpicker']) }}
+                                                    {{ Form::select('sendafter',[''=>'Day/s before']+[-2=>-2,-1=>-1,0=>0,1=>1,2=>2],$birthday->sendafter,['class'=>'form-control selectpicker']) }}
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6">
@@ -65,6 +69,9 @@
                                         </div>
                                     </div>
                                     {{ Form::close() }}
+                                    @else
+                                    <a href="{{  url('campaign/template') }}"> Create Template </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -123,7 +130,7 @@
     </script>
     <script>
         $('#summernote').summernote({
-            height:350,
+            //height:350,
             popover: {
                 image: [
                     ['custom', ['imageAttributes']],

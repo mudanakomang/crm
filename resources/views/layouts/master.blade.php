@@ -39,7 +39,14 @@
     <!-- Custom Theme Style -->
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
     <link href="{{ asset('flags/flags.css') }}" rel="stylesheet">
-
+    <link href="{{ asset('css/jquery.steps.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendors/airdatepicker/dist/css/datepicker.min.css') }}" rel="stylesheet">
+    {{--<link href="{{ asset('vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css') }}" rel="stylesheet">--}}
+    <style>
+      .datepicker{
+        z-index:9999 !important;
+      }
+    </style>
 
   </head>
 
@@ -106,7 +113,8 @@
 
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
-    <script src="{{ asset('vendors/parsleyjs/dist/parsley.min.js') }}"></script>
+
+    <script src="{{ asset('js/popper.min.js') }}"></script>
     <!-- Bootstrap -->
     <script src="{{ asset('vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <!-- FastClick -->
@@ -170,10 +178,16 @@
     <script src="{{ asset('vendors/switchery/dist/switchery.min.js')}}"></script>
     <script src="{{ asset('vendors/iCheck/icheck.min.js')}}"></script>
     <script src="{{ asset('plugins/sweetalert/sweetalert.min.js') }}"></script>
+    <script src="{{ asset('vendors/parsleyjs/dist/parsley.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.steps.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('vendors/airdatepicker/dist/js/datepicker.min.js') }}"></script>
+    <script src="{{ asset('vendors/airdatepicker/dist/js/i18n/datepicker.en.js') }}"></script>
 
 
     <!-- Custom Theme Scripts -->
     <script src="{{ asset('build/js/custom.js') }}"></script>
+
 
     @yield('script')
   </body>

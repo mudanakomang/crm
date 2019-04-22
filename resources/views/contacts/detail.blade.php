@@ -11,6 +11,7 @@
                         <div class="panel-heading ">
 
                             <h2> {{ $data[0]->fname.' '.$data[0]->lname }}   </h2>
+
                             @if(!empty($data[0]->country->country))
                             <img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($data[0]->country->iso2)}}" alt="{{$data[0]->country->country}}" />
                                 @endif
@@ -25,12 +26,12 @@
                                         @if(empty($data[0]->transaction) )
                                             0
                                         @else
-                                            {{ count($data[0]->transaction) }} /
+                                            {{ count($data[0]->transaction->whereIn('status',['O','I'])) }} /
                                             @if(!$data[0]->transaction->isEmpty())
 
                                                 @php
                                                     $sum=0;
-                                                    foreach($data[0]->transaction as $night){
+                                                    foreach($data[0]->transaction->whereIn('status',['O','I']) as $night){
                                                     $total= \Carbon\Carbon::parse($night->checkout)->diffInDays(\Carbon\Carbon::parse($night->checkin));
                                                     $sum+=$total;
                                                     }
@@ -43,10 +44,10 @@
                                     </div>
 
                                 </div>
-
                                 <div class="col-lg-3 col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                                     <span class="count_top"><i class="fa fa-money"></i> TOTAL SPENDING</span>
                                     <div class="count blue">
+
                                         @if(!$data[0]->transaction->isEmpty())
                                             @php
                                                 $sum=0;
@@ -227,7 +228,7 @@
                                                                                     <div class="col-lg-4  col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
-                                                                                                {{ Form::select('gender',[''=>'Select Gender','Male'=>'Male','Female'=>'Female'],$data[0]->gender,['class'=>'form-control selectpicker','required']) }}
+                                                                                                {{ Form::select('gender',[''=>'Select Gender','M'=>'Male','F'=>'Female'],$data[0]->gender,['class'=>'form-control selectpicker','required']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -238,6 +239,16 @@
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
                                                                                                 {{ Form::text('birthday',$data[0]->birthday==NULL ? '': \Carbon\Carbon::parse($data[0]->birthday)->format('d M Y'),['class'=>'datepicker form-control','required']) }}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                                                                                        {{ Form::label('wedding_bday','Wedding Birthday') }}
+                                                                                    </div>
+                                                                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                                                                        <div class="form-group">
+                                                                                            <div class="form-line">
+                                                                                                {{ Form::text('wedding_bday',$data[0]->wedding_bday==NULL ? '': \Carbon\Carbon::parse($data[0]->wedding_bday)->format('d M Y'),['class'=>'datepicker form-control','required']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -269,10 +280,20 @@
                                                                                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                     <div class="form-group">
                                                                                         <div class="form-line">
-                                                                                            {{ Form::select('country_id',[''=>'Select Nationality']+\App\Country::pluck('country','id')->all(),$data[0]->country==NULL ? '' : $data[0]->country->id,['class'=>'form-control selectpicker', 'data-live-search'=>'true','required']) }}
+                                                                                            {{ Form::select('country_id',[''=>'Select Nationality']+\App\Country::pluck('country','iso3')->all(),$data[0]->country==NULL ? '' : $data[0]->country_id,['class'=>'form-control selectpicker', 'data-live-search'=>'true','required']) }}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
+                                                                                    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                                                                                        {{ Form::label('area','Origin/Area') }}
+                                                                                    </div>
+                                                                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                                                                        <div class="form-group">
+                                                                                            <div class="form-line">
+                                                                                                {{ Form::select('area',[''=>'Select Origin']+\App\Contact::groupBy('area')->pluck('area','area')->all(),$data[0]->area==NULL ? '' : $data[0]->area,['class'=>'form-control selectpicker', 'data-live-search'=>'true','required']) }}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
                                                                                 <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
                                                                                     {{ Form::label('email','Email') }}
                                                                                 </div>
@@ -347,7 +368,7 @@
                                                                                 <td>{{\Carbon\Carbon::parse($trx->checkin)->format('d M Y')}}</td>
                                                                                 <td>{{\Carbon\Carbon::parse($trx->checkout)->format('d M Y')}}</td>
                                                                                 <td>{{\Carbon\Carbon::parse($trx->checkin)->diffInDays(\Carbon\Carbon::parse($trx->checkout))}}</td>
-                                                                                <td>{{ \App\ProfileFolio::where('folio','=',$trx->resv_id)->value('source') }}</td>
+                                                                                <td>{{\App\ProfileFolio::where('folio','=',$trx->resv_id)->value('source') }}</td>
                                                                                 <td>{{$trx->room}}</td>
                                                                                 <td>{{$trx->roomType->room_name}}</td>
                                                                                 <td>{{number_format($trx->revenue,0,',','.')}}</td>
@@ -358,6 +379,8 @@
                                                                                         Inhouse
                                                                                     @elseif($trx->status=='X')
                                                                                         Cancel
+												                                    @elseif($trx->status=='G')
+													                                    Guaranteed
                                                                                     @else
                                                                                         Confirm
                                                                                     @endif
@@ -380,7 +403,8 @@
                                                                       <tr class="bg-teal">
                                                                           <th>#</th>
                                                                           <th>Name</th>
-                                                                          <th>Status</th>
+                                                                          <th>Status</th>                                                                           '
+                                                                          <th>Tracking</th>
                                                                           <th>Schedule</th>
                                                                       </tr>
                                                                     </thead>
@@ -390,9 +414,15 @@
                                                                             <td>{{ $key+1 }}</td>
                                                                             <td>{{ $campaign->name }}</td>
                                                                             <td>{{ $campaign->status }}</td>
+                                                                            <td>
+                                                                                @foreach(\App\EmailResponse::where('campaign_id','=',$campaign->id)->where('recepient','=',$data[0]->email)->groupBy('event')->orderBy('created_at')->get() as $event)
+                                                                                @if($loop->first)
+                                                                                    {{ $event->event }}
+                                                                                    @endif
+                                                                                @endforeach
+                                                                            </td>
                                                                             <td>{{ \Carbon\Carbon::parse($campaign->schedule->schedule)->format('d F Y H:i') }}</td>
                                                                         </tr>
-
                                                                     @endforeach
 
                                                                     </tbody>
@@ -431,6 +461,7 @@
                                                                     {{ Form::hidden('salutation',$data[0]->salutation )}}
                                                                     {{ Form::hidden('gender',$data[0]->gender )}}
                                                                     {{ Form::hidden('birthday',$data[0]->birthday )}}
+                                                                    {{ Form::hidden('wedding_bday',$data[0]->birthday )}}
                                                                     {{ Form::hidden('country_id',$data[0]->country==null ? '':$data[0]->country->id )}}
                                                                     {{ Form::hidden('address1',$data[0]->address1->isEmpty() ? '' :$data[0]->address1[0]->pivot->value) }}
                                                                     {{ Form::hidden('address2',$data[0]->address2->isEmpty() ? '' :$data[0]->address2[0]->pivot->value) }}
@@ -551,6 +582,12 @@
     </div>
 @endsection
 @section('script')
+    <script>
+        $('.datepicker').datetimepicker({
+            format: 'DD MMMM YYYY',
+            showClear:true,
+        });
+    </script>
     <script>
         if (window.location.pathname=='/contacts/add'){
             $('#updateContact2').attr('disabled','disabled');

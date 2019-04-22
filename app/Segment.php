@@ -10,7 +10,7 @@ class Segment extends Model
     protected $table='segments';
 
     public  function campaign(){
-        return $this->hasMany('\App\Campaign');
+        return $this->belongsToMany('\App\Campaign','campaign_segment','campaign_id','segment_id');
     }
 
 }

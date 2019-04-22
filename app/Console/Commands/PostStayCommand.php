@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Birthday;
 use App\Contact;
-use App\Http\Controllers\EmailTemplateController;
+
+use App\Http\Controllers\MailgunController;
 use App\MailEditor;
 use App\PostStay;
 use Illuminate\Console\Command;
@@ -45,16 +45,29 @@ class PostStayCommand extends Command
         //
         $poststay=PostStay::find(1);
 
-        $email=new EmailTemplateController();
+
+        $mg=new MailgunController();
         if($poststay->active=='y'){
             $poststay_templ=MailEditor::find($poststay->template_id);
-            $users=Contact::whereHas('transaction',function ($q) use ($poststay){
-                return $q->whereRaw('date_format(now(),\'%y-%m-%d\')=DATE_ADD(checkout,INTERVAL \''.$poststay->sendafter.'\' day)');
-            })->get();
-            foreach ($users as $user){
-                $email->emailsend($user,$poststay_templ,$user->gender=='M' ? $poststay_templ->subject.' Mr.'.$user->fname.' '.$user->lname:$poststay_templ->subject.' Ms./Mrs.'.$user->fname.' '.$user->lname);
+            $user_list=[];
+            $users1=\App\Contact::has('transaction','>',1)->get();
+            foreach ($users1 as $u){
+                if(\Carbon\Carbon::parse($u->latestTransaction[0]->checkout)->addDay($poststay->sendafter)->format('Y-m-d')==\Carbon\Carbon::now()->format('Y-m-d')){
+                    array_push($user_list,$u);
+                }
+            }
+            $users2=\App\Contact::has('transaction','=',1)->get();
+            foreach ($users2 as $u){
+                if(\Carbon\Carbon::parse($u->transaction[0]->checkout)->addDay($poststay->sendafter)->format('Y-m-d')==\Carbon\Carbon::now()->format('Y-m-d')){
+                    array_push($user_list,$u);
+                }
+            }
+            foreach ($user_list as $user){
+               //dd($user);
+                 $mg->sendmail($user,$poststay_templ,'poststay');
             }
         }
+
 
     }
 }

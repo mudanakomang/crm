@@ -34,9 +34,16 @@ class MailEditor extends Model
         return $parsed;
     }
     public function poststay(){
-        return $this->belongsTo('\App\PostStay');
+        //return $this->belongsTo('\App\PostStay');
+        return $this->hasOne('\App\PostStay','template_id');
     }
     public function miss(){
-        return $this->belongsTo('\App\MissYou');
+        return $this->hasOne('\App\MissYou','template_id');
+    }
+    public function campaign(){
+        return $this->belongsToMany('\App\Campaign','campaign_template','template_id','campaign_id');
+    }
+    public function birthday(){
+        return $this->hasOne('\App\Birthday','template_id');
     }
 }

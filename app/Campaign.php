@@ -17,9 +17,16 @@ class Campaign extends Model
         return $this->hasOne('\App\Schedule');
     }
     public function segment(){
-        return $this->belongsTo('\App\Segment');
+        return $this->belongsToMany('\App\Segment','campaign_segment','campaign_id','segment_id');
     }
     public  function emailresponse(){
         return $this->hasMany('\App\EmailResponse');
+    }
+
+    public function external(){
+        return $this->belongsToMany('\App\ExternalContact','campaign_external_contact','campaign_id','external_contact_id')->withPivot('status');
+    }
+    public function externalSegment(){
+        return $this->belongsToMany(\App\ExternalContactCategory::class);
     }
 }

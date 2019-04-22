@@ -23,7 +23,7 @@
     <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <div class="form-line">
-                {{ Form::select('type',[''=>'Select Type','Poststay'=>'Poststay','Birthday'=>'Birthday','Checkin Reminder'=>'Checkin Reminder','Promo'=>'Promotion','Special Eevent'=>'Special Event','Miss You'=>'Miss You'],$template->type,['class'=>'form-control selectpicker','required']) }}
+                {{ Form::select('type',[''=>'Select Type','Poststay'=>'Poststay','Birthday'=>'Birthday','Promo'=>'Promotion','Prestay'=>'Prestay','Miss You'=>'Miss You'],$template->type,['class'=>'form-control selectpicker','required']) }}
             </div>
         </div>
     </div>
@@ -73,7 +73,7 @@
     <div class="col-lg-12 ">
         <div class="col-lg-6">
             <a class="btn btn-sm btn-success" href="{{ url('email/template') }}" title="Back"><i class="fa fa-arrow-circle-o-left"></i> Back</a>
-            <button class="btn btn-success btn-sm" type="submit"> <i class="fa fa-save"></i> Save </button>
+            <a class="btn btn-success btn-sm" id="saveTemplate"> <i class="fa fa-save"></i> Save </a>
         </div>
 
     </div>

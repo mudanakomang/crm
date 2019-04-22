@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+   Reviews  | {{ $configuration->hotel_name.' '.$configuration->app_title }}
+@endsection
 @section('content')
     <div class="right_col" role="main">
         <div class="row">
@@ -38,24 +41,39 @@
                                                             <div class="x_content" >
                                                                 <div class="dashboard-widget-content">
                                                                     <div class="star" style="color:#1ABB9C;padding: 20px">
-                                                                        <h4>Rating  {{$tripadvisor->aggregateRating->ratingValue}} of {{$tripadvisor->aggregateRating->reviewCount}} Travelers</h4>
-                                                                        @for($i=0;$i<5;$i++ )
-                                                                            @if($i<$tripadvisor->aggregateRating->ratingValue)
-                                                                                <span><i class="fa fa-star fa-2x"></i> </span>
-                                                                            @else
-                                                                                <span><i class="fa fa-star-o fa-2x"></i> </span>
-                                                                            @endif
+                                                                        <h4>Rating {{ $tripadvisor->aggregateRating->rating }} of {{ $tripadvisor->aggregateRating->totalreview }} Travelers </h4>
+                                                                        {{--@for($i=0;$i<5;$i++ )--}}
+                                                                            {{--@if($i<$tripadvisor->aggregateRating->rating)--}}
+                                                                                {{--<span><i class="fa fa-star fa-2x"></i> </span>--}}
+                                                                            {{--@else--}}
+                                                                                {{--<span><i class="fa fa-star-o fa-2x"></i> </span>--}}
+                                                                            {{--@endif--}}
 
-                                                                        @endfor
+                                                                        {{--@endfor--}}
+                                                                        @php
+                                                                        $number = $tripadvisor->aggregateRating->rating;
+                                                                        // Make it integer:
+                                                                        $stars = round( $number * 2, 0, PHP_ROUND_HALF_UP);
+
+                                                                        // Add full stars:
+                                                                        $i = 1;
+                                                                        while ($i <= $stars - 1) {
+                                                                        echo "<span><i class='fa fa-star fa-2x'></i> </span>";
+                                                                        $i += 2;
+                                                                        }
+                                                                        // Add half star if needed:
+                                                                        if ( $stars & 1 ) echo "<span><i class='fa fa-star-half-o fa-2x'></i> </span>";
+                                                                        @endphp
                                                                     </div>
                                                                     @foreach($tripadvisor->rating as $rating)
                                                                         <div class="widget_summary">
                                                                             <div class="w_left w_25">
+
                                                                                 <span>{{ $rating->label }}</span>
                                                                             </div>
                                                                             <div class="w_center w_55">
                                                                                 <div class="progress">
-                                                                                    <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $rating->value }}" aria-valuemax=" {{ $tripadvisor->aggregateRating->reviewCount  }}" aria-valuemin="0" style="width: {{$rating->value/$tripadvisor->aggregateRating->reviewCount*100 }}%" >
+                                                                                    <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $rating->value }}" aria-valuemax=" {{ $tripadvisor->aggregateRating->totalreview  }}" aria-valuemin="0" style="width: {{$rating->value/$tripadvisor->aggregateRating->totalreview*100 }}%" >
                                                                                         <span class="sr-only">{{ $rating->value }}</span>
                                                                                     </div>
                                                                                 </div>
@@ -90,7 +108,12 @@
                                                                                         <h4 class="title">
                                                                                             <a href="{{ url($review->link_review) }}">{{ $review->title }}</a>
                                                                                         </h4>
-                                                                                        <div class="byline">{{ $review->author }}
+													<div>
+			                                                                       <div class="byline">{{ $review->author }}
+													<div class="star" style="color:#1ABB9C">
+                                                                                                    {{ $review->origin }}
+                                                                                                </div>
+
                                                                                             <div class="star" style="color:#1ABB9C">
                                                                                                 @for($i=0;$i<5;$i++ )
                                                                                                     @if($i<$review->rating/10)
@@ -99,7 +122,7 @@
                                                                                                         <span><i class="fa fa-star-o"></i> </span>
                                                                                                     @endif
                                                                                                 @endfor
-                                                                                            </div>
+                                                                                            </div>											
                                                                                             <span> <small>{{ $review->date_posted }}</small></span>
                                                                                         </div>
                                                                                         <p class="excerpt">
@@ -121,7 +144,6 @@
                                      </div>
                                 </div>
                             </div>
-
                             <div class="panel ">
                                 <div class="panel-heading" role="tab" id="headingTwo_18">
                                     <h4 class="panel-title">
@@ -190,7 +212,7 @@
                                                                     <div class="dashboard-widget-content">
 
                                                                         <ul  class="list-unstyled ">
-                                                                            @foreach(\App\Reviews::where('source','=','Booking')->orderBy('created_at','desc')->take(20)->get()  as $key=> $reviewlist)
+                                                                            @foreach(\App\Reviews::where('source','=','Booking')->orderBy('date_posted','asc')->take(20)->get()  as $key=> $reviewlist)
 
                                                                                 <li >
                                                                                     <div class="block" style="border-bottom: 1px solid">
@@ -205,7 +227,7 @@
                                                                                                 <div class="star" style="color:#1ABB9C">
                                                                                                     {{ $reviewlist["origin"] }}
                                                                                                 </div>
-                                                                                                <span> <small> {{ $reviewlist["review_date"] }}</small></span>
+                                                                                                <span> <small> {{ str_replace("Reviewed:","",$reviewlist["date_posted"]) }}</small></span>
                                                                                             </div>
                                                                                             <span><i class="fa fa-minus-circle left" style="color:#cc0000"></i> </span>
                                                                                             <p class="excerpt " style="margin-left: 20px">
@@ -306,7 +328,7 @@
                                                                     <div class="dashboard-widget-content">
 
                                                                         <ul  class="list-unstyled ">
-                                                                            @foreach(\App\Reviews::where('source','=','Hotels')->orderBy('created_at','desc')->take(20)->get()  as $key=> $reviewlist)
+                                                                            @foreach(\App\Reviews::where('source','=','Hotels')->orderBy('date_posted','asc')->take(20)->get()  as $key=> $reviewlist)
 
                                                                                 <li >
                                                                                     <div class="block" style="border-bottom: 1px solid">
@@ -319,7 +341,7 @@
                                                                                             </h4>
                                                                                             <div class="byline">  {{ $reviewlist->author }}
                                                                                                 <div class="star" style="color:#1ABB9C">
-                                                                                                    {{ \App\Country::where('iso2','=',$reviewlist->origin)->value('country') }}
+                                                                                                   {{ \App\Country::where('iso2','=',$reviewlist->origin)->value('country') }}
                                                                                                 </div>
                                                                                                 <span> <small> {{ $reviewlist->date_posted }}</small></span>
                                                                                             </div>
@@ -348,6 +370,7 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>

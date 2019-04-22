@@ -7,7 +7,7 @@
                     <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
                         <div class="x_panel tile ">
                             <div class="x_title">
-                                <h2>Segment Management</h2>
+                                <h3>Segment Management</h3>
                                 <ul class="nav navbar-right panel_toolbox">
                                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                     <li><a class="close-link"><i class="fa fa-close"></i></a>
@@ -31,8 +31,14 @@
                                             <tr>
 
                                                 <td>{{ $key+1 }}</td>
-                                                <td>{{ $item->name }} </td>
-                                                <td>{{ $item->campaign->count()>0 ? $item->campaign[0]->name:"" }}</td>
+                                                <td><a href="{{ url('segments').'/'.$item->id }}"> {{ $item->name }}</a> </td>
+                                                <td>@if($item->campaign->count()>0)
+                                                        <ul class="list-unstyled">
+                                                        @foreach($item->campaign as $campaign)
+                                                            <li>{{ $campaign->name }} </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @endif</td>
                                                 <td>{!! Form::open(['method' => 'DELETE','route' => ['segments.destroy', $item->id],'id'=>$item->id]) !!}
                                                     {!! Form::close() !!}
                                                     <a href="#" title="Delete Segment" onclick="return swal({title:'Delete Confirmation',text:'This Segment will permanently deleted',type:'warning',

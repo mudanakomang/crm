@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+    Post Stay Configuration  | {{ $configuration->hotel_name.' '.$configuration->app_title }}
+@endsection
 @section('content')
     <div class="right_col" role="main">
         <section class="content">
@@ -7,7 +10,7 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel tile">
                             <div class="x_title">
-                                <h2>Post Stay Configuration</h2>
+                                <h3>Post Stay Configuration</h3>
                                 <ul class="nav navbar-right panel_toolbox">
                                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                     <li><a class="close-link"><i class="fa fa-close"></i></a>
@@ -19,11 +22,7 @@
                                 <div class="form-inline">
                                     {{ Form::model($poststay,['route'=>['poststay.update',$poststay->id],'files'=>'true','id'=>'templateForm']) }}
                                     <div class="form-group">
-
-
                                             <div class="pull-right">
-
-
                                                 <label>
                                                     Deactivate  <input type="checkbox" name="activate" class="js-switch"  id="myonoffswitch"  />  Activate
                                                 </label>
@@ -124,7 +123,7 @@
 
     <script>
         $('#summernote').summernote({
-            height:350,
+           // height:350,
             popover: {
                 image: [
                     ['custom', ['imageAttributes']],
