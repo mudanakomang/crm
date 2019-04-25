@@ -68,14 +68,14 @@
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::text('stay_from',null,['class'=>'datepicker form-control','id'=>'stay_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
+                                          {{ Form::text('stay_from',null,['class'=>' form-control','id'=>'stay_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
                                       </div>
                                   </div>
                               </div>
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::text('stay_to',null,['class'=>'datepicker form-control', 'id'=>'stay_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
+                                          {{ Form::text('stay_to',null,['class'=>' form-control', 'id'=>'stay_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
                                       </div>
                                   </div>
                               </div>
@@ -331,6 +331,15 @@
 
     <script>
         $(document).ready(function () {
+            $('#stay_from, #stay_to').datepicker({                
+                language: 'en',
+                dateFormat: 'dd M yyyy ',
+                onSelect:function(d,dt,i){
+                    checkRecepient()
+                }
+                
+            })
+
             $('#spending_from').maskMoney({thousands:'.', decimal:',', precision:0});
             $('#spending_to').maskMoney({thousands:'.', decimal:',', precision:0});
         })
@@ -442,18 +451,18 @@
             })
         }
 
-        $('#stay_from').datetimepicker({
-            format: 'DD MMMM YYYY',
-            showClear:true,
-        }).on('dp.change',function(){
-            checkRecepient()
-        });
-        $('#stay_to').datetimepicker({
-            format: 'DD MMMM YYYY',
-            showClear:true,
-        }).on('dp.change',function() {
-            checkRecepient();
-        });
+        // $('#stay_from').datetimepicker({
+        //     format: 'DD MMMM YYYY',
+        //     showClear:true,
+        // }).on('dp.change',function(){
+        //     checkRecepient()
+        // });
+        // $('#stay_to').datetimepicker({
+        //     format: 'DD MMMM YYYY',
+        //     showClear:true,
+        // }).on('dp.change',function() {
+        //     checkRecepient();
+        // });
         $('#bday_from').datetimepicker({
             format: 'DD MMMM',
             showClear:true,

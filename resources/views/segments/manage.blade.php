@@ -147,12 +147,13 @@
 
                         var js =JSON.parse(json);
                         for(var i in js){
-                            if(c===js[i]["iso2"]){
+                            if(c===js[i]["iso3"]){
                                 country=js[i]["country"];
-					var d = js[i]["iso2"]
+					            var d = js[i]["iso2"]
                             }
                         }
                         return country + '<img src="../flags/blank.gif"  class="flag flag-'+d.toLowerCase()+' pull-right"  alt="'+d+'" />';
+                        
                     }},
                     {"data":"area"},
                     {"data":"transaction.[length-1].status","render":function(s){
@@ -228,46 +229,27 @@
 
 
         }
-        $('#stay_from').datetimepicker({
-            format: 'DD MMMM YYYY',
-            showClear:true,
-        }).on('dp.change',function(){
-            checkRecepient()
+       
+        $('#stay_from,#stay_to').datepicker({
+            language: 'en',
+                dateFormat: 'dd M yyyy ',
+                autoClose:true,
+                clearButton:true,
+                onSelect:function(d,dt,i){
+                    checkRecepient()
+                }
+        })
+       
+        $('#bday_to , #bday_from,#wedding_bday_from,#wedding_bday_to').datepicker({
+            language: 'en',
+            dateFormat:'dd M',
+            autoClose:true,
+            clearButton:true,
+            onSelect:function(d,dt,i){
+                    checkRecepient()
+                }
         });
-        $('#stay_to').datetimepicker({
-            format: 'DD MMMM YYYY',
-            showClear:true,
-        }).on('dp.change',function() {
-            checkRecepient();
-        });
-        $('#bday_from').datetimepicker({
-            format: 'DD MMMM',
-            showClear:true,
-            viewMode:'months',
-        }).on('dp.change',function(){
-            checkRecepient()
-        });
-        $('#bday_to').datetimepicker({
-            format: 'DD MMMM',
-            showClear:true,
-            viewMode:'months',
-        }).on('dp.change',function() {
-            checkRecepient();
-        });
-        $('#wedding_bday_from').datetimepicker({
-            format: 'DD MMMM',
-            showClear:true,
-            viewMode:'months',
-        }).on('dp.change',function(){
-            checkRecepient()
-        });
-        $('#wedding_bday_to').datetimepicker({
-            format: 'DD MMMM',
-            showClear:true,
-            viewMode:'months',
-        }).on('dp.change',function() {
-            checkRecepient();
-        });
+
     </script>
     <script>
         $('#saveSegment').on('click',function (e) {

@@ -63,7 +63,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="form-line">
-                                            {{ Form::text('hotel_name',$configuration->hotel_name,['class'=>'datepicker form-control','id'=>'hotel_name', 'data-live-search'=>'true','placeholder'=>'Hotel Name']) }}
+                                            {{ Form::text('hotel_name',$configuration->hotel_name,['class'=>' form-control','id'=>'hotel_name', 'data-live-search'=>'true','placeholder'=>'Hotel Name']) }}
                                         </div>
                                     </div>
                                 </div>
@@ -75,7 +75,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="form-line">
-                                            {{ Form::text('app_title',$configuration->app_title,['class'=>'datepicker form-control','id'=>'app_title', 'data-live-search'=>'true','placeholder'=>'App Title']) }}
+                                            {{ Form::text('app_title',$configuration->app_title,['class'=>' form-control','id'=>'app_title', 'data-live-search'=>'true','placeholder'=>'App Title']) }}
                                         </div>
                                     </div>
                                 </div>
@@ -87,7 +87,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="form-line">
-                                            {{ Form::text('gm_name',$configuration->gm_name,['class'=>'datepicker form-control','id'=>'gm_name', 'data-live-search'=>'true','placeholder'=>'GM Name']) }}
+                                            {{ Form::text('gm_name',$configuration->gm_name,['class'=>' form-control','id'=>'gm_name', 'data-live-search'=>'true','placeholder'=>'GM Name']) }}
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="form-line">
-                                            {{ Form::text('mailgun_domain',$configuration->mailgun_domain,['class'=>'datepicker form-control','id'=>'mailgun_domain', 'data-live-search'=>'true','placeholder'=>'Mailgun Domain']) }}
+                                            {{ Form::text('mailgun_domain',$configuration->mailgun_domain,['class'=>' form-control','id'=>'mailgun_domain', 'data-live-search'=>'true','placeholder'=>'Mailgun Domain']) }}
                                         </div>
                                     </div>
                                 </div>
@@ -111,7 +111,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="form-line">
-                                            {{ Form::input('password','mailgun_password',$configuration->mailgun_password,['class'=>'datepicker form-control','id'=>'mailgun_password', 'data-live-search'=>'true','placeholder'=>'Mailgun Password']) }}
+                                            {{ Form::input('password','mailgun_password',$configuration->mailgun_password,['class'=>' form-control','id'=>'mailgun_password', 'data-live-search'=>'true','placeholder'=>'Mailgun Password']) }}
                                         </div>
                                     </div>
                                 </div>
@@ -123,7 +123,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="form-line">
-                                            {{ Form::input('password','mailgun_apikey',$configuration->mailgun_apikey,['class'=>'datepicker form-control','id'=>'mailgun_apikey', 'data-live-search'=>'true','placeholder'=>'Mailgun API Key']) }}
+                                            {{ Form::input('password','mailgun_apikey',$configuration->mailgun_apikey,['class'=>' form-control','id'=>'mailgun_apikey', 'data-live-search'=>'true','placeholder'=>'Mailgun API Key']) }}
                                         </div>
                                     </div>
                                 </div>
@@ -135,7 +135,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="form-line">
-                                            {{ Form::email('sender_email',$configuration->sender_email,['class'=>'datepicker form-control','id'=>'sender_email', 'data-live-search'=>'true','placeholder'=>'Sender Email']) }}
+                                            {{ Form::email('sender_email',$configuration->sender_email,['class'=>' form-control','id'=>'sender_email', 'data-live-search'=>'true','placeholder'=>'Sender Email']) }}
                                         </div>
                                     </div>
                                 </div>
@@ -147,7 +147,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="form-line">
-                                            {{ Form::email('sender_name',$configuration->sender_name,['class'=>'datepicker form-control','id'=>'sender_name', 'data-live-search'=>'true','placeholder'=>'Sender Name']) }}
+                                            {{ Form::email('sender_name',$configuration->sender_name,['class'=>' form-control','id'=>'sender_name', 'data-live-search'=>'true','placeholder'=>'Sender Name']) }}
                                         </div>
                                     </div>
                                 </div>

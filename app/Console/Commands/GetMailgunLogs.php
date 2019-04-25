@@ -41,8 +41,10 @@ class GetMailgunLogs extends Command
     public function handle()
     {
         //
+
         $mg=new MailgunController();
         $logs=$mg->getLogs(null,null,null,'NOT accepted','NOT danabala72@gmail.com');
+        dd($logs);
         foreach ($logs as $log){
             $time=Carbon::createFromTimestamp($log->getTimestamp())->format('Y-m-d H:i:s');
                 MailgunLogs::updateOrCreate(
@@ -57,6 +59,7 @@ class GetMailgunLogs extends Command
                 ['email'=>$failedemail->recipient]
             );
         }
+    
 
     }
 }

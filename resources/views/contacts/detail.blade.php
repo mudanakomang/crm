@@ -238,7 +238,7 @@
                                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
-                                                                                                {{ Form::text('birthday',$data[0]->birthday==NULL ? '': \Carbon\Carbon::parse($data[0]->birthday)->format('d M Y'),['class'=>'datepicker form-control','required']) }}
+                                                                                                {{ Form::text('birthday',$data[0]->birthday==NULL ? '': \Carbon\Carbon::parse($data[0]->birthday)->format('d M Y'),['class'=>'form-control','required']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -248,7 +248,7 @@
                                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
                                                                                             <div class="form-line">
-                                                                                                {{ Form::text('wedding_bday',$data[0]->wedding_bday==NULL ? '': \Carbon\Carbon::parse($data[0]->wedding_bday)->format('d M Y'),['class'=>'datepicker form-control','required']) }}
+                                                                                                {{ Form::text('wedding_bday',$data[0]->wedding_bday==NULL ? '': \Carbon\Carbon::parse($data[0]->wedding_bday)->format('d M Y'),['class'=>' form-control','autocomplete'=>'off']) }}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -583,10 +583,11 @@
 @endsection
 @section('script')
     <script>
-        $('.datepicker').datetimepicker({
-            format: 'DD MMMM YYYY',
-            showClear:true,
+        $('#birthday , #wedding_bday').datepicker({
+            language: 'en',
+            dateFormat:'dd M yyyy'
         });
+        
     </script>
     <script>
         if (window.location.pathname=='/contacts/add'){

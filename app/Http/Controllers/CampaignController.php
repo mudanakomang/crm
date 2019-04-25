@@ -216,8 +216,8 @@ class CampaignController extends Controller
         })->when($seg->age_to !=null,function ($q) use ($seg){
             return $q->whereRaw('birthday >= date_sub(now(),INTERVAL \''.$seg->age_to.'\' YEAR)');
         })->when(unserialize($seg->booking_source)[0]!=null,function ($q) use ($seg){
-            $q->whereHas('profilesfolio',function ($q) use ($seg){
-                $q->whereIn('source',unserialize($seg->booking_source)[0]);
+           return  $q->whereHas('profilesfolio',function ($q) use ($seg){
+               return  $q->whereIn('source',unserialize($seg->booking_source));
             });
         })->when($seg->wedding_bday_from ==null and $seg->wedding_bday_to !=null , function ($q) use ($seg){
             return $q->whereRaw('DATE_FORMAT(wedding_bday,\'%m-%d\') = ?',[Carbon::parse($seg->wedding_bday_to)->format('m-d')]);
