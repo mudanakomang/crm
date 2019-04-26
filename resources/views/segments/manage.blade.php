@@ -147,7 +147,7 @@
 
                         var js =JSON.parse(json);
                         for(var i in js){
-                            if(c===js[i]["iso2"]){
+                            if(c===js[i]["iso3"]){
                                 country=js[i]["country"];
 					            var d = js[i]["iso2"]
                             }

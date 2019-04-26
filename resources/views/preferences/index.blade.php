@@ -63,7 +63,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="form-line">
-                                            {{ Form::text('hotel_name',$configuration->hotel_name,['class'=>'datepicker form-control','id'=>'hotel_name', 'data-live-search'=>'true','placeholder'=>'Hotel Name']) }}
+                                            {{ Form::text('hotel_name',$configuration->hotel_name,['class'=>' form-control','id'=>'hotel_name', 'data-live-search'=>'true','placeholder'=>'Hotel Name']) }}
                                         </div>
                                     </div>
                                 </div>
