@@ -68,22 +68,17 @@
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-<<<<<<< HEAD
-                                          {{ Form::text('stay_from',null,['class'=>'form-control','id'=>'stay_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
-=======
-                                          {{ Form::text('stay_from',null,['class'=>' form-control','id'=>'stay_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
->>>>>>> 844c6d6b05865d723250842706c876c9235f3066
+                                          {{ Form::text('stay_from',null,['class'=>' form-control','id'=>'stay_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','autocomplete'=>'off', 'data-live-search'=>'true','placeholder'=>'From']) }}
+
                                       </div>
                                   </div>
                               </div>
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-<<<<<<< HEAD
-                                          {{ Form::text('stay_to',null,['class'=>'form-control', 'id'=>'stay_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
-=======
-                                          {{ Form::text('stay_to',null,['class'=>' form-control', 'id'=>'stay_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
->>>>>>> 844c6d6b05865d723250842706c876c9235f3066
+
+                                          {{ Form::text('stay_to',null,['class'=>' form-control', 'id'=>'stay_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','autocomplete'=>'off','data-live-search'=>'true','placeholder'=>'To']) }}
+
                                       </div>
                                   </div>
                               </div>
@@ -93,14 +88,14 @@
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::text('total_stay_from',null,['class'=>'form-control','id'=>'total_stay_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
+                                          {{ Form::text('total_stay_from',null,['class'=>'form-control','id'=>'total_stay_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','autocomplete'=>'off', 'data-live-search'=>'true','placeholder'=>'From']) }}
                                       </div>
                                   </div>
                               </div>
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::text('total_stay_to',null,['class'=>'form-control', 'id'=>'total_stay_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
+                                          {{ Form::text('total_stay_to',null,['class'=>'form-control', 'id'=>'total_stay_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','autocomplete'=>'off','data-live-search'=>'true','placeholder'=>'To']) }}
                                       </div>
                                   </div>
                               </div>
@@ -111,14 +106,14 @@
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::text('total_night_from',null,['class'=>'form-control','id'=>'total_night_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
+                                          {{ Form::text('total_night_from',null,['class'=>'form-control','id'=>'total_night_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','autocomplete'=>'off', 'data-live-search'=>'true','placeholder'=>'From']) }}
                                       </div>
                                   </div>
                               </div>
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::text('total_night_to',null,['class'=>'form-control','id'=>'total_night_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'To']) }}
+                                          {{ Form::text('total_night_to',null,['class'=>'form-control','id'=>'total_night_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'autocomplete'=>'off','data-live-search'=>'true','placeholder'=>'To']) }}
                                       </div>
                                   </div>
                               </div>
@@ -128,7 +123,7 @@
                               <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::select('gender[]',['M'=>'Male','F'=>'Female'],null,['class'=>'form-control selectpicker','id'=>'gender','multiple','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','actionsBox'=>'true','data-live-search'=>'true']) }}
+                                          {{ Form::select('gender[]',['M'=>'Male','F'=>'Female'],null,['class'=>'form-control selectpicker','id'=>'gender','multiple','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','autocomplete'=>'off','oninput'=>'this.onchange()','actionsBox'=>'true','data-live-search'=>'true']) }}
                                       </div>
                                   </div>
                               </div>
@@ -138,14 +133,14 @@
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::text('age_from',null,['class'=>'form-control','id'=>'age_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
+                                          {{ Form::text('age_from',null,['class'=>'form-control','id'=>'age_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','autocomplete'=>'off', 'data-live-search'=>'true','placeholder'=>'From']) }}
                                       </div>
                                   </div>
                               </div>
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::text('age_to',null,['class'=>'form-control', 'id'=>'age_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
+                                          {{ Form::text('age_to',null,['class'=>'form-control', 'id'=>'age_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','autocomplete'=>'off','data-live-search'=>'true','placeholder'=>'To']) }}
                                       </div>
                                   </div>
                               </div>
@@ -156,14 +151,14 @@
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::text('bday_from',null,['class'=>'form-control','id'=>'bday_from','onchange'=>'checkRecepient()','onpaste'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
+                                          {{ Form::text('bday_from',null,['class'=>'form-control','id'=>'bday_from','onchange'=>'checkRecepient()','onpaste'=>'this.onchange()','autocomplete'=>'off', 'data-live-search'=>'true','placeholder'=>'From']) }}
                                       </div>
                                   </div>
                               </div>
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
                                       <div class="form-line">
-                                          {{ Form::text('bday_to',null,['class'=>'form-control', 'id'=>'bday_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
+                                          {{ Form::text('bday_to',null,['class'=>'form-control', 'id'=>'bday_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','autocomplete'=>'off','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
                                       </div>
                                   </div>
                               </div>
@@ -342,11 +337,9 @@
             $('#stay_from, #stay_to').datepicker({                
                 language: 'en',
                 dateFormat: 'dd M yyyy ',
-<<<<<<< HEAD
+
                 autoClose:true,
                 clearButton:true,
-=======
->>>>>>> 844c6d6b05865d723250842706c876c9235f3066
                 onSelect:function(d,dt,i){
                     checkRecepient()
                 }
@@ -462,7 +455,7 @@
                     $('.previewtemplate').append(data.content)
                 }
             })
-<<<<<<< HEAD
+
         }       
     
         $('#bday_to , #bday_from,#wedding_bday_from,#wedding_bday_to').datepicker({
@@ -473,65 +466,7 @@
             onSelect:function(d,dt,i){
                     checkRecepient()
                 }
-=======
-        }
-
-        // $('#stay_from').datetimepicker({
-        //     format: 'DD MMMM YYYY',
-        //     showClear:true,
-        // }).on('dp.change',function(){
-        //     checkRecepient()
-        // });
-        // $('#stay_to').datetimepicker({
-        //     format: 'DD MMMM YYYY',
-        //     showClear:true,
-        // }).on('dp.change',function() {
-        //     checkRecepient();
-        // });
-        $('#bday_from').datetimepicker({
-            format: 'DD MMMM',
-            showClear:true,
-            viewMode:'months',
-        }).on('dp.change',function(){
-            checkRecepient()
         });
-        $('#bday_to').datetimepicker({
-            format: 'DD MMMM',
-            showClear:true,
-            viewMode:'months',
-        }).on('dp.change',function() {
-            checkRecepient();
-        });
-        $('#wedding_bday_from').datetimepicker({
-            format: 'DD MMMM ',
-            showClear:true,
-            viewMode:'months',
-        }).on('dp.change',function(){
-            checkRecepient()
-        });
-        $('#wedding_bday_to').datetimepicker({
-            format: 'DD MMMM',
-            showClear:true,
-            viewMode:'months',
-        }).on('dp.change',function() {
-            checkRecepient();
->>>>>>> 844c6d6b05865d723250842706c876c9235f3066
-        });
-
-        // $('#wedding_bday_from').datetimepicker({
-        //     format: 'DD MMMM ',
-        //     showClear:true,
-        //     viewMode:'months',
-        // }).on('dp.change',function(){
-        //     checkRecepient()
-        // });
-        // $('#wedding_bday_to').datetimepicker({
-        //     format: 'DD MMMM',
-        //     showClear:true,
-        //     viewMode:'months',
-        // }).on('dp.change',function() {
-        //     checkRecepient();
-        // });
     </script>
         <script>
 
