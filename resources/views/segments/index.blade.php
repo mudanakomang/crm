@@ -31,7 +31,7 @@
                                             <tr>
 
                                                 <td>{{ $key+1 }}</td>
-                                                <td><a href="{{ url('segments').'/'.$item->id }}"> {{ $item->name }}</a> </td>
+                                                <td><a href="#"> {{ $item->name }}</a> </td>
                                                 <td>@if($item->campaign->count()>0)
                                                         <ul class="list-unstyled">
                                                         @foreach($item->campaign as $campaign)

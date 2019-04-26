@@ -111,7 +111,7 @@
                     "targets":5,
                     "render":function (data,type,row) {
                         for(var i in item){
-                            if(data===item[i]['iso3']){
+                            if(data===item[i]['iso2']){
                                 var d=''
                                 d=(item[i]["iso2"])
                                 d=d.toLowerCase()

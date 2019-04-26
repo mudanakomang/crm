@@ -108,7 +108,7 @@ class MailgunController extends Controller
             $mg->messages()->send($domain,
                 [
                     'from' => $config->sender_name.'<'.$config->sender_email.'>',
-                    'to' => $this->convertstring($user->fname).' '.$this->convertstring($user->lname).'<'.$user->email.'>',
+                    'to' => $this->convertstring($user->fname).' '.$this->convertstring($user->lname).'<'.$user->email.'>',                
                     'subject' => $template->subject,
                     'html' => $template->parse($data),
                     'o:tracking-opens' => true,

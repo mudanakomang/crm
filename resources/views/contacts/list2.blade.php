@@ -96,13 +96,7 @@
                 "columnDefs": [
                     {
                         "targets": 0,
-                        "data": "id",
-                        // My problem occurs when
-                        // commenting the "data": = "id" line and uncommenting the 2 lines below,
-                        // results in an AJAX error
-
-                        // "data": null,
-                        // "defaultContent": '',
+                        "data": "id",                      
                     },{
                         "targets":1,
                         "render":function (data,type,row) {
@@ -126,7 +120,7 @@
                     	"targets":5,
 						"render":function (data,type,row) {
 							for(var i in item){
-							    if(data===item[i]['iso3']){
+							    if(data===item[i]['iso2']){
                                     var d=''
                                     d=(item[i]["iso2"])
                                     d=d.toLowerCase()
@@ -154,7 +148,16 @@
 								case "G":
 								    return "Guaranteed"
 									break
-								default:""
+								case "N":
+									return "No Show"
+									break
+								case "":
+									return ""
+									break
+								case null:
+									return ""
+									break
+								//default:""
 							}
                         }
 					},{

@@ -64,14 +64,14 @@
         <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
             <div class="form-group">
                 <div class="form-line">
-                    {{ Form::text('stay_from',null,['class'=>'datepicker form-control','id'=>'stay_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
+                    {{ Form::text('stay_from',null,['class'=>' form-control','id'=>'stay_from','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()', 'data-live-search'=>'true','placeholder'=>'From']) }}
                 </div>
             </div>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
             <div class="form-group">
                 <div class="form-line">
-                    {{ Form::text('stay_to',null,['class'=>'datepicker form-control', 'id'=>'stay_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
+                    {{ Form::text('stay_to',null,['class'=>' form-control', 'id'=>'stay_to','onchange'=>'checkRecepient()','onkeyup'=>'this.onchange()','onpaste'=>'this.onchange()','oninput'=>'this.onchange()','data-live-search'=>'true','placeholder'=>'To']) }}
                 </div>
             </div>
         </div>

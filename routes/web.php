@@ -233,7 +233,7 @@ Route::get('test',function (){
 //   $ftp->close();
 //    //$ftp->put('images/upload/user.jpg','images/user.jpg',FTP_BINARY);
 //    $ftp->putFromString('images/upload/user.jpg',$file);
-   \Illuminate\Support\Facades\Storage::disk('sftp')->put('user.jpg',$file);
+   \Illuminate\Support\Facades\Storage::disk('ftp')->put('user.jpg',$file);
 
 
 });
