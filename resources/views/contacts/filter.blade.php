@@ -161,7 +161,7 @@
                               </div>
 
                               <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
-                                  {{ Form::label('','Wedding Birthday') }}
+                                  {{ Form::label('','Wedding Anniversary') }}
                               </div>
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
                                   <div class="form-group">
@@ -201,7 +201,7 @@
                                       <th><input type="checkbox" id="selectAll" ></th>
                                       <th class="align-center">Full Name</th>
                                       <th class="align-center">Birthday</th>
-                                      <th class="align-center">Wedding Birthday</th>
+                                      <th class="align-center">Wedding Anniversary</th>
                                       <th class="align-center">Country</th>
                                       <th class="align-center">Area/Origin</th>
                                       <th class="align-center">Status</th>

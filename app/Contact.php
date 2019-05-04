@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Contact extends Model
 {
     //
+
     protected $fillable=['fname','lname','idnumber','ccid','email','birthday','salutation','gender','country_id','source_booking'];
     protected $primaryKey = 'contactid';
 
@@ -72,11 +73,12 @@ class Contact extends Model
     public function profilesfolio(){
         return $this->hasMany('\App\ProfileFolio','profileid','contactid');
     }
-    public function sumRevenue(){
-        return $this->transaction->sum('revenue');
-    }
+
     public function latestTransaction(){
         return $this->belongsToMany('\App\Transaction','contact_transaction','contact_id','transaction_id','contactid','id')->orderBy('checkout','desc')->limit(1);
+    }
+    public function excluded(){
+        return $this->hasOne('\App\ExcludedEmail','contact_id','contactid');
     }
 
 }

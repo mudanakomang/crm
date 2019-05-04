@@ -41,10 +41,22 @@
     <link href="{{ asset('flags/flags.css') }}" rel="stylesheet">
     <link href="{{ asset('css/jquery.steps.css') }}" rel="stylesheet">
     <link href="{{ asset('vendors/airdatepicker/dist/css/datepicker.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-toggle.min.css') }}">
     {{--<link href="{{ asset('vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css') }}" rel="stylesheet">--}}
     <style>
       .datepicker{
         z-index:9999 !important;
+      }
+      #loadcontacts tbody .checkbox{
+        width:18px;
+        height:18px;
+        margin-top:2px;
+
+      }
+      #loadcontacts tbody .checkbox:checked {
+           width:20px;
+           height:20px;
+           margin-top:2px;
       }
     </style>
 
@@ -183,6 +195,7 @@
     <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('vendors/airdatepicker/dist/js/datepicker.min.js') }}"></script>
     <script src="{{ asset('vendors/airdatepicker/dist/js/i18n/datepicker.en.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-toggle.min.js') }}"></script>
 
 
     <!-- Custom Theme Scripts -->

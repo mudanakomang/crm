@@ -91,6 +91,7 @@ Route::group(['middleware'=>'auth'],function (){
     Route::post('contacts/incomplete/update','ContactController@updateStatus');
     Route::get('contacts/excluded/email','ContactController@excluded');
     Route::post('contacts/excluded/addemail','ContactController@addEmail');
+    Route::post('excldued/email/update','ContactController@updateexcluded')->name('update.exclude');
 
     Route::post('deliverystatus','MailgunController@deliveryStatus')->name('deliverystatus');
 
@@ -209,7 +210,7 @@ Route::get('test',function (){
     dd($campaign->contact);
 });
 Route::get('contacts/list',function (){
-   return view('contacts.list2');
+   return view('contacts.list3',['gender'=>NULL,'country'=>NULL]);
 });
 Route::post('loadcontacts','ContactController@loadcontacts')->name('loadcontacts');
 Route::get('test',function (){

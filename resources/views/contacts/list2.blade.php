@@ -26,7 +26,7 @@
 										<th class="align-center">Full Name</th>
 										<th class="align-center">Last Name</th>
 										<th class="align-center">Birthday</th>
-										<th class="align-center">Wedding Birthday</th>
+										<th class="align-center">Wedding Anniversary</th>
 										<th class="align-center">Country</th>
 										<th class="align-center">Area/Origin</th>
 										<th class="align-center">Status</th>
@@ -34,6 +34,7 @@
 										<th class="align-center">Total Stays</th>
 										<th class="align-center">Last Stay</th>
 										<th class="align-center">Total Spending (Rp.)</th>
+
 									</tr>
 									</thead>
 
@@ -65,13 +66,14 @@
 			//	"scroller":       true,
 				"paging":true,
              //  "lengthChange": false,
+				"pageLength":25,
 				"stateSave":true,
                 "ajax":{
                     "url":"{{ route('loadcontacts') }}",
                     "dataSrc":"",
                     "type":"POST",
                     "data":{
-                        "_token":"{{ csrf_token() }}"
+                        "_token":"{{ csrf_token() }}",
                     }
                 },
                 "processing": true,
@@ -92,6 +94,7 @@
                     { "data": "transaction.0.checkin" },
                     { "data": "transaction" },
 
+
                 ],
                 "columnDefs": [
                     {
@@ -107,8 +110,12 @@
                         "targets":1,
                         "render":function (data,type,row) {
                             var id=row.contactid
-
-                            return '<a href="{{ url('contacts/detail/') }}'+'/'+id+'" >'+ data +' ' +row.lname+'</a>'
+							if(row.lname===null) {
+                               var lname='';
+                            } else {
+                                var lname = row.lname
+							}
+                            return '<a href="{{ url('contacts/detail/') }}'+'/'+id+'" >'+ data +' ' +lname+'</a>'
 //							data +' '+ row.lname
                         }
                     },{
@@ -184,8 +191,9 @@
                             d=Math.floor(s)
 							return d.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
                         }
-					}],
-                "pageLength":20,
+					}
+				],
+
                 "createdRow": function( row, data, dataIndex){
                     $('td',row).eq(1).css('text-transform', "capitalize")
                 },
@@ -197,5 +205,7 @@
                 } );
             } ).draw();
         })
+
 	</script>
+
 @endsection

@@ -26,7 +26,7 @@
 										<th class="align-center">Full Name</th>
 										<th class="align-center">Last Name</th>
 										<th class="align-center">Birthday</th>
-										<th class="align-center">Wedding Birthday</th>
+										<th class="align-center">Wedding Anniversary</th>
 										<th class="align-center">Country</th>
 										<th class="align-center">Area/Origin</th>
 										<th class="align-center">Status</th>
@@ -34,6 +34,7 @@
 										<th class="align-center">Total Stays</th>
 										<th class="align-center">Last Stay</th>
 										<th class="align-center">Total Spending (Rp.)</th>
+										<th class="align-center">Complaint</th>
 									</tr>
 									</thead>
 
@@ -69,11 +70,12 @@
                 "type": "POST",
                 "data":{
                     _token: "{{csrf_token()}}",
-					route:'list'
+					gender:"{{ $gender }}",
+                    {{--country:"{{ $country }}"--}}
                 }
             },
             "columns": [
-                { "data": "contactid" },
+                { "data": null },
                 { "data": "fname" },
                 { "data": "lname" },
                 { "data": "birthday" },
@@ -85,14 +87,31 @@
 				{ "data": "stay"},
 				{ "data": "checkin"},
 				{ "data": "revenue","name":"transaction.revenue"},
+				{ "data": null},
+
 
             ],
 		   	"columnDefs":[
                 {
+                    "targets":0,
+                    "sortable":false,
+                    "render":function (data,type,row,meta) {
+                        return meta.row+1
+                    }
+                },
+                {
                     "targets":1,
                     "render":function (data,type,row) {
+
                         var id=row.contactid
-                        return '<a href="{{ url('contacts/detail/') }}'+'/'+id+'" >'+ data +' ' +row.lname+'</a>'
+                        var lname=""
+                        if(row.lname==null){
+                            lname=""
+                        }else {
+                            lname=row.lname
+                        }
+
+                        return '<a href="{{ url('contacts/detail/') }}'+'/'+id+'" >'+ data +' ' +lname+'</a>'
                     }
                 },{
                 	"targets":2,
@@ -116,15 +135,19 @@
                                 d=(item[i]["iso2"])
                                 d=d.toLowerCase()
                                 var  country=item[i]["country"];
-                                return country +'<img src="../flags/blank.gif"  class="flag flag-'+d+' pull-right"  alt="'+data+'" />';
+                                return country +'<i  class="flag flag-'+d+' pull-right"  />';
                             }
                         }
                     }
                 },{
                     "targets":7,
-					"sortable":false,
+					"sortable":true,
                     "render":function (data,type,row) {
+
                         switch (data){
+                            case null:
+                                return "";
+                                break
                             case 'C':
                                 return "Confirm";
                                 break
@@ -145,7 +168,7 @@
                     }
                 },{
                 	"targets":10,
-					"sortable":false,
+					"sortable":true,
 					"render":function (data,type,row) {
                         if(moment(data).isValid()){
                             return moment(data).format("MMM DD YYYY")
@@ -153,10 +176,66 @@
                             return ''
                         }
                     }
-				}
+				},
+                {
+                    "targets":11,
+                    "render":function (data,type,row) {
+                        return "Rp. "+Math.round(data).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.")
+                    }
+                },
+                {
+                    'targets': 12,
+                    'searchable': false,
+                    'orderable': false,
+                    'className': 'dt-body-center',
+                    'render': function (data, type, full, meta){
+                        console.log(full.excluded)
+                      if(full.excluded !==null){
+                          return '<input type="checkbox" class="checkbox"  checked name="complaint" id="complaint'+full.contactid+'" value=1>';
+                      }else{
+                          return '<input type="checkbox" class="checkbox" name="complaint"   id="complaint'+full.contactid+'" value=0>';
+                      }
+                    }
+                }
 			],
        });
+        $('#loadcontacts tbody').on('change', 'input[type="checkbox"]', function(e){
+            var chkid=e.target.id.replace('complaint','')
+            var el=$(this)
+            if(el.is(':checked')){
+                var val=1;
+                el.val(0)
+            }else {
+                var val=0;
+               el.val(1)
+            }
+            swal({
+                title:'Are you Sure?',
+                text:'This action will delete or insert an email from / to the list of excluded emails. The Guest will not receive any emails later if this option checked',
+                type:'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText:'Update',
+                cancelButtonText: 'Cancel',
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },function (isconfirm) {
+                if(isconfirm){
+                    $.ajax({
+                        url:'{{ route('update.exclude') }}',
+                        type:'POST',
+                        data:{
+                            _token:'{{ csrf_token() }}',
+                            val:val,
+                            id:chkid
+                        },
+                    })
+                    location.reload()
+                }
+            })
 
+
+        })
     });
 </script>
 @endsection

@@ -247,6 +247,18 @@ where contactid is not NULL and transactions.checkin BETWEEN  DATE_FORMAT(DATE_S
 
         return view('contacts.list',['data'=>$b]);
     }
+    public  function updateexcluded(Request $request){
+        $val=$request->val;
+        $email=Contact::find($request->id)->email;
+
+        if($val==0){
+            $em=ExcludedEmail::where('email','=',$email)->first();
+            $em->delete();
+        }else{
+            ExcludedEmail::insert(['email'=>$email,'contact_id'=>$request->id]);
+        }
+        return response('success',200);
+    }
 public function loadcontacts(Request $request){
     $contacts=Contact::with(['transaction'=>function($qq){
 	      	return $qq->sum('revenue');
@@ -261,7 +273,9 @@ public function contactslist(Request $request){
         return $qq->sum('revenue');
     }])->whereHas('transaction',function ($q){
         return $q->where('status','<>',NULL)->where('revenue','>=',0);
-    })->withCount('campaign')->withCount('transaction')
+    })->withCount('campaign')->withCount('transaction')->when(!empty($request->gender),function ($qq) use ($request){
+        return $qq->where('gender','=',$request->gender);
+    })->withCount('excluded')->groupBy('contactid')
         ->get();
 
     $columns = array(
@@ -272,8 +286,10 @@ public function contactslist(Request $request){
         4 =>'wedding_bday',
         5 =>'country_id',
         6 =>'area',
+        7 =>'status',
         8 =>'campaign_count',
         9 =>'transaction_count',
+        10 =>'checkin',
         11=>'revenue'
     );
     $totalData = $contacts->count();
@@ -282,67 +298,48 @@ public function contactslist(Request $request){
     $start = $request->input('start');
     $order = $columns[$request->input('order.0.column')];
     $dir = $request->input('order.0.dir');
-    if (empty($request->input('search.value'))){
-        $contactslist=Contact::with(['transaction'=>function($qq){
-            return $qq->sum('revenue');
-        }])->whereHas('transaction',function ($q){
-            return $q->where('status','<>',NULL)->where('revenue','>=',0);
-        })->withCount('campaign')->withCount('transaction')
+    $search=$request->input('search.value');
+    if(empty($search)){
+        $contactslist=Contact::whereHas('transaction',function ($q){
+            return $q->whereNotNull('status')->where('revenue','>',0);
+        })->join(DB::raw('(select id,sum(revenue) as revenue,status,checkin,contact_id from transactions left join contact_transaction on contact_transaction.transaction_id=transactions.id where revenue >0 group by id) as revenue'),'revenue.contact_id','=','contactid')
+            ->withCount('campaign')->withCount('transaction')
             ->offset($start)->limit($limit)->orderBy($order,$dir)
-            ->get();
+            ->withCount('campaign')->withCount('transaction')->when(!empty($request->gender),function($qq) use ($request){
+                return $qq->where('gender','=',$request->gender);
+            })->withCount('excluded')->groupBy('contactid')->get();
     }else{
-        $search = $request->input('search.value');
-        $contactslist=Contact::with(['transaction'=>function($qq){
-            return $qq->sum('revenue');
-        }])->whereHas('transaction',function ($q){
-            return $q->where('status','<>',NULL)->where('revenue','>=',0);
-        })->withCount('campaign')->withCount('transaction')
-            ->select(DB::raw("sum(revenue) as revenue"))
-            ->where('contactid','LIKE',"%{$search}%")
-            ->orWhere('fname','LIKE',"%{$search}%")
+        $contactslist=Contact::whereHas('transaction',function ($q){
+            return $q->whereNotNull('status')->where('revenue','>',0);
+        })->join(DB::raw('(select id,sum(revenue) as revenue,status,checkin,contact_id from transactions left join contact_transaction on contact_transaction.transaction_id=transactions.id where revenue >0 group by id) as revenue'),'revenue.contact_id','=','contactid')
+            ->withCount('campaign')->withCount('transaction')
+            ->Where('fname','LIKE',"%{$search}%")
             ->orWhere('lname','LIKE',"%{$search}%")
-            ->orWhere('birthday','LIKE',"%{$search}%")
-            ->orWhere('wedding_bday','LIKE',"%{$search}%")
-            ->orWhereHas('country',function ($q) use ($search){
-                return $q->where('country','LIKE',"%{$search}%");
-            })->orWhereHas('transaction',function ($q) use ($search){
-                return $q->where('status','LIKE',"%{$search}%");
-            })
-            ->orWhere('area','LIKE',"%{$search}%")
-            ->orWhereHas('transaction',function ($q) use ($search){
-                return $q->where('checkin','LIKE',"%{$search}%");
-            })
+            ->orWhereHas('country',function ($q) use ($search) {
+                return $q->where('country', 'LIKE', "%{$search}%");
+            })->orWhere('area','LIKE',"%{$search}%")
             ->offset($start)
             ->limit($limit)
             ->orderBy($order,$dir)
-            ->get();
+            ->when(!empty($request->gender),function($qq) use ($request){
+                return $qq->where('gender','=',$request->gender);
+            })->withCount('excluded')->groupBy('contactid')->get();
 
-        $totalFiltered=Contact::with(['transaction'=>function($qq){
-            return $qq->sum('revenue');
-        }])->whereHas('transaction',function ($q){
-            return $q->where('status','<>',NULL)->where('revenue','>=',0);
-        })->withCount('campaign')->withCount('transaction')
-            ->select(DB::raw("sum(revenue) as revenue"))
-            ->where('contactid','LIKE',"%{$search}%")
-            ->orWhere('fname','LIKE',"%{$search}%")
-            ->orWhere('lname','LIKE',"%{$search}%")
-            ->orWhere('birthday','LIKE',"%{$search}%")
-            ->orWhere('wedding_bday','LIKE',"%{$search}%")
-            ->orWhereHas('country',function ($q) use ($search){
-                return $q->where('country','LIKE',"%{$search}%");
-            })->orWhereHas('transaction',function ($q) use ($search){
-                return $q->where('status','LIKE',"%{$search}%");
-             })
-            ->orWhere('area','LIKE',"%{$search}%")
-            ->orWhereHas('transaction',function ($q) use ($search){
-                return $q->where('checkin','LIKE',"%{$search}%");
-            })
-            ->count();
+        $totalFiltered=count($contactslist);
+
     }
+
     $data=array();
     if (!empty($contactslist)){
+
         foreach ($contactslist as $key=>$list){
-            $nestedData['contactid']=$key+1;
+            $rev=0;
+            foreach ($list->transaction as $transaction){
+                $rev+=$transaction->revenue;
+            }
+
+
+            $nestedData['contactid']=$list->contactid;
             $nestedData['fname']=$list->fname;
             $nestedData['lname']=$list->lname;
             $nestedData['birthday']=$list->birthday;
@@ -353,7 +350,8 @@ public function contactslist(Request $request){
             $nestedData['campaign']=count($list->campaign);
             $nestedData['stay']=count($list->transaction);
             $nestedData['checkin']=$list->transaction[0]->checkin;
-            $nestedData['revenue']=$list->transaction;
+            $nestedData['revenue']=$rev;
+            $nestedData['excluded']=$list->excluded;
             $data[]=$nestedData;
         }
     }
@@ -708,13 +706,15 @@ public function contactslist(Request $request){
         return view('contacts.import',['create'=>$created,'update'=>$update,'created_data'=>$created_data,'updated_data'=>$updated_data]);
     }
     public function country($c){
-        $cid=Country::where('country','=',$c)->value('iso2');
+        $country=Country::where('country','=',$c)->first()['iso3'];
         setlocale(LC_MONETARY,"id_ID");
         $b=[];
         $a=[];
         $c=[];
 
-        $contacts=\App\Contact::where('country_id','=',$cid)->get();
+        $contacts=Contact::whereHas('transaction',function ($q){
+            return $q->where('revenue','>',0)->whereNotNull('status');
+        })->where('country_id','=',$country)->get();
 
         foreach ($contacts as $contact){
             array_push($b,$contact);
@@ -774,47 +774,32 @@ public function contactslist(Request $request){
 
     public function male(){
 
-        setlocale(LC_MONETARY, "id_ID");
-        $b = [];
-        $a = [];
-        $c = [];
-
-        $contacts=Contact::where('gender','=','M')->get();
-
-        foreach ($contacts as $contact) {
-
-            array_push($b, $contact);
-            foreach ($contact->transaction as $trx) {
-                array_push($c,$trx);
-
-            }
-            array_merge($b, $a);
-            array_merge($b, $c);
-
-        }
-        return view('contacts.list', ['data' => $b]);
+       $gender='M';
+       return view('contacts.list3',['gender'=>$gender]);
     }
     public function female(){
 
-        setlocale(LC_MONETARY, "id_ID");
-        $b = [];
-        $a = [];
-        $c = [];
-
-        $contacts=Contact::where('gender','=','F')->get();
-
-        foreach ($contacts as $contact) {
-
-            array_push($b, $contact);
-            foreach ($contact->transaction as $trx) {
-                array_push($c,$trx);
-
-            }
-            array_merge($b, $a);
-            array_merge($b, $c);
-
-        }
-        return view('contacts.list', ['data' => $b]);
+//        setlocale(LC_MONETARY, "id_ID");
+//        $b = [];
+//        $a = [];
+//        $c = [];
+//
+//        $contacts=Contact::where('gender','=','F')->get();
+//
+//        foreach ($contacts as $contact) {
+//
+//            array_push($b, $contact);
+//            foreach ($contact->transaction as $trx) {
+//                array_push($c,$trx);
+//
+//            }
+//            array_merge($b, $a);
+//            array_merge($b, $c);
+//
+//        }
+//        return view('contacts.list', ['data' => $b]);
+        $gender='F';
+       return view('contacts.list3',['gender'=>$gender]);
     }
     public function uploadStay(Request $request){
 

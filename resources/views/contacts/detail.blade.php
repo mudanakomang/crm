@@ -13,8 +13,10 @@
                             <h2> {{ $data[0]->fname.' '.$data[0]->lname }}   </h2>
 
                             @if(!empty($data[0]->country->country))
-                            <img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($data[0]->country->iso2)}}" alt="{{$data[0]->country->country}}" />
-                                @endif
+                                <img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($data[0]->country->iso2)}}" alt="{{$data[0]->country->country}}" />
+                            @endif
+                            <br>
+                            <br>
 
                         </div>
                         <div class="x_content" style="height:120px;">
@@ -36,7 +38,7 @@
                                                     $sum+=$total;
                                                     }
                                                 @endphp
-                                                {{  $sum }}
+                                                {{ $sum }}
                                             @else
                                                 0
                                             @endif
@@ -243,7 +245,7 @@
                                                                                         </div>
                                                                                     </div>
                                                                                     <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
-                                                                                        {{ Form::label('wedding_bday','Wedding Birthday') }}
+                                                                                        {{ Form::label('wedding_bday','Wedding Anniversary') }}
                                                                                     </div>
                                                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                                                                         <div class="form-group">
@@ -583,6 +585,39 @@
 @endsection
 @section('script')
     <script>
+
+
+        function setSwitchery(switchElement, checkedBool) {
+            if((checkedBool && !switchElement.isChecked()) || (!checkedBool && switchElement.isChecked())) {
+                switchElement.setPosition(true);
+                switchElement.handleOnchange(true);
+            }
+        }
+
+        var mySwitch = new Switchery($('#complaint{{ $data[0]->contactid }}')[0], {
+            size:"small",
+            color: '#0D74E9'
+        });
+        $('#complaint{{ $data[0]->contactid }}').on('change',function (e) {
+            if($(this).is(':checked')){
+                var val=1;
+                $(this).val(1)
+            }else{
+                val=0;
+                $(this).val(0)
+            }
+            $.ajax({
+                url:'{{ route('update.exclude') }}',
+                type:'POST',
+                data:{
+                    _token:'{{ csrf_token() }}',
+                     val:val,
+                    email:"{{ $data[0]->email }}"
+                },
+
+            })
+        })
+
         $('#birthday , #wedding_bday').datepicker({
             language: 'en',
             dateFormat:'dd M yyyy'

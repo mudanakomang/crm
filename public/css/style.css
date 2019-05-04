@@ -2156,7 +2156,8 @@
   margin-right: 10px; }
 
 .demo-splite-button-dropdowns > .btn-group {
-  margin-right: 10px; }
+  margin-right: 10px; }
+
 
 .demo-dropup .dropup {
   margin-right: 10px; }
@@ -4006,7 +4007,8 @@ section.content {
 .dtp > .dtp-content > .dtp-date-view > header.dtp-header {
   background: #009688; }
 
-.dtp .dtp-buttons .dtp-btn-ok {
+.dtp .dtp-buttons .dtp-btn-ok {
+
   margin-left: 10px; }
 
 .dtp .dtp-buttons .dtp-btn-clear {

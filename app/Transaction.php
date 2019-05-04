@@ -14,4 +14,5 @@ class Transaction extends Model
     public function roomType(){
         return $this->hasOne('\App\RoomType','room_code','room_type');
     }
+
 }
