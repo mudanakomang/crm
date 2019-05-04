@@ -52,7 +52,7 @@
 											</td>
 											<td>{{ $contact->birthday=='' ? "": \Carbon\Carbon::parse($contact->birthday)->format('M d') }}</td>
 											<td>{{ $contact->wedding_bday=='' ? "": \Carbon\Carbon::parse($contact->wedding_bday)->format('M d') }}</td>
-											<td>{{ \App\Country::where('iso3',$contact->country_id)->first()['country'] }}
+											<td>{{ \App\Country::where('iso2',$contact->country_id)->first()['country'] }}
 												<img src="{{ asset('flags/blank.gif') }}" class="flag flag-{{strtolower($contact->country['iso2'])}} pull-right" alt="{{$contact->country['country']}}" />
 											</td>
 											<td>{{ $contact->area }}</td>

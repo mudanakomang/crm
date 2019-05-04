@@ -161,15 +161,7 @@ class Emailtemplate extends Controller
             $images = $dom->getElementsByTagName('img');
             foreach($images as $k => $img) {
                 $name = $img->getAttribute('src');
-//                $ftp=new FtpClient();
-//                $ftp->connect(env('FTP_HOST'));
-//                $ftp->login(env('FTP_USERNAME'),env('FTP_PASSWORD'));
-//                $ftp->pasv(true);
-//
-//                $ftp->remove($name);
-//                $ftp->close();
-                Storage::disk('sftp')->delete($name);
-
+                Storage::disk('ftp')->delete($name);
             }
 
             $template->delete();
@@ -181,9 +173,7 @@ class Emailtemplate extends Controller
 
 
 
-    public function upload(Request $request){
-        //dd($request->all());
-
+    public function upload(Request $request){    
         $dom = new \DomDocument();
         libxml_use_internal_errors(true);
         $dom->loadHtml($request->contents, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
@@ -193,14 +183,11 @@ class Emailtemplate extends Controller
         foreach($images as $k => $img) {
             $data = $img->getAttribute('src');
             $name=$img->getAttribute('data-filename');
-
-
             if (!empty(explode(';', $data)[1])) {
 
                 list($type, $data) = explode(';', $data);
 
-                list(, $data) = explode(',', $data);
-               // dd($data);
+                list(, $data) = explode(',', $data);            
 
                 $data = base64_decode($data);
 
@@ -217,32 +204,15 @@ class Emailtemplate extends Controller
                 }else{
                     $pth='other';
                 }
-                $base='crm.kutaseaviewhotel.com/themes/kutaseaview/assets/mail-template';
-                //$image_name = "images/upload/" . time() . $k . '.png';
+                $base='crm.ramaresidencepadma.com/themes/ramaresidencepadma/assets/mail-template';                
                 $image_name = $base.'/'.$pth.'/'.$name;
-
-              //  Storage::disk('sftp')->put($image_name,$data);
-//                $ftp=new FtpClient();
-//                $ftp->connect(env('FTP_HOST'));
-//                $ftp->login(env('FTP_USERNAME'),env('FTP_PASSWORD'));
-//                $ftp->pasv(true);
-
-
-
-//                $path = asset('/'.$image_name) ;
-//                $publicpath=$image_name;
-                if (Storage::disk('sftp')->exists($image_name)){
-                   Storage::disk('sftp')->delete($image_name);
-                    Storage::disk('sftp')->put($image_name,$data);
+                if (Storage::disk('ftp')->exists($image_name)){
+                   Storage::disk('ftp')->delete($image_name);
+                    Storage::disk('ftp')->put($image_name,$data);
                 }else{
-                    Storage::disk('sftp')->put($image_name,$data);
+                    Storage::disk('ftp')->put($image_name,$data);
                 }
-
-              //  file_put_contents($publicpath, $data);
-               // Storage::disk('ftp')->put($publicpath,$data);
-
                 $img->removeAttribute('src');
-
                 $img->setAttribute('src', 'http://'.$image_name);
                 $img->setAttribute('url','');
                 $img->setAttribute('target','_blank');
@@ -278,17 +248,6 @@ class Emailtemplate extends Controller
 
         return view('email.manage.confirm',['confirm'=>$confirm]);
     }
-//    public function confirmActivate(Request $request){
-//        $confirm=ConfirmEmail::find(1);
-//        if ($request->state=='on'){
-//            $confirm->update(['active'=>'y']);
-//            return response(['active'=>true],200);
-//        }else{
-//            $confirm->update(['active'=>'n']);
-//            return response(['active'=>false],200);
-//        }
-//    }
-
     public function confirmActivate(Request $request){
         $confirm=ConfirmEmail::find(1);
         if($request->state=='on'){
